@@ -1,50 +1,12 @@
-import { useEffect } from "react";
-import { useLocation } from "wouter";
-import { useAuth } from "@/contexts/auth-context";
-import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/navbar";
 import { MobileNavbar } from "@/components/mobile-navbar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Briefcase, Building, User, Heart, MessageSquare } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function HomePage() {
   const [_, setLocation] = useLocation();
-  const { user } = useAuth();
-
-  // Redirect to appropriate setup page if user has not completed profile
-  const { data: employerProfile } = useQuery({
-    queryKey: ["/api/employer/profile"],
-    enabled: user?.role === "employer",
-  });
-
-  const { data: jobseekerProfile } = useQuery({
-    queryKey: ["/api/jobseeker/profile"],
-    enabled: user?.role === "jobseeker",
-  });
-
-  useEffect(() => {
-    if (!user) return;
-
-    if (user.role === "employer") {
-      if (!employerProfile) {
-        setLocation("/employer/profile-setup");
-      }
-    } else if (user.role === "jobseeker") {
-      if (!jobseekerProfile) {
-        setLocation("/jobseeker/profile-setup");
-      }
-    }
-  }, [user, employerProfile, jobseekerProfile, setLocation]);
-
-  // Redirect to appropriate match feed if profile is complete
-  useEffect(() => {
-    if (user?.role === "employer" && employerProfile) {
-      setLocation("/employer/match-feed");
-    } else if (user?.role === "jobseeker" && jobseekerProfile) {
-      setLocation("/jobseeker/match-feed");
-    }
-  }, [user, employerProfile, jobseekerProfile, setLocation]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -96,20 +58,10 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {user?.role === "jobseeker" ? (
-                  <Button 
-                    className="w-full" 
-                    onClick={() => setLocation("/jobseeker/profile-setup")}
-                  >
-                    Complete Your Profile
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                ) : user?.role === "employer" ? null : (
-                  <Button className="w-full" onClick={() => setLocation("/auth")}>
-                    Sign Up as Job Seeker
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                )}
+                <Button className="w-full" onClick={() => setLocation("/auth")}>
+                  Sign Up as Job Seeker
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
               </CardContent>
             </Card>
 
@@ -145,20 +97,10 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {user?.role === "employer" ? (
-                  <Button 
-                    className="w-full" 
-                    onClick={() => setLocation("/employer/profile-setup")}
-                  >
-                    Complete Your Profile
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                ) : user?.role === "jobseeker" ? null : (
-                  <Button className="w-full" onClick={() => setLocation("/auth")}>
-                    Sign Up as Employer
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                )}
+                <Button className="w-full" onClick={() => setLocation("/auth")}>
+                  Sign Up as Employer
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
               </CardContent>
             </Card>
           </div>
@@ -216,25 +158,23 @@ export default function HomePage() {
           </div>
 
           {/* CTA Section */}
-          {!user && (
-            <div className="bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg shadow-lg p-8 text-center">
-              <h2 className="text-2xl font-heading font-bold text-white mb-4">
-                Ready to find your perfect match?
-              </h2>
-              <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-                Join thousands of professionals and companies who are connecting through enterN's innovative
-                matching platform.
-              </p>
-              <Button 
-                size="lg" 
-                variant="secondary" 
-                onClick={() => setLocation("/auth")}
-              >
-                Get Started Now
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
-            </div>
-          )}
+          <div className="bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg shadow-lg p-8 text-center">
+            <h2 className="text-2xl font-heading font-bold text-white mb-4">
+              Ready to find your perfect match?
+            </h2>
+            <p className="text-white/90 mb-6 max-w-2xl mx-auto">
+              Join thousands of professionals and companies who are connecting through enterN's innovative
+              matching platform.
+            </p>
+            <Button 
+              size="lg" 
+              variant="secondary" 
+              onClick={() => setLocation("/auth")}
+            >
+              Get Started Now
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
         </div>
       </main>
 
