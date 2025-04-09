@@ -1,0 +1,271 @@
+import type { Express } from "express";
+import { createServer, type Server } from "http";
+import { storage } from "./storage";
+import { setupAuth } from "./auth";
+
+export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up authentication routes
+  setupAuth(app);
+
+  // Employer Profile Routes
+  app.post("/api/employer/profile", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "employer") return res.status(403).json({ message: "Forbidden" });
+      
+      const employerProfile = await storage.createEmployerProfile({
+        ...req.body,
+        userId: req.user.id,
+      });
+      
+      res.status(201).json(employerProfile);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/employer/profile", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "employer") return res.status(403).json({ message: "Forbidden" });
+      
+      const employerProfile = await storage.getEmployerProfileByUserId(req.user.id);
+      if (!employerProfile) {
+        return res.status(404).json({ message: "Employer profile not found" });
+      }
+      
+      res.json(employerProfile);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Job Posting Routes
+  app.post("/api/job-postings", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "employer") return res.status(403).json({ message: "Forbidden" });
+      
+      const employerProfile = await storage.getEmployerProfileByUserId(req.user.id);
+      if (!employerProfile) {
+        return res.status(404).json({ message: "Employer profile not found" });
+      }
+      
+      const jobPosting = await storage.createJobPosting({
+        ...req.body,
+        employerId: employerProfile.id,
+      });
+      
+      res.status(201).json(jobPosting);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/job-postings", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "employer") return res.status(403).json({ message: "Forbidden" });
+      
+      const employerProfile = await storage.getEmployerProfileByUserId(req.user.id);
+      if (!employerProfile) {
+        return res.status(404).json({ message: "Employer profile not found" });
+      }
+      
+      const jobPostings = await storage.getJobPostingsByEmployerId(employerProfile.id);
+      res.json(jobPostings);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Jobseeker Profile Routes
+  app.post("/api/jobseeker/profile", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "jobseeker") return res.status(403).json({ message: "Forbidden" });
+      
+      const jobseekerProfile = await storage.createJobseekerProfile({
+        ...req.body,
+        userId: req.user.id,
+      });
+      
+      res.status(201).json(jobseekerProfile);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/jobseeker/profile", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "jobseeker") return res.status(403).json({ message: "Forbidden" });
+      
+      const jobseekerProfile = await storage.getJobseekerProfileByUserId(req.user.id);
+      if (!jobseekerProfile) {
+        return res.status(404).json({ message: "Jobseeker profile not found" });
+      }
+      
+      res.json(jobseekerProfile);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Jobseeker Preferences Routes
+  app.post("/api/jobseeker/preferences", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "jobseeker") return res.status(403).json({ message: "Forbidden" });
+      
+      const jobseekerProfile = await storage.getJobseekerProfileByUserId(req.user.id);
+      if (!jobseekerProfile) {
+        return res.status(404).json({ message: "Jobseeker profile not found" });
+      }
+      
+      const preferences = await storage.createJobseekerPreferences({
+        jobseekerId: jobseekerProfile.id,
+        preferences: req.body.preferences,
+      });
+      
+      res.status(201).json(preferences);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/jobseeker/preferences", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "jobseeker") return res.status(403).json({ message: "Forbidden" });
+      
+      const jobseekerProfile = await storage.getJobseekerProfileByUserId(req.user.id);
+      if (!jobseekerProfile) {
+        return res.status(404).json({ message: "Jobseeker profile not found" });
+      }
+      
+      const preferences = await storage.getJobseekerPreferencesByJobseekerId(jobseekerProfile.id);
+      res.json(preferences);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Match Feed Routes
+  app.get("/api/employer/match-feed", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "employer") return res.status(403).json({ message: "Forbidden" });
+      
+      const employerProfile = await storage.getEmployerProfileByUserId(req.user.id);
+      if (!employerProfile) {
+        return res.status(404).json({ message: "Employer profile not found" });
+      }
+      
+      const jobseekers = await storage.getJobseekersForEmployerMatchFeed(employerProfile.id);
+      res.json(jobseekers);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/jobseeker/match-feed", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "jobseeker") return res.status(403).json({ message: "Forbidden" });
+      
+      const jobseekerProfile = await storage.getJobseekerProfileByUserId(req.user.id);
+      if (!jobseekerProfile) {
+        return res.status(404).json({ message: "Jobseeker profile not found" });
+      }
+      
+      const employers = await storage.getEmployersForJobseekerMatchFeed(jobseekerProfile.id);
+      res.json(employers);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Match Routes
+  app.post("/api/employer/match", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "employer") return res.status(403).json({ message: "Forbidden" });
+      
+      const { jobseekerId, status } = req.body;
+      
+      const employerProfile = await storage.getEmployerProfileByUserId(req.user.id);
+      if (!employerProfile) {
+        return res.status(404).json({ message: "Employer profile not found" });
+      }
+      
+      const match = await storage.updateEmployerMatchStatus(employerProfile.id, jobseekerId, status);
+      res.json(match);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.post("/api/jobseeker/match", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "jobseeker") return res.status(403).json({ message: "Forbidden" });
+      
+      const { employerId, status } = req.body;
+      
+      const jobseekerProfile = await storage.getJobseekerProfileByUserId(req.user.id);
+      if (!jobseekerProfile) {
+        return res.status(404).json({ message: "Jobseeker profile not found" });
+      }
+      
+      const match = await storage.updateJobseekerMatchStatus(jobseekerProfile.id, employerId, status);
+      res.json(match);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Job Interest Routes
+  app.post("/api/job-interest", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      
+      const { matchId, jobId, status } = req.body;
+      
+      // Verify that the user is a part of this match
+      const userIsPartOfMatch = await storage.verifyUserInMatch(req.user.id, matchId);
+      if (!userIsPartOfMatch) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      const jobInterest = await storage.updateJobInterestStatus(matchId, jobId, status);
+      res.json(jobInterest);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/job-interests/:matchId", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      
+      const matchId = parseInt(req.params.matchId);
+      
+      // Verify that the user is a part of this match
+      const userIsPartOfMatch = await storage.verifyUserInMatch(req.user.id, matchId);
+      if (!userIsPartOfMatch) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      const jobInterests = await storage.getJobInterestsByMatchId(matchId);
+      res.json(jobInterests);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  // Create HTTP server
+  const httpServer = createServer(app);
+
+  return httpServer;
+}
