@@ -26,12 +26,8 @@ export default function HomePage() {
     enabled: !!user && user.role === "jobseeker",
   });
 
-  // Redirect to auth page if not authenticated
-  useEffect(() => {
-    if (!isLoading && !user) {
-      setLocation("/auth");
-    }
-  }, [user, isLoading, setLocation]);
+  // Only redirect authenticated users to their profile pages
+  // We want unauthenticated users to be able to see the landing page
 
   // Redirect to appropriate setup page if user has not completed profile
   useEffect(() => {
