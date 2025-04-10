@@ -89,15 +89,26 @@ export default function JobseekerProfileSetup() {
         description: "Your profile has been saved successfully.",
       });
       
-      // Invalidate the profile query before redirecting
-      queryClient.invalidateQueries({ queryKey: ["/api/jobseeker/profile"] });
-      
-      // Add a small delay to ensure cache is cleared before redirect
-      setTimeout(() => {
-        console.log("Redirecting to preferences page...");
-        // Use direct window.location for more reliable navigation
+      try {
+        // Store profile ID in localStorage as backup
+        localStorage.setItem('jobseekerProfileId', result.id.toString());
+        console.log("Saved profile ID to localStorage:", result.id);
+        
+        // Invalidate the profile query before redirecting
+        queryClient.invalidateQueries({ queryKey: ["/api/jobseeker/profile"] });
+        
+        // Add a small delay to ensure cache is cleared before redirect
+        setTimeout(() => {
+          console.log("Redirecting to preferences page...");
+          // Use direct window.location for more reliable navigation
+          window.location.href = "/jobseeker/preferences";
+        }, 1000);
+      } catch (error) {
+        console.error("Navigation error:", error);
+        // Fallback direct navigation
+        alert("Profile created. Click OK to continue to preferences page.");
         window.location.href = "/jobseeker/preferences";
-      }, 1000);
+      }
     },
     onError: (error: Error) => {
       toast({
@@ -109,11 +120,17 @@ export default function JobseekerProfileSetup() {
   });
 
   const onSubmit = (data: JobseekerProfileFormData) => {
-    console.log("Form submitted", data);
+    console.log("********************************************");
+    console.log("FORM SUBMISSION TRIGGERED");
+    console.log("Form data:", data);
+    console.log("Form errors:", form.formState.errors);
     console.log("Selected industries:", selectedIndustries);
     console.log("Selected locations:", selectedLocations);
+    console.log("User:", user);
+    console.log("********************************************");
     
     if (!user || !user.id) {
+      console.error("User not found or missing user ID");
       toast({
         title: "Error",
         description: "You must be logged in to create a profile.",
@@ -126,12 +143,20 @@ export default function JobseekerProfileSetup() {
     const profileData = {
       ...data,
       userId: user.id, // Now we're sure user.id exists
-      preferredIndustries: selectedIndustries,
-      preferredLocations: selectedLocations.map(loc => loc.trim()),
+      preferredIndustries: selectedIndustries || [],
+      preferredLocations: (selectedLocations || []).map(loc => loc.trim()),
     };
     
-    console.log("Profile data to submit:", profileData);
-    profileMutation.mutate(profileData);
+    console.log("Complete profile data to submit:", profileData);
+    
+    try {
+      // This will trigger the mutationFn and onSuccess/onError handlers
+      profileMutation.mutate(profileData);
+      
+      console.log("Mutation triggered successfully");
+    } catch (error) {
+      console.error("Error triggering mutation:", error);
+    }
   };
 
   const handleIndustrySelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -347,10 +372,22 @@ export default function JobseekerProfileSetup() {
                 </div>
               </CardContent>
 
-              <CardFooter className="bg-gray-50 flex justify-end">
+              <CardFooter className="bg-gray-50 flex justify-between">
+                <Button 
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    console.log("Test navigation button clicked");
+                    window.location.href = "/jobseeker/preferences";
+                  }}
+                >
+                  Test Direct Navigation
+                </Button>
+                
                 <Button 
                   type="submit" 
                   disabled={profileMutation.isPending}
+                  onClick={() => console.log("Submit button clicked - this should trigger form submit")}
                 >
                   {profileMutation.isPending ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

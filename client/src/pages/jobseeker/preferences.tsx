@@ -333,11 +333,23 @@ export default function JobseekerPreferences() {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   const [completedSections, setCompletedSections] = useState<Record<string, boolean>>({});
 
-  // Get jobseeker profile
+  // Get jobseeker profile 
   const { data: jobseekerProfile } = useQuery<JobseekerProfile>({
     queryKey: ["/api/jobseeker/profile"],
     enabled: !!user,
+    onError: (error) => {
+      console.error("Error fetching jobseeker profile:", error);
+      toast({
+        title: "Error",
+        description: "Could not fetch your profile. You may need to create one first.",
+        variant: "destructive",
+      });
+    }
   });
+  
+  // Get profile ID from localStorage as fallback
+  const storedProfileId = typeof window !== 'undefined' ? localStorage.getItem('jobseekerProfileId') : null;
+  console.log("Retrieved profile ID from localStorage:", storedProfileId);
 
   // Initialize the form with default values
   const form = useForm<PreferencesFormData>({
@@ -402,17 +414,19 @@ export default function JobseekerPreferences() {
 
   const preferencesMutation = useMutation({
     mutationFn: async (data: PreferencesFormData) => {
-      // Verify that we have a jobseeker profile
-      if (!jobseekerProfile || !jobseekerProfile.id) {
+      // Verify that we have a jobseeker profile ID (either from query or localStorage)
+      const profileId = jobseekerProfile?.id || storedProfileId;
+      
+      if (!profileId) {
         console.error("No jobseeker profile found, cannot save preferences");
-        throw new Error("You need to create a profile before saving preferences");
+        throw new Error("You need to create a profile before saving preferences. Please go back to Profile Setup.");
       }
       
-      console.log("Saving preferences for jobseeker profile:", jobseekerProfile.id);
+      console.log("Saving preferences for jobseeker profile:", profileId);
       
       try {
         const res = await apiRequest("POST", "/api/jobseeker/preferences", {
-          jobseekerId: jobseekerProfile.id,
+          jobseekerId: parseInt(profileId.toString(), 10), // Ensure we have a number
           preferences: data.preferences,
         });
         console.log("Preferences saved successfully");
