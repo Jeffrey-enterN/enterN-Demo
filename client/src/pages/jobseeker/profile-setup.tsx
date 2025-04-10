@@ -81,14 +81,22 @@ export default function JobseekerProfileSetup() {
         throw error;
       }
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
+      console.log("Profile created successfully:", result);
+      
       toast({
         title: "Profile created",
         description: "Your profile has been saved successfully.",
       });
       
-      // Redirect to preferences page
-      setLocation("/jobseeker/preferences");
+      // Invalidate the profile query before redirecting
+      queryClient.invalidateQueries({ queryKey: ["/api/jobseeker/profile"] });
+      
+      // Add a small delay to ensure cache is cleared before redirect
+      setTimeout(() => {
+        console.log("Redirecting to preferences page...");
+        setLocation("/jobseeker/preferences");
+      }, 500);
     },
     onError: (error: Error) => {
       toast({

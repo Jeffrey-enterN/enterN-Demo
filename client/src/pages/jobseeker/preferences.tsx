@@ -400,20 +400,27 @@ export default function JobseekerPreferences() {
     }));
   }, []);
 
-  // In a development environment, let's simulate having a profile to avoid the TypeScript errors
-  // In production, we would handle the profile not found case more gracefully
-  const mockJobseekerProfile = { id: 1, userId: 1, firstName: "Test", lastName: "User" } as JobseekerProfile;
-  
   const preferencesMutation = useMutation({
     mutationFn: async (data: PreferencesFormData) => {
-      // Use the actual profile when available, otherwise use our mock data for development
-      const profile = jobseekerProfile || mockJobseekerProfile;
+      // Verify that we have a jobseeker profile
+      if (!jobseekerProfile || !jobseekerProfile.id) {
+        console.error("No jobseeker profile found, cannot save preferences");
+        throw new Error("You need to create a profile before saving preferences");
+      }
       
-      const res = await apiRequest("POST", "/api/jobseeker/preferences", {
-        jobseekerId: profile.id,
-        preferences: data.preferences,
-      });
-      return await res.json();
+      console.log("Saving preferences for jobseeker profile:", jobseekerProfile.id);
+      
+      try {
+        const res = await apiRequest("POST", "/api/jobseeker/preferences", {
+          jobseekerId: jobseekerProfile.id,
+          preferences: data.preferences,
+        });
+        console.log("Preferences saved successfully");
+        return await res.json();
+      } catch (error) {
+        console.error("Error saving preferences:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       toast({

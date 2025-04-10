@@ -3,6 +3,7 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
     const text = (await res.text()) || res.statusText;
+    console.error(`API Error: ${res.status}: ${text}`);
     throw new Error(`${res.status}: ${text}`);
   }
 }
@@ -12,15 +13,42 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
-  const res = await fetch(url, {
-    method,
-    headers: data ? { "Content-Type": "application/json" } : {},
-    body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
-  });
+  console.log(`Making ${method} request to ${url}`, data);
+  
+  try {
+    const res = await fetch(url, {
+      method,
+      headers: data ? { "Content-Type": "application/json" } : {},
+      body: data ? JSON.stringify(data) : undefined,
+      credentials: "include",
+    });
 
-  await throwIfResNotOk(res);
-  return res;
+    console.log(`API response for ${method} ${url}:`, {
+      status: res.status,
+      statusText: res.statusText,
+      // Simplified headers logging to avoid TypeScript issue
+      headers: `Content-Type: ${res.headers.get('content-type')}`
+    });
+    
+    // Clone the response so we can log the body but still return the original response
+    const clonedRes = res.clone();
+    clonedRes.text().then(body => {
+      try {
+        const jsonBody = JSON.parse(body);
+        console.log(`API response body:`, jsonBody);
+      } catch (e) {
+        console.log(`API response body (text):`, body);
+      }
+    }).catch(e => {
+      console.error('Could not read response body:', e);
+    });
+    
+    await throwIfResNotOk(res);
+    return res;
+  } catch (error) {
+    console.error(`API request failed for ${method} ${url}:`, error);
+    throw error;
+  }
 }
 
 type UnauthorizedBehavior = "returnNull" | "throw";
