@@ -95,8 +95,9 @@ export default function JobseekerProfileSetup() {
       // Add a small delay to ensure cache is cleared before redirect
       setTimeout(() => {
         console.log("Redirecting to preferences page...");
-        setLocation("/jobseeker/preferences");
-      }, 500);
+        // Use direct window.location for more reliable navigation
+        window.location.href = "/jobseeker/preferences";
+      }, 1000);
     },
     onError: (error: Error) => {
       toast({

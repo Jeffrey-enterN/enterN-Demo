@@ -52,6 +52,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Login successful",
         description: `Welcome back!`,
       });
+      
+      // Check if user has a profile already
+      if (user.role === "jobseeker") {
+        // Redirect to profile setup or match feed based on previous usage
+        window.location.href = "/jobseeker/profile-setup";
+      } else if (user.role === "employer") {
+        window.location.href = "/employer/profile-setup";
+      }
     },
     onError: (error: Error) => {
       toast({
@@ -73,6 +81,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         title: "Registration successful",
         description: "Your account has been created.",
       });
+      
+      // Redirect user based on role after registration
+      if (user.role === "jobseeker") {
+        window.location.href = "/jobseeker/profile-setup";
+      } else if (user.role === "employer") {
+        window.location.href = "/employer/profile-setup";
+      }
     },
     onError: (error: Error) => {
       toast({
