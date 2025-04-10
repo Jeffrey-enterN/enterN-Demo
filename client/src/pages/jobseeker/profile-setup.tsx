@@ -28,7 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { insertJobseekerProfileSchema } from "@shared/schema";
-import { Loader2, Upload } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 // Extend the jobseeker profile schema with validation
 const jobseekerProfileSchema = insertJobseekerProfileSchema.extend({
@@ -147,17 +147,6 @@ export default function JobseekerProfileSetup() {
               </CardHeader>
 
               <CardContent className="space-y-6">
-                <div>
-                  <Label htmlFor="profile-photo">Profile Photo</Label>
-                  <div className="flex items-center mt-1">
-                    <div className="h-16 w-16 rounded-full bg-gray-100 flex items-center justify-center border border-gray-300 mr-4">
-                      <Upload className="h-8 w-8 text-gray-400" />
-                    </div>
-                    <Button variant="outline" type="button">
-                      Upload
-                    </Button>
-                  </div>
-                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
@@ -282,21 +271,37 @@ export default function JobseekerProfileSetup() {
                 />
 
                 <div>
-                  <Label htmlFor="preferred-industries">Preferred Industries</Label>
+                  <Label htmlFor="preferred-industries">Industries of Interest</Label>
                   <select 
                     id="preferred-industries" 
                     multiple 
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition mt-1"
                     onChange={handleIndustrySelect}
+                    size={10}
                   >
-                    <option value="technology">Technology</option>
-                    <option value="healthcare">Healthcare</option>
-                    <option value="finance">Finance</option>
-                    <option value="education">Education</option>
-                    <option value="retail">Retail</option>
-                    <option value="manufacturing">Manufacturing</option>
+                    <option value="11">Agriculture, Forestry, Fishing & Hunting</option>
+                    <option value="21">Mining, Quarrying, Oil & Gas</option>
+                    <option value="22">Utilities</option>
+                    <option value="23">Construction</option>
+                    <option value="31">Manufacturing</option>
+                    <option value="41">Wholesale Trade</option>
+                    <option value="44">Retail Trade</option>
+                    <option value="48">Transportation & Warehousing</option>
+                    <option value="51">Information</option>
+                    <option value="52">Finance & Insurance</option>
+                    <option value="53">Real Estate, Renting & Leasing</option>
+                    <option value="54">Professional, Scientific & Technical Services</option>
+                    <option value="55">Management of Companies & Enterprises</option>
+                    <option value="56a">Administrative Support</option>
+                    <option value="56b">Waste Management & Remediation</option>
+                    <option value="61">Educational Services</option>
+                    <option value="62">Health Care & Social Assistance</option>
+                    <option value="71">Arts, Entertainment & Recreation</option>
+                    <option value="72">Accommodation & Food Services</option>
+                    <option value="81">Public Administration</option>
+                    <option value="99">Other</option>
                   </select>
-                  <p className="mt-1 text-xs text-gray-500">Hold Ctrl (or Cmd) to select multiple options</p>
+                  <p className="mt-1 text-xs text-gray-500">Hold Ctrl (or Cmd) to select multiple industries</p>
                 </div>
 
                 <div>
