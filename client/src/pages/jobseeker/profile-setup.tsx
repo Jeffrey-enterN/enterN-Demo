@@ -69,17 +69,17 @@ export default function JobseekerProfileSetup() {
   });
 
   const profileMutation = useMutation({
-    mutationFn: async (data: JobseekerProfileFormData) => {
-      // Add the user ID
-      const profileData = {
-        ...data,
-        userId: user?.id,
-        preferredIndustries: selectedIndustries,
-        preferredLocations: selectedLocations.map(loc => loc.trim()),
-      };
+    mutationFn: async (profileData: any) => {
+      console.log("Profile mutation called with:", profileData);
       
-      const res = await apiRequest("POST", "/api/jobseeker/profile", profileData);
-      return await res.json();
+      try {
+        const res = await apiRequest("POST", "/api/jobseeker/profile", profileData);
+        console.log("Server response:", res);
+        return await res.json();
+      } catch (error) {
+        console.error("Error submitting profile:", error);
+        throw error;
+      }
     },
     onSuccess: () => {
       toast({
@@ -100,7 +100,29 @@ export default function JobseekerProfileSetup() {
   });
 
   const onSubmit = (data: JobseekerProfileFormData) => {
-    profileMutation.mutate(data);
+    console.log("Form submitted", data);
+    console.log("Selected industries:", selectedIndustries);
+    console.log("Selected locations:", selectedLocations);
+    
+    if (!user || !user.id) {
+      toast({
+        title: "Error",
+        description: "You must be logged in to create a profile.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Add the user ID and selected data
+    const profileData = {
+      ...data,
+      userId: user.id, // Now we're sure user.id exists
+      preferredIndustries: selectedIndustries,
+      preferredLocations: selectedLocations.map(loc => loc.trim()),
+    };
+    
+    console.log("Profile data to submit:", profileData);
+    profileMutation.mutate(profileData);
   };
 
   const handleIndustrySelect = (event: React.ChangeEvent<HTMLSelectElement>) => {

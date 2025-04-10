@@ -82,16 +82,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Jobseeker Profile Routes
   app.post("/api/jobseeker/profile", async (req, res, next) => {
     try {
-      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
-      if (req.user.role !== "jobseeker") return res.status(403).json({ message: "Forbidden" });
+      console.log("Received POST to /api/jobseeker/profile with body:", req.body);
       
-      const jobseekerProfile = await storage.createJobseekerProfile({
+      if (!req.isAuthenticated()) {
+        console.log("User not authenticated");
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      
+      console.log("User authenticated:", req.user);
+      
+      if (req.user.role !== "jobseeker") {
+        console.log("User is not a jobseeker, role:", req.user.role);
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      console.log("Creating jobseeker profile with user ID:", req.user.id);
+      
+      const profileData = {
         ...req.body,
         userId: req.user.id,
-      });
+      };
+      
+      console.log("Profile data to save:", profileData);
+      
+      const jobseekerProfile = await storage.createJobseekerProfile(profileData);
+      
+      console.log("Created jobseeker profile:", jobseekerProfile);
       
       res.status(201).json(jobseekerProfile);
     } catch (error) {
+      console.error("Error creating jobseeker profile:", error);
       next(error);
     }
   });
