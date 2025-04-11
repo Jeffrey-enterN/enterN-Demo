@@ -53,12 +53,12 @@ export default function PreferenceSlider({
             </TooltipProvider>
           )}
         </div>
-        <span className="text-sm text-gray-500">{sliderValue}</span>
+        {/* Numeric value removed as requested */}
       </div>
 
-      <div className="flex justify-between text-xs text-gray-500 mb-1">
-        <span className="w-1/3 text-left">{min}</span>
-        <span className="w-1/3 text-right">{max}</span>
+      <div className="flex justify-between text-xs text-gray-600 mb-1 px-1">
+        <span className="w-1/2 text-left font-medium">{min}</span>
+        <span className="w-1/2 text-right font-medium">{max}</span>
       </div>
 
       <Slider
@@ -68,8 +68,21 @@ export default function PreferenceSlider({
         min={1}
         step={1}
         onValueChange={handleValueChange}
-        className="h-2"
+        className="h-2.5 cursor-pointer"
       />
+      
+      {/* Visual indicator for slider position without showing the number */}
+      <div className="flex justify-between mt-1 relative">
+        <div className="flex-1 flex justify-start">
+          <div className={`h-1 ${sliderValue < 33 ? 'bg-blue-300 w-2' : 'w-0'}`}></div>
+        </div>
+        <div className="flex-1 flex justify-center">
+          <div className={`h-1 ${sliderValue >= 33 && sliderValue <= 66 ? 'bg-purple-300 w-2' : 'w-0'}`}></div>
+        </div>
+        <div className="flex-1 flex justify-end">
+          <div className={`h-1 ${sliderValue > 66 ? 'bg-red-300 w-2' : 'w-0'}`}></div>
+        </div>
+      </div>
     </div>
   );
 }
