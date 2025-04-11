@@ -385,9 +385,67 @@ export default function JobseekerProfileSetup() {
                 </Button>
                 
                 <Button 
-                  type="submit" 
+                  type="button" 
                   disabled={profileMutation.isPending}
-                  onClick={() => console.log("Submit button clicked - this should trigger form submit")}
+                  onClick={() => {
+                    console.log("Submit button clicked - manual form submission");
+                    // Manually trigger form validation and submission
+                    const isValid = form.trigger();
+                    console.log("Form validation result:", isValid);
+                    
+                    if (isValid) {
+                      const formData = form.getValues();
+                      console.log("Form data collected:", formData);
+                      
+                      // Add the user ID and selected data
+                      const profileData = {
+                        ...formData,
+                        userId: user?.id,
+                        preferredIndustries: selectedIndustries || [],
+                        preferredLocations: (selectedLocations || []).map(loc => loc.trim()),
+                      };
+                      
+                      console.log("Manual submit with data:", profileData);
+                      
+                      // Call API directly 
+                      apiRequest("POST", "/api/jobseeker/profile", profileData)
+                        .then(async (res) => {
+                          console.log("API response:", res);
+                          const data = await res.json();
+                          console.log("Profile created:", data);
+                          
+                          // Save ID to localStorage
+                          localStorage.setItem('jobseekerProfileId', data.id.toString());
+                          console.log("Profile ID saved to localStorage:", data.id);
+                          
+                          // Direct navigation
+                          toast({
+                            title: "Profile created",
+                            description: "Redirecting to preferences...",
+                          });
+                          
+                          // Navigate directly with small delay to allow toast to show
+                          setTimeout(() => {
+                            window.location.href = "/jobseeker/preferences";
+                          }, 500);
+                        })
+                        .catch(err => {
+                          console.error("Error creating profile:", err);
+                          toast({
+                            title: "Error creating profile",
+                            description: err.message,
+                            variant: "destructive",
+                          });
+                        });
+                    } else {
+                      console.log("Form validation failed:", form.formState.errors);
+                      toast({
+                        title: "Please fix errors",
+                        description: "There are validation errors in the form.",
+                        variant: "destructive",
+                      });
+                    }
+                  }}
                 >
                   {profileMutation.isPending ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
