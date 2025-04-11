@@ -3,12 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --brand-cyan: rgb(0, 255, 255);
-  --brand-cyan-light: rgba(0, 255, 255, 0.15);
-  --brand-cyan-medium: rgba(0, 255, 255, 0.5);
-  --brand-deepPink: rgb(255, 20, 147);
-  --brand-deepPink-light: rgba(255, 20, 147, 0.15);
-  --brand-deepPink-medium: rgba(255, 20, 147, 0.5);
+  /* More subtle brand colors */
+  --brand-cyan: rgb(0, 210, 210);
+  --brand-cyan-light: rgba(0, 210, 210, 0.08);
+  --brand-cyan-medium: rgba(0, 210, 210, 0.3);
+  --brand-deepPink: rgb(220, 20, 130);
+  --brand-deepPink-light: rgba(220, 20, 130, 0.08);
+  --brand-deepPink-medium: rgba(220, 20, 130, 0.3);
+  
+  /* Accent colors for smaller pops */
+  --brand-cyan-accent: rgb(0, 210, 210);
+  --brand-deepPink-accent: rgb(220, 20, 130);
 }
 
 @layer base {
@@ -23,7 +28,9 @@
   /* Custom gradient text classes */
   .text-gradient-brand {
     @apply text-transparent bg-clip-text;
-    background-image: linear-gradient(135deg, var(--brand-cyan), var(--brand-deepPink));
+    background-image: linear-gradient(135deg, 
+      rgba(0, 180, 180, 0.9), 
+      rgba(180, 20, 120, 0.9));
   }
   
   /* Custom brand utility classes */

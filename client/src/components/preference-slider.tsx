@@ -71,19 +71,19 @@ export default function PreferenceSlider({
         className="h-2.5 cursor-pointer"
       />
       
-      {/* Visual indicator for slider position using brand colors */}
+      {/* Very subtle indicator for slider position - small accent dot */}
       <div className="flex justify-between mt-1 relative">
         <div className="flex-1 flex justify-start">
-          <div className={`h-1.5 rounded-full ${sliderValue < 33 ? 'w-2 transition-all' : 'w-0'}`} 
-               style={{backgroundColor: 'var(--brand-cyan)'}}></div>
+          <div className={`h-1 rounded-full ${sliderValue < 33 ? 'opacity-100' : 'opacity-0'} transition-opacity`} 
+               style={{backgroundColor: 'var(--brand-cyan)', width: '3px'}}></div>
         </div>
         <div className="flex-1 flex justify-center">
-          <div className={`h-1.5 rounded-full ${sliderValue >= 33 && sliderValue <= 66 ? 'w-2 transition-all' : 'w-0'}`}
-               style={{background: 'linear-gradient(90deg, var(--brand-cyan), var(--brand-deepPink))'}}></div>
+          <div className={`h-1 rounded-full ${sliderValue >= 33 && sliderValue <= 66 ? 'opacity-100' : 'opacity-0'} transition-opacity`}
+               style={{background: '#666', width: '3px'}}></div>
         </div>
         <div className="flex-1 flex justify-end">
-          <div className={`h-1.5 rounded-full ${sliderValue > 66 ? 'w-2 transition-all' : 'w-0'}`}
-               style={{backgroundColor: 'var(--brand-deepPink)'}}></div>
+          <div className={`h-1 rounded-full ${sliderValue > 66 ? 'opacity-100' : 'opacity-0'} transition-opacity`}
+               style={{backgroundColor: 'var(--brand-deepPink)', width: '3px'}}></div>
         </div>
       </div>
     </div>
