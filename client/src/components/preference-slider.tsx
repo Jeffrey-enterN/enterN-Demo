@@ -71,16 +71,19 @@ export default function PreferenceSlider({
         className="h-2.5 cursor-pointer"
       />
       
-      {/* Visual indicator for slider position without showing the number */}
+      {/* Visual indicator for slider position using brand colors */}
       <div className="flex justify-between mt-1 relative">
         <div className="flex-1 flex justify-start">
-          <div className={`h-1 ${sliderValue < 33 ? 'bg-blue-300 w-2' : 'w-0'}`}></div>
+          <div className={`h-1.5 rounded-full ${sliderValue < 33 ? 'w-2 transition-all' : 'w-0'}`} 
+               style={{backgroundColor: 'var(--brand-cyan)'}}></div>
         </div>
         <div className="flex-1 flex justify-center">
-          <div className={`h-1 ${sliderValue >= 33 && sliderValue <= 66 ? 'bg-purple-300 w-2' : 'w-0'}`}></div>
+          <div className={`h-1.5 rounded-full ${sliderValue >= 33 && sliderValue <= 66 ? 'w-2 transition-all' : 'w-0'}`}
+               style={{background: 'linear-gradient(90deg, var(--brand-cyan), var(--brand-deepPink))'}}></div>
         </div>
         <div className="flex-1 flex justify-end">
-          <div className={`h-1 ${sliderValue > 66 ? 'bg-red-300 w-2' : 'w-0'}`}></div>
+          <div className={`h-1.5 rounded-full ${sliderValue > 66 ? 'w-2 transition-all' : 'w-0'}`}
+               style={{backgroundColor: 'var(--brand-deepPink)'}}></div>
         </div>
       </div>
     </div>

@@ -74,7 +74,7 @@ export default function AuthPage() {
       <div className="w-full md:w-1/2 flex items-center justify-center bg-white p-6 md:p-10">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-heading font-bold text-gray-900">enterN</h1>
+            <h1 className="text-4xl font-heading font-extrabold text-gradient-brand">enterN</h1>
             <p className="mt-2 text-gray-600">Connect with the right opportunities</p>
           </div>
 
@@ -227,16 +227,22 @@ export default function AuthPage() {
                               <Button
                                 type="button"
                                 variant={field.value === UserRoleEnum.JOBSEEKER ? "default" : "outline"}
-                                className={field.value === UserRoleEnum.JOBSEEKER ? "border-2 border-primary-500" : ""}
+                                className={field.value === UserRoleEnum.JOBSEEKER 
+                                  ? "border-2 border-brand-cyan shadow-md"
+                                  : "hover:border-brand-cyan hover:border-opacity-50 transition-all"}
                                 onClick={() => registerForm.setValue("role", UserRoleEnum.JOBSEEKER)}
+                                style={field.value === UserRoleEnum.JOBSEEKER ? {background: 'var(--brand-cyan-light)'} : {}}
                               >
                                 Job Seeker
                               </Button>
                               <Button
                                 type="button"
                                 variant={field.value === UserRoleEnum.EMPLOYER ? "default" : "outline"}
-                                className={field.value === UserRoleEnum.EMPLOYER ? "border-2 border-primary-500" : ""}
+                                className={field.value === UserRoleEnum.EMPLOYER 
+                                  ? "border-2 border-brand-deepPink shadow-md" 
+                                  : "hover:border-brand-deepPink hover:border-opacity-50 transition-all"}
                                 onClick={() => registerForm.setValue("role", UserRoleEnum.EMPLOYER)}
+                                style={field.value === UserRoleEnum.EMPLOYER ? {background: 'var(--brand-deepPink-light)'} : {}}
                               >
                                 Employer
                               </Button>
@@ -287,12 +293,13 @@ export default function AuthPage() {
       </div>
 
       {/* Right Column - Hero Section */}
-      <div className="hidden md:block md:w-1/2 bg-gradient-to-b from-primary-500 to-secondary-600">
-        <div className="h-full flex flex-col justify-center px-8 lg:px-16">
-          <h2 className="text-4xl lg:text-5xl font-heading font-bold text-white mb-6">
+      <div className="hidden md:block md:w-1/2" style={{background: "linear-gradient(135deg, rgba(0, 255, 255, 0.85), rgba(255, 20, 147, 0.85))"}}>
+        <div className="h-full flex flex-col justify-center px-8 lg:px-16 relative">
+          <div className="absolute inset-0 opacity-10" style={{backgroundImage: "url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')"}}></div>
+          <h2 className="text-4xl lg:text-5xl font-heading font-bold text-white mb-6 drop-shadow-md">
             Find the perfect match for your career journey
           </h2>
-          <p className="text-lg text-white/90 mb-8">
+          <p className="text-lg text-white mb-8 drop-shadow">
             Connect with employers or talent using our innovative matching system. No more wasted time on irrelevant applications.
           </p>
           <div className="space-y-4">
