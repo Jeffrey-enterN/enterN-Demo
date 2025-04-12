@@ -75,7 +75,7 @@ export default function HomePage() {
             <Card className="shadow hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center text-xl">
-                  <User className="h-5 w-5 mr-2 text-primary-500" />
+                  <User className="h-5 w-5 mr-2" style={{color: "#5ce1e6"}} />
                   For Job Seekers
                 </CardTitle>
                 <CardDescription>
@@ -85,20 +85,23 @@ export default function HomePage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 h-5 w-5 rounded-full bg-primary-100 flex items-center justify-center mr-3">
-                      <span className="text-xs font-semibold text-primary-600">1</span>
+                    <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3" 
+                         style={{backgroundColor: "rgba(92, 225, 230, 0.15)"}}>
+                      <span className="text-xs font-semibold" style={{color: "#0097b1"}}>1</span>
                     </div>
                     <p className="text-gray-700">Create your professional profile</p>
                   </div>
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 h-5 w-5 rounded-full bg-primary-100 flex items-center justify-center mr-3">
-                      <span className="text-xs font-semibold text-primary-600">2</span>
+                    <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3"
+                         style={{backgroundColor: "rgba(92, 225, 230, 0.15)"}}>
+                      <span className="text-xs font-semibold" style={{color: "#0097b1"}}>2</span>
                     </div>
                     <p className="text-gray-700">Set your career preferences with our intuitive slider system</p>
                   </div>
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 h-5 w-5 rounded-full bg-primary-100 flex items-center justify-center mr-3">
-                      <span className="text-xs font-semibold text-primary-600">3</span>
+                    <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3"
+                         style={{backgroundColor: "rgba(92, 225, 230, 0.15)"}}>
+                      <span className="text-xs font-semibold" style={{color: "#0097b1"}}>3</span>
                     </div>
                     <p className="text-gray-700">Match with employers and express interest in specific roles</p>
                   </div>
@@ -124,7 +127,7 @@ export default function HomePage() {
             <Card className="shadow hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center text-xl">
-                  <Building className="h-5 w-5 mr-2 text-primary-500" />
+                  <Building className="h-5 w-5 mr-2" style={{color: "#ff66c4"}} />
                   For Employers
                 </CardTitle>
                 <CardDescription>
@@ -134,20 +137,23 @@ export default function HomePage() {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 h-5 w-5 rounded-full bg-primary-100 flex items-center justify-center mr-3">
-                      <span className="text-xs font-semibold text-primary-600">1</span>
+                    <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3"
+                         style={{backgroundColor: "rgba(255, 102, 196, 0.15)"}}>
+                      <span className="text-xs font-semibold" style={{color: "#ff66c4"}}>1</span>
                     </div>
                     <p className="text-gray-700">Create your company profile and showcase your culture</p>
                   </div>
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 h-5 w-5 rounded-full bg-primary-100 flex items-center justify-center mr-3">
-                      <span className="text-xs font-semibold text-primary-600">2</span>
+                    <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3"
+                         style={{backgroundColor: "rgba(255, 102, 196, 0.15)"}}>
+                      <span className="text-xs font-semibold" style={{color: "#ff66c4"}}>2</span>
                     </div>
                     <p className="text-gray-700">Post job opportunities with detailed descriptions</p>
                   </div>
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 h-5 w-5 rounded-full bg-primary-100 flex items-center justify-center mr-3">
-                      <span className="text-xs font-semibold text-primary-600">3</span>
+                    <div className="flex-shrink-0 h-5 w-5 rounded-full flex items-center justify-center mr-3"
+                         style={{backgroundColor: "rgba(255, 102, 196, 0.15)"}}>
+                      <span className="text-xs font-semibold" style={{color: "#ff66c4"}}>3</span>
                     </div>
                     <p className="text-gray-700">Match with candidates who align with your requirements</p>
                   </div>
@@ -180,8 +186,9 @@ export default function HomePage() {
               <Card className="shadow">
                 <CardContent className="pt-6">
                   <div className="flex flex-col items-center text-center">
-                    <div className="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center mb-4">
-                      <Heart className="h-6 w-6 text-primary-600" />
+                    <div className="h-12 w-12 rounded-full flex items-center justify-center mb-4" 
+                         style={{background: "linear-gradient(rgba(92, 225, 230, 0.1), rgba(255, 102, 196, 0.1))"}}>
+                      <Heart className="h-6 w-6" style={{color: "#0097b1"}} />
                     </div>
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Matching Algorithm</h3>
                     <p className="text-gray-600">
@@ -195,8 +202,9 @@ export default function HomePage() {
               <Card className="shadow">
                 <CardContent className="pt-6">
                   <div className="flex flex-col items-center text-center">
-                    <div className="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center mb-4">
-                      <Briefcase className="h-6 w-6 text-primary-600" />
+                    <div className="h-12 w-12 rounded-full flex items-center justify-center mb-4" 
+                         style={{background: "linear-gradient(rgba(255, 102, 196, 0.1), rgba(92, 225, 230, 0.1))"}}>
+                      <Briefcase className="h-6 w-6" style={{color: "#ff66c4"}} />
                     </div>
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Job Verification</h3>
                     <p className="text-gray-600">
@@ -210,8 +218,9 @@ export default function HomePage() {
               <Card className="shadow">
                 <CardContent className="pt-6">
                   <div className="flex flex-col items-center text-center">
-                    <div className="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center mb-4">
-                      <MessageSquare className="h-6 w-6 text-primary-600" />
+                    <div className="h-12 w-12 rounded-full flex items-center justify-center mb-4" 
+                         style={{background: "linear-gradient(rgba(200, 253, 4, 0.15), rgba(92, 225, 230, 0.1))"}}>
+                      <MessageSquare className="h-6 w-6" style={{color: "#0097b1"}} />
                     </div>
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Direct Communication</h3>
                     <p className="text-gray-600">
@@ -224,7 +233,8 @@ export default function HomePage() {
           </div>
 
           {/* CTA Section */}
-          <div className="bg-gradient-to-r from-primary-600 to-secondary-600 rounded-lg shadow-lg p-8 text-center">
+          <div className="rounded-lg shadow-lg p-8 text-center" 
+               style={{background: "linear-gradient(135deg, #5ce1e6, #ff66c4)"}}>
             <h2 className="text-2xl font-heading font-bold text-white mb-4">
               {user ? "Ready to complete your profile?" : "Ready to find your perfect match?"}
             </h2>
