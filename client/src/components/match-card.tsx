@@ -220,7 +220,11 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                   {showAllPreferences && profile.preferences.preferences && (
                     <div className="mt-4 border-t pt-3">
                       <h5 className="font-medium text-gray-900 mb-3 text-center" style={{color: "#0097b1"}}>All Preferences</h5>
-                      <div className="space-y-4 max-h-[350px] overflow-y-auto pr-2 pb-4">
+                      <div className="text-xs text-center text-gray-500 mb-3">
+                        <span>Scroll to see more</span>
+                        <ChevronDown className="mx-auto mt-1 h-4 w-4 text-gray-400 animate-bounce" />
+                      </div>
+                      <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 pb-28 overscroll-contain" style={{WebkitOverflowScrolling: "touch"}}>
                         {Object.entries(profile.preferences.preferences).map(([key, value]) => {
                           // Skip the ones we already displayed above
                           if (key === 'remoteWork' || key === 'organizationSize' || key === 'growthTrajectory') {
@@ -281,7 +285,7 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
       </div>
 
       {/* Swipe Buttons */}
-      <div className="absolute bottom-4 left-0 right-0 flex justify-center space-x-10">
+      <div className="absolute bottom-0 left-0 right-0 py-6 flex justify-center space-x-10 z-10 bg-gradient-to-t from-white via-white to-transparent">
         <Button 
           onClick={handleReject}
           variant="outline" 
