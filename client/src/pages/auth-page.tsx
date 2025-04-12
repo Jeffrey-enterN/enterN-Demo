@@ -74,8 +74,8 @@ export default function AuthPage() {
       <div className="w-full md:w-1/2 flex items-center justify-center bg-white p-6 md:p-10">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
-            <h1 className="text-3xl font-heading font-bold text-gray-900">
-              enter<span className="text-gradient-brand font-extrabold">N</span>
+            <h1 className="text-3xl font-heading">
+              <span style={{color: "#ff66c4"}}>enter</span><span style={{color: "#5ce1e6"}}>N</span>
             </h1>
             <p className="mt-2 text-gray-600">Connect with the right opportunities</p>
           </div>
@@ -231,7 +231,7 @@ export default function AuthPage() {
                                 variant={field.value === UserRoleEnum.JOBSEEKER ? "default" : "outline"}
                                 className={field.value === UserRoleEnum.JOBSEEKER 
                                   ? "border-l-4 border-brand-cyan shadow-sm"
-                                  : "hover:border-brand-cyan hover:border-opacity-30 transition-all"}
+                                  : "hover:border-cyan-400 hover:border-opacity-50 transition-all"}
                                 onClick={() => registerForm.setValue("role", UserRoleEnum.JOBSEEKER)}
                               >
                                 Job Seeker
@@ -240,8 +240,8 @@ export default function AuthPage() {
                                 type="button"
                                 variant={field.value === UserRoleEnum.EMPLOYER ? "default" : "outline"}
                                 className={field.value === UserRoleEnum.EMPLOYER 
-                                  ? "border-l-4 border-brand-deepPink shadow-sm" 
-                                  : "hover:border-brand-deepPink hover:border-opacity-30 transition-all"}
+                                  ? "border-l-4 border-brand-pink shadow-sm" 
+                                  : "hover:border-pink-400 hover:border-opacity-50 transition-all"}
                                 onClick={() => registerForm.setValue("role", UserRoleEnum.EMPLOYER)}
                               >
                                 Employer
@@ -297,9 +297,9 @@ export default function AuthPage() {
         <div className="h-full flex flex-col justify-center px-8 lg:px-16 relative">
           <div className="absolute inset-0 opacity-5" style={{backgroundImage: "url('data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')"}}></div>
           {/* Subtle cyan accent line */}
-          <div className="absolute top-0 left-0 w-full h-1" style={{background: "linear-gradient(90deg, var(--brand-cyan-accent), transparent)"}}></div>
+          <div className="absolute top-0 left-0 w-full h-1" style={{background: "linear-gradient(90deg, var(--brand-cyan), transparent)"}}></div>
           {/* Subtle pink accent line */}
-          <div className="absolute bottom-0 right-0 w-full h-1" style={{background: "linear-gradient(270deg, var(--brand-deepPink-accent), transparent)"}}></div>
+          <div className="absolute bottom-0 right-0 w-full h-1" style={{background: "linear-gradient(270deg, var(--brand-pink), transparent)"}}></div>
           
           <h2 className="text-4xl lg:text-5xl font-heading font-bold text-white mb-6">
             Find the perfect match for your <span className="text-gradient-brand">career journey</span>

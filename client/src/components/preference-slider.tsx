@@ -79,11 +79,11 @@ export default function PreferenceSlider({
         </div>
         <div className="flex-1 flex justify-center">
           <div className={`h-1 rounded-full ${sliderValue >= 33 && sliderValue <= 66 ? 'opacity-100' : 'opacity-0'} transition-opacity`}
-               style={{background: '#666', width: '3px'}}></div>
+               style={{background: 'var(--brand-gray-dark)', width: '3px'}}></div>
         </div>
         <div className="flex-1 flex justify-end">
           <div className={`h-1 rounded-full ${sliderValue > 66 ? 'opacity-100' : 'opacity-0'} transition-opacity`}
-               style={{backgroundColor: 'var(--brand-deepPink)', width: '3px'}}></div>
+               style={{backgroundColor: 'var(--brand-pink)', width: '3px'}}></div>
         </div>
       </div>
     </div>

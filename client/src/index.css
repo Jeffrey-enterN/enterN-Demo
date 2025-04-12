@@ -3,17 +3,28 @@
 @tailwind utilities;
 
 :root {
-  /* More subtle brand colors */
-  --brand-cyan: rgb(0, 210, 210);
-  --brand-cyan-light: rgba(0, 210, 210, 0.08);
-  --brand-cyan-medium: rgba(0, 210, 210, 0.3);
-  --brand-deepPink: rgb(220, 20, 130);
-  --brand-deepPink-light: rgba(220, 20, 130, 0.08);
-  --brand-deepPink-medium: rgba(220, 20, 130, 0.3);
+  /* Exact brand colors */
+  --brand-pink: #ff66c4;
+  --brand-cyan: #5ce1e6;
+  --brand-gray-dark: #767979;
+  --brand-gray-light: #b6b6b6;
+  --brand-teal: #0097b1;
+  --brand-white: #ffffff;
+  --brand-black: #000000;
+  --brand-lime: #c8fd04;
+  
+  /* Light versions for backgrounds and accents */
+  --brand-pink-light: rgba(255, 102, 196, 0.1);
+  --brand-cyan-light: rgba(92, 225, 230, 0.1);
+  --brand-lime-light: rgba(200, 253, 4, 0.1);
+  
+  /* Medium versions for borders and highlights */
+  --brand-pink-medium: rgba(255, 102, 196, 0.35);
+  --brand-cyan-medium: rgba(92, 225, 230, 0.35);
   
   /* Accent colors for smaller pops */
-  --brand-cyan-accent: rgb(0, 210, 210);
-  --brand-deepPink-accent: rgb(220, 20, 130);
+  --brand-pink-accent: #ff66c4;
+  --brand-cyan-accent: #5ce1e6;
 }
 
 @layer base {
@@ -29,8 +40,8 @@
   .text-gradient-brand {
     @apply text-transparent bg-clip-text;
     background-image: linear-gradient(135deg, 
-      rgba(0, 180, 180, 0.9), 
-      rgba(180, 20, 120, 0.9));
+      var(--brand-pink), 
+      var(--brand-cyan));
   }
   
   /* Custom brand utility classes */
@@ -38,15 +49,27 @@
     border-color: var(--brand-cyan);
   }
   
-  .border-brand-deepPink {
-    border-color: var(--brand-deepPink);
+  .border-brand-pink {
+    border-color: var(--brand-pink);
+  }
+  
+  .border-brand-lime {
+    border-color: var(--brand-lime);
+  }
+  
+  .border-brand-teal {
+    border-color: var(--brand-teal);
   }
   
   .bg-brand-cyan-light {
     background-color: var(--brand-cyan-light);
   }
   
-  .bg-brand-deepPink-light {
-    background-color: var(--brand-deepPink-light);
+  .bg-brand-pink-light {
+    background-color: var(--brand-pink-light);
+  }
+  
+  .bg-brand-lime-light {
+    background-color: var(--brand-lime-light);
   }
 }
