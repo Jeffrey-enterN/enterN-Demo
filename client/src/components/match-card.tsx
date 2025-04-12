@@ -98,16 +98,17 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="h-40 bg-gray-200">
+      <div className="h-40">
         {/* Background image would be here in a real app */}
-        <div className="w-full h-full bg-gradient-to-r from-primary-200 to-secondary-200"></div>
+        <div className="w-full h-full" style={{background: "linear-gradient(135deg, rgba(92, 225, 230, 0.2), rgba(255, 102, 196, 0.2))"}}></div>
       </div>
       
       <div className="relative px-6 pb-6">
         <div className="flex justify-center">
-          <div className="-mt-12 w-24 h-24 rounded-full border-4 border-white bg-gray-200 overflow-hidden">
+          <div className="-mt-12 w-24 h-24 rounded-full border-4 border-white overflow-hidden"
+               style={{background: "linear-gradient(135deg, #5ce1e6, #ff66c4)"}}>
             {/* Profile photo would be here in a real app */}
-            <div className="w-full h-full flex items-center justify-center text-primary-600 font-bold text-2xl">
+            <div className="w-full h-full flex items-center justify-center text-white font-bold text-2xl">
               {profile.firstName ? profile.firstName.charAt(0) : "J"}
             </div>
           </div>
@@ -122,7 +123,16 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
           </p>
           <div className="mt-2 flex flex-wrap justify-center gap-2">
             {profile.preferredIndustries && profile.preferredIndustries.slice(0, 3).map((industry: string, idx: number) => (
-              <Badge key={idx} variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+              <Badge 
+                key={idx} 
+                variant="secondary" 
+                className={idx % 3 === 0 
+                  ? "bg-[rgba(92,225,230,0.15)] text-[#0097b1] hover:bg-[rgba(92,225,230,0.25)]" 
+                  : idx % 3 === 1 
+                    ? "bg-[rgba(255,102,196,0.15)] text-[#ff66c4] hover:bg-[rgba(255,102,196,0.25)]" 
+                    : "bg-[rgba(200,253,4,0.15)] text-black hover:bg-[rgba(200,253,4,0.25)]"
+                }
+              >
                 {industry}
               </Badge>
             ))}
@@ -130,14 +140,14 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
         </div>
         
         <div className="mt-6">
-          <h4 className="font-medium text-gray-900">Summary</h4>
+          <h4 className="font-medium text-gray-900 border-l-4 pl-2" style={{borderColor: "#5ce1e6"}}>Summary</h4>
           <p className="mt-1 text-sm text-gray-600">
             {profile.summary || "Passionate professional seeking opportunities to grow and contribute."}
           </p>
         </div>
         
         <div className="mt-6">
-          <h4 className="font-medium text-gray-900">Education</h4>
+          <h4 className="font-medium text-gray-900 border-l-4 pl-2" style={{borderColor: "#ff66c4"}}>Education</h4>
           <div className="mt-1">
             <p className="text-sm font-medium text-gray-900">{profile.school || "University"}</p>
             <p className="text-sm text-gray-600">{profile.degreeLevel} {profile.major}</p>
@@ -146,7 +156,7 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
         
         {profile.preferences && (
           <div className="mt-6">
-            <h4 className="font-medium text-gray-900">Key Preferences</h4>
+            <h4 className="font-medium text-gray-900 border-l-4 pl-2" style={{borderColor: "#c8fd04"}}>Key Preferences</h4>
             <div className="mt-3 space-y-3">
               {/* Display some key preferences as slider visualizations */}
               {profile.preferences.preferences && (
@@ -160,8 +170,11 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
-                          className="bg-primary-500 h-2 rounded-full" 
-                          style={{ width: `${(profile.preferences.preferences.remoteWork / 10) * 100}%` }}
+                          className="h-2 rounded-full" 
+                          style={{ 
+                            width: `${(profile.preferences.preferences.remoteWork / 10) * 100}%`,
+                            background: "linear-gradient(90deg, #5ce1e6, #ff66c4)"
+                          }}
                         ></div>
                       </div>
                     </div>
@@ -176,8 +189,11 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
-                          className="bg-primary-500 h-2 rounded-full" 
-                          style={{ width: `${(profile.preferences.preferences.organizationSize / 10) * 100}%` }}
+                          className="h-2 rounded-full" 
+                          style={{ 
+                            width: `${(profile.preferences.preferences.organizationSize / 10) * 100}%`,
+                            background: "linear-gradient(90deg, #ff66c4, #c8fd04)"
+                          }}
                         ></div>
                       </div>
                     </div>
@@ -192,8 +208,11 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
-                          className="bg-primary-500 h-2 rounded-full" 
-                          style={{ width: `${(profile.preferences.preferences.growthTrajectory / 10) * 100}%` }}
+                          className="h-2 rounded-full" 
+                          style={{ 
+                            width: `${(profile.preferences.preferences.growthTrajectory / 10) * 100}%`,
+                            background: "linear-gradient(90deg, #c8fd04, #5ce1e6)"
+                          }}
                         ></div>
                       </div>
                     </div>
@@ -211,7 +230,8 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
           onClick={handleReject}
           variant="outline" 
           size="icon" 
-          className="h-14 w-14 rounded-full shadow-lg text-red-500 bg-white hover:bg-red-50 hover:text-red-600 transition"
+          className="h-14 w-14 rounded-full shadow-lg bg-white hover:bg-[rgba(92,225,230,0.05)] border-[#5ce1e6] transition"
+          style={{color: "#5ce1e6"}}
         >
           <X className="h-7 w-7" />
         </Button>
@@ -219,7 +239,8 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
           onClick={handleAccept}
           variant="outline" 
           size="icon" 
-          className="h-14 w-14 rounded-full shadow-lg text-green-500 bg-white hover:bg-green-50 hover:text-green-600 transition"
+          className="h-14 w-14 rounded-full shadow-lg bg-white hover:bg-[rgba(255,102,196,0.05)] border-[#ff66c4] transition"
+          style={{color: "#ff66c4"}}
         >
           <Check className="h-7 w-7" />
         </Button>
