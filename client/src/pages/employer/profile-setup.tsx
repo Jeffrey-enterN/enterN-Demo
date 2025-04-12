@@ -108,8 +108,8 @@ export default function EmployerProfileSetup() {
           </div>
           <div className="w-full bg-gray-200 h-2 mt-4 rounded-full overflow-hidden">
             <div 
-              className="bg-primary-500 h-full rounded-full" 
-              style={{ width: `${progress}%` }}
+              className="h-full rounded-full" 
+              style={{ width: `${progress}%`, background: "linear-gradient(90deg, var(--brand-pink), var(--brand-pink-medium))" }}
             ></div>
           </div>
         </div>
@@ -131,9 +131,9 @@ export default function EmployerProfileSetup() {
                   <Label htmlFor="company-logo">Company Logo</Label>
                   <div className="flex items-center mt-1">
                     <div className="h-16 w-16 rounded-lg bg-gray-100 flex items-center justify-center border border-gray-300 mr-4">
-                      <Upload className="h-8 w-8 text-gray-400" />
+                      <Upload className="h-8 w-8" style={{color: "#ff66c4"}} />
                     </div>
-                    <Button variant="outline" type="button">
+                    <Button variant="outline" type="button" className="border-brand-pink text-brand-pink hover:bg-brand-pink-light">
                       Upload
                     </Button>
                   </div>
@@ -323,7 +323,9 @@ export default function EmployerProfileSetup() {
 
               <CardFooter className="bg-gray-50 flex justify-end">
                 <Button 
-                  type="submit" 
+                  type="submit"
+                  style={{background: "#ff66c4", color: "white"}}
+                  className="hover:bg-brand-pink-dark"
                   disabled={profileMutation.isPending}
                 >
                   {profileMutation.isPending ? (

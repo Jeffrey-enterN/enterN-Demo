@@ -108,8 +108,8 @@ export default function EmployerJobPosting() {
           </div>
           <div className="w-full bg-gray-200 h-2 mt-4 rounded-full overflow-hidden">
             <div 
-              className="bg-primary-500 h-full rounded-full" 
-              style={{ width: `${progress}%` }}
+              className="h-full rounded-full" 
+              style={{ width: `${progress}%`, background: "linear-gradient(90deg, var(--brand-pink), var(--brand-pink-medium))" }}
             ></div>
           </div>
         </div>
@@ -266,12 +266,15 @@ export default function EmployerJobPosting() {
                 <Button 
                   variant="outline" 
                   type="button"
+                  className="border-brand-pink text-brand-pink hover:bg-brand-pink-light"
                   onClick={() => setLocation("/employer/profile-setup")}
                 >
                   Back
                 </Button>
                 <Button 
-                  type="submit" 
+                  type="submit"
+                  style={{background: "#ff66c4", color: "white"}}
+                  className="hover:bg-brand-pink-dark"
                   disabled={jobPostingMutation.isPending}
                 >
                   {jobPostingMutation.isPending ? (
