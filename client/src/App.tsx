@@ -10,6 +10,7 @@ import JobseekerPreferences from "@/pages/jobseeker/preferences";
 import JobseekerMatchFeed from "@/pages/jobseeker/match-feed";
 import JobInterest from "@/pages/shared/job-interest";
 import DemoCard from "@/pages/demo-card";
+import DemoMatchFeed from "@/pages/demo-match-feed";
 import { AuthProvider } from "@/contexts/auth-context";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -38,6 +39,7 @@ function AppRoutes() {
       
       {/* Demo Routes - Not Protected */}
       <Route path="/demo-card" component={DemoCard} />
+      <Route path="/demo-match-feed" component={DemoMatchFeed} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
