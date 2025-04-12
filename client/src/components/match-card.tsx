@@ -224,56 +224,330 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                         <span>Scroll to see more</span>
                         <ChevronDown className="mx-auto mt-1 h-4 w-4 text-gray-400 animate-bounce" />
                       </div>
-                      <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 pb-28 overscroll-contain" style={{WebkitOverflowScrolling: "touch"}}>
-                        {Object.entries(profile.preferences.preferences).map(([key, value]) => {
-                          // Skip the ones we already displayed above
-                          if (key === 'remoteWork' || key === 'organizationSize' || key === 'growthTrajectory') {
-                            return null;
+                      <div className="space-y-5 max-h-[300px] overflow-y-auto pr-2 pb-28 overscroll-contain" style={{WebkitOverflowScrolling: "touch"}}>
+                        
+                        {/* Workplace Environment Section */}
+                        <div className="space-y-3">
+                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Workplace Environment</h6>
+                          {Object.entries(profile.preferences.preferences)
+                            .filter(([key]) => 
+                              ["remoteWork", "workStructure", "openOffice", "dressCasual", "workFromAnywhere", "flexibleHours"]
+                              .includes(key))
+                            .map(([key, value]) => {
+                              if (key === 'remoteWork') return null; // Skip, already displayed above
+                              
+                              // Create human-readable labels from camelCase
+                              const label = key
+                                .replace(/([A-Z])/g, ' $1')
+                                .replace(/^./, str => str.toUpperCase());
+                                
+                              // Generate opposites for slider labels
+                              let leftLabel = "Low";
+                              let rightLabel = "High";
+                              
+                              // Custom labels for workplace environment
+                              if (key === "workStructure") {
+                                leftLabel = "Structured";
+                                rightLabel = "Flexible";  
+                              } else if (key === "openOffice") {
+                                leftLabel = "Private";
+                                rightLabel = "Open Space";
+                              } else if (key === "dressCasual") {
+                                leftLabel = "Formal";
+                                rightLabel = "Casual";
+                              } else if (key === "workFromAnywhere") {
+                                leftLabel = "Fixed Location";
+                                rightLabel = "Anywhere";
+                              } else if (key === "flexibleHours") {
+                                leftLabel = "Fixed Hours";
+                                rightLabel = "Flexible";
+                              }
+                              
+                              return (
+                                <div key={key}>
+                                  <div className="text-sm font-medium text-gray-900 mb-1">{label}</div>
+                                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>{leftLabel}</span>
+                                    <span>{rightLabel}</span>
+                                  </div>
+                                  <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div 
+                                      className="h-2 rounded-full" 
+                                      style={{ 
+                                        width: `${(Number(value) / 10) * 100}%`,
+                                        background: "#5ce1e6"
+                                      }}
+                                    ></div>
+                                  </div>
+                                </div>
+                              );
+                            })
                           }
-                          
-                          // Create human-readable labels from camelCase
-                          const label = key
-                            .replace(/([A-Z])/g, ' $1')
-                            .replace(/^./, str => str.toUpperCase());
-                            
-                          // Generate opposites for slider labels
-                          let leftLabel = "Low";
-                          let rightLabel = "High";
-                          
-                          // Custom labels for common preference types
-                          if (key.includes("work")) {
-                            leftLabel = "Less";
-                            rightLabel = "More";
-                          } else if (key.includes("structure")) {
-                            leftLabel = "Flexible";
-                            rightLabel = "Structured";  
-                          } else if (key.includes("risk")) {
-                            leftLabel = "Risk-Averse";
-                            rightLabel = "Risk-Taking";
-                          } else if (key.includes("communication")) {
-                            leftLabel = "Direct";
-                            rightLabel = "Diplomatic";
+                        </div>
+                        
+                        {/* Company Characteristics Section */}
+                        <div className="space-y-3">
+                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Company Characteristics</h6>
+                          {Object.entries(profile.preferences.preferences)
+                            .filter(([key]) => 
+                              ["organizationSize", "growthTrajectory", "innovationFocus", "companyStability", 
+                              "socialImpact", "environmentalFocus", "diversityCommitment", "internationalPresence", "companyAge"]
+                              .includes(key))
+                            .map(([key, value]) => {
+                              if (key === 'organizationSize' || key === 'growthTrajectory') return null; // Skip, already displayed above
+                              
+                              // Create human-readable labels from camelCase
+                              const label = key
+                                .replace(/([A-Z])/g, ' $1')
+                                .replace(/^./, str => str.toUpperCase());
+                                
+                              // Generate opposites for slider labels
+                              let leftLabel = "Low";
+                              let rightLabel = "High";
+                              
+                              // Custom labels for company characteristics
+                              if (key === "companyAge") {
+                                leftLabel = "Startup";
+                                rightLabel = "Established";
+                              }
+                              
+                              return (
+                                <div key={key}>
+                                  <div className="text-sm font-medium text-gray-900 mb-1">{label}</div>
+                                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>{leftLabel}</span>
+                                    <span>{rightLabel}</span>
+                                  </div>
+                                  <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div 
+                                      className="h-2 rounded-full" 
+                                      style={{ 
+                                        width: `${(Number(value) / 10) * 100}%`,
+                                        background: "#5ce1e6"
+                                      }}
+                                    ></div>
+                                  </div>
+                                </div>
+                              );
+                            })
                           }
-                          
-                          return (
-                            <div key={key}>
-                              <div className="text-sm font-medium text-gray-900 mb-1">{label}</div>
-                              <div className="flex justify-between text-xs text-gray-500 mb-1">
-                                <span>{leftLabel}</span>
-                                <span>{rightLabel}</span>
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div 
-                                  className="h-2 rounded-full" 
-                                  style={{ 
-                                    width: `${(Number(value) / 10) * 100}%`,
-                                    background: "#5ce1e6"
-                                  }}
-                                ></div>
-                              </div>
-                            </div>
-                          );
-                        })}
+                        </div>
+                        
+                        {/* Team & Management Section */}
+                        <div className="space-y-3">
+                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Team & Management</h6>
+                          {Object.entries(profile.preferences.preferences)
+                            .filter(([key]) => 
+                              ["communicationStyle", "feedbackFrequency", "decisionMaking", "managementStyle", 
+                              "teamSize", "crossFunctionalWork", "mentorshipAccess", "autonomyLevel", "teamDynamics"]
+                              .includes(key))
+                            .map(([key, value]) => {
+                              // Create human-readable labels from camelCase
+                              const label = key
+                                .replace(/([A-Z])/g, ' $1')
+                                .replace(/^./, str => str.toUpperCase());
+                                
+                              // Generate opposites for slider labels
+                              let leftLabel = "Low";
+                              let rightLabel = "High";
+                              
+                              // Custom labels for team & management
+                              if (key === "communicationStyle") {
+                                leftLabel = "Direct";
+                                rightLabel = "Diplomatic";
+                              } else if (key === "decisionMaking") {
+                                leftLabel = "Consensus";
+                                rightLabel = "Decisive";
+                              } else if (key === "managementStyle") {
+                                leftLabel = "Hands-off";
+                                rightLabel = "Involved";
+                              } else if (key === "teamSize") {
+                                leftLabel = "Small";
+                                rightLabel = "Large";
+                              } else if (key === "teamDynamics") {
+                                leftLabel = "Individual";
+                                rightLabel = "Team-based";
+                              } else if (key === "autonomyLevel") {
+                                leftLabel = "Directed";
+                                rightLabel = "Autonomous";
+                              }
+                              
+                              return (
+                                <div key={key}>
+                                  <div className="text-sm font-medium text-gray-900 mb-1">{label}</div>
+                                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>{leftLabel}</span>
+                                    <span>{rightLabel}</span>
+                                  </div>
+                                  <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div 
+                                      className="h-2 rounded-full" 
+                                      style={{ 
+                                        width: `${(Number(value) / 10) * 100}%`,
+                                        background: "#5ce1e6"
+                                      }}
+                                    ></div>
+                                  </div>
+                                </div>
+                              );
+                            })
+                          }
+                        </div>
+                        
+                        {/* Professional Development Section */}
+                        <div className="space-y-3">
+                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Professional Development</h6>
+                          {Object.entries(profile.preferences.preferences)
+                            .filter(([key]) => 
+                              ["learningOpportunities", "careerAdvancement", "performanceRecognition", 
+                              "skillDevelopment", "industryNetworking", "certificationSupport", 
+                              "conferencesSupport", "continuousLearning", "learningStyle"]
+                              .includes(key))
+                            .map(([key, value]) => {
+                              // Create human-readable labels from camelCase
+                              const label = key
+                                .replace(/([A-Z])/g, ' $1')
+                                .replace(/^./, str => str.toUpperCase());
+                                
+                              // Generate opposites for slider labels
+                              let leftLabel = "Low";
+                              let rightLabel = "High";
+                              
+                              // Custom labels
+                              if (key === "learningStyle") {
+                                leftLabel = "Independent";
+                                rightLabel = "Collaborative";
+                              }
+                              
+                              return (
+                                <div key={key}>
+                                  <div className="text-sm font-medium text-gray-900 mb-1">{label}</div>
+                                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>{leftLabel}</span>
+                                    <span>{rightLabel}</span>
+                                  </div>
+                                  <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div 
+                                      className="h-2 rounded-full" 
+                                      style={{ 
+                                        width: `${(Number(value) / 10) * 100}%`,
+                                        background: "#5ce1e6"
+                                      }}
+                                    ></div>
+                                  </div>
+                                </div>
+                              );
+                            })
+                          }
+                        </div>
+                        
+                        {/* Compensation & Benefits Section */}
+                        <div className="space-y-3">
+                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Compensation & Benefits</h6>
+                          {Object.entries(profile.preferences.preferences)
+                            .filter(([key]) => 
+                              ["compensationPreference", "equityVsSalary", "benefitsPackage", "retirementBenefits", 
+                              "healthWellnessFocus", "paidTimeOff", "parentalLeave", "tuitionReimbursement"]
+                              .includes(key))
+                            .map(([key, value]) => {
+                              // Create human-readable labels from camelCase
+                              const label = key
+                                .replace(/([A-Z])/g, ' $1')
+                                .replace(/^./, str => str.toUpperCase());
+                                
+                              // Generate opposites for slider labels
+                              let leftLabel = "Low";
+                              let rightLabel = "High";
+                              
+                              // Custom labels
+                              if (key === "equityVsSalary") {
+                                leftLabel = "Salary";
+                                rightLabel = "Equity";
+                              }
+                              
+                              return (
+                                <div key={key}>
+                                  <div className="text-sm font-medium text-gray-900 mb-1">{label}</div>
+                                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>{leftLabel}</span>
+                                    <span>{rightLabel}</span>
+                                  </div>
+                                  <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div 
+                                      className="h-2 rounded-full" 
+                                      style={{ 
+                                        width: `${(Number(value) / 10) * 100}%`,
+                                        background: "#5ce1e6"
+                                      }}
+                                    ></div>
+                                  </div>
+                                </div>
+                              );
+                            })
+                          }
+                        </div>
+                        
+                        {/* Work Dynamics Section */}
+                        <div className="space-y-3">
+                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Work Dynamics</h6>
+                          {Object.entries(profile.preferences.preferences)
+                            .filter(([key]) => 
+                              ["riskTolerance", "travelRequirements", "projectVariety", "deadlinePressure", 
+                              "customerInteraction", "workIndependence", "mentorshipImportance", "recognitionStyle",
+                              "problemSolvingApproach", "paceOfWork", "adaptabilityRequirement"]
+                              .includes(key))
+                            .map(([key, value]) => {
+                              // Create human-readable labels from camelCase
+                              const label = key
+                                .replace(/([A-Z])/g, ' $1')
+                                .replace(/^./, str => str.toUpperCase());
+                                
+                              // Generate opposites for slider labels
+                              let leftLabel = "Low";
+                              let rightLabel = "High";
+                              
+                              // Custom labels for work dynamics
+                              if (key === "riskTolerance") {
+                                leftLabel = "Risk-Averse";
+                                rightLabel = "Risk-Taking";
+                              } else if (key === "deadlinePressure") {
+                                leftLabel = "Relaxed";
+                                rightLabel = "Deadline-Driven";
+                              } else if (key === "workIndependence") {
+                                leftLabel = "Collaborative";
+                                rightLabel = "Independent";
+                              } else if (key === "recognitionStyle") {
+                                leftLabel = "Private";
+                                rightLabel = "Public";
+                              } else if (key === "problemSolvingApproach") {
+                                leftLabel = "Analytical";
+                                rightLabel = "Creative";
+                              } else if (key === "paceOfWork") {
+                                leftLabel = "Measured";
+                                rightLabel = "Fast-Paced";
+                              }
+                              
+                              return (
+                                <div key={key}>
+                                  <div className="text-sm font-medium text-gray-900 mb-1">{label}</div>
+                                  <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>{leftLabel}</span>
+                                    <span>{rightLabel}</span>
+                                  </div>
+                                  <div className="w-full bg-gray-200 rounded-full h-2">
+                                    <div 
+                                      className="h-2 rounded-full" 
+                                      style={{ 
+                                        width: `${(Number(value) / 10) * 100}%`,
+                                        background: "#5ce1e6"
+                                      }}
+                                    ></div>
+                                  </div>
+                                </div>
+                              );
+                            })
+                          }
+                        </div>
                       </div>
                     </div>
                   )}
