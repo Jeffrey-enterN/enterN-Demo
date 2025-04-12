@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Filter } from "lucide-react";
 import MatchCard from "@/components/match-card";
+import { sampleJobseekers } from "@/data/sample-profiles";
 
 export default function EmployerMatchFeed() {
   const { user } = useAuth();
@@ -21,60 +22,52 @@ export default function EmployerMatchFeed() {
     enabled: !!user,
   });
 
-  // Get match feed data
-  const { data: jobseekers = [], isLoading, refetch } = useQuery<any[]>({
-    queryKey: ["/api/employer/match-feed"],
-    enabled: !!employerProfile,
-  });
+  // Use sample data for demonstration
+  const [availableJobseekers, setAvailableJobseekers] = useState([...sampleJobseekers]);
+  const isLoading = false; // Set loading to false since we have sample data
 
-  // Match mutation
-  const matchMutation = useMutation({
-    mutationFn: async ({ jobseekerId, status }: { jobseekerId: number, status: string }) => {
-      const res = await apiRequest("POST", "/api/employer/match", { jobseekerId, status });
-      return await res.json();
-    },
-    onSuccess: (data) => {
-      if (data.employerStatus === MatchStatusEnum.MATCHED && data.jobseekerStatus === MatchStatusEnum.MATCHED) {
-        toast({
-          title: "It's a match!",
-          description: "You've matched with this candidate. You can now share job postings.",
-        });
-      } else if (data.employerStatus === MatchStatusEnum.MATCHED) {
-        toast({
-          title: "Interest sent",
-          description: "You've expressed interest in this candidate.",
-        });
-      } else if (data.employerStatus === MatchStatusEnum.REJECTED) {
-        toast({
-          title: "Candidate passed",
-          description: "This candidate has been removed from your match feed.",
-        });
-      }
-      
-      // Refetch the match feed
-      refetch();
-    },
-    onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
+  // Simplified match handling for demo
   const handleMatch = (jobseekerId: number, status: string) => {
-    matchMutation.mutate({ jobseekerId, status });
+    // Log matching for debugging
+    console.log(`Matched with ID ${jobseekerId}, status: ${status}`);
+    
+    // Show toast notification
+    if (status === MatchStatusEnum.MATCHED) {
+      toast({
+        title: "Interest sent",
+        description: "You've expressed interest in this candidate.",
+      });
+    } else if (status === MatchStatusEnum.REJECTED) {
+      toast({
+        title: "Candidate passed",
+        description: "This candidate has been removed from your match feed.",
+      });
+    }
+    
+    // Remove the candidate from the available list
+    setAvailableJobseekers(prev => prev.filter(jobseeker => jobseeker.id !== jobseekerId));
+    
+    // If all jobseekers have been processed, reset the list for demo purposes
+    if (availableJobseekers.length <= 1) {
+      setTimeout(() => {
+        setAvailableJobseekers([...sampleJobseekers]);
+        toast({
+          title: "Match queue refreshed",
+          description: "New candidates have been added to your match feed.",
+        });
+      }, 500);
+    }
   };
 
   // Filter jobseekers based on active tab
-  const filteredJobseekers = jobseekers.filter((jobseeker: any) => {
+  const filteredJobseekers = availableJobseekers.filter((jobseeker: any) => {
     if (activeTab === "job-fair") {
-      // Logic for job fair filter
-      return true; // Placeholder for demo
+      // Logic for job fair filter - for demo, show all with Bachelor's or Master's degree
+      return jobseeker.degreeLevel.includes("Bachelor") || jobseeker.degreeLevel.includes("Master");
     } else if (activeTab === "local") {
-      // Logic for local candidates
-      return true; // Placeholder for demo
+      // Logic for local candidates - for demo, show all with tech-related majors
+      const techMajors = ["Computer Science", "Data Science", "Cloud Architecture", "Information Security", "Game Design"];
+      return techMajors.some(tech => jobseeker.major.includes(tech));
     } else {
       // All candidates
       return true;
