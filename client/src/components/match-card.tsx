@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, X } from "lucide-react";
+import { Check, X, ChevronDown, ChevronUp } from "lucide-react";
 
 interface MatchCardProps {
   profile: any; // Jobseeker profile with preferences
@@ -13,6 +13,7 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
   const [swiping, setSwiping] = useState<string | null>(null);
   const [startX, setStartX] = useState<number | null>(null);
   const [offsetX, setOffsetX] = useState(0);
+  const [showAllPreferences, setShowAllPreferences] = useState(false);
 
   // Handle swipe animation completion
   useEffect(() => {
@@ -92,7 +93,7 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
 
   return (
     <div
-      className="relative bg-white rounded-xl shadow-lg overflow-hidden"
+      className={`relative bg-white rounded-xl shadow-lg overflow-hidden ${showAllPreferences ? 'min-h-[650px]' : ''}`}
       style={cardStyle}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -141,9 +142,21 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
         
         {profile.preferences && (
           <div className="mt-6">
-            <h4 className="font-medium text-gray-900 border-l-4 pl-2" style={{borderColor: "#5ce1e6"}}>Key Preferences</h4>
+            <div className="flex items-center justify-between">
+              <h4 className="font-medium text-gray-900 border-l-4 pl-2" style={{borderColor: "#5ce1e6"}}>Key Preferences</h4>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="text-[#5ce1e6] hover:text-[#0097b1] hover:bg-[rgba(92,225,230,0.1)]"
+                onClick={() => setShowAllPreferences(!showAllPreferences)}
+              >
+                <span className="mr-1">{showAllPreferences ? "Show Less" : "View All"}</span>
+                {showAllPreferences ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              </Button>
+            </div>
+            
             <div className="mt-3 space-y-3">
-              {/* Display some key preferences as slider visualizations */}
+              {/* Always display key preferences */}
               {profile.preferences.preferences && (
                 <>
                   {/* Remote Work Preference */}
@@ -199,6 +212,64 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                             background: "#5ce1e6"
                           }}
                         ></div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Expandable section for all other preferences */}
+                  {showAllPreferences && profile.preferences.preferences && (
+                    <div className="mt-4 border-t pt-3">
+                      <h5 className="font-medium text-gray-900 mb-3 text-center" style={{color: "#0097b1"}}>All Preferences</h5>
+                      <div className="space-y-4 max-h-[350px] overflow-y-auto pr-2 pb-4">
+                        {Object.entries(profile.preferences.preferences).map(([key, value]) => {
+                          // Skip the ones we already displayed above
+                          if (key === 'remoteWork' || key === 'organizationSize' || key === 'growthTrajectory') {
+                            return null;
+                          }
+                          
+                          // Create human-readable labels from camelCase
+                          const label = key
+                            .replace(/([A-Z])/g, ' $1')
+                            .replace(/^./, str => str.toUpperCase());
+                            
+                          // Generate opposites for slider labels
+                          let leftLabel = "Low";
+                          let rightLabel = "High";
+                          
+                          // Custom labels for common preference types
+                          if (key.includes("work")) {
+                            leftLabel = "Less";
+                            rightLabel = "More";
+                          } else if (key.includes("structure")) {
+                            leftLabel = "Flexible";
+                            rightLabel = "Structured";  
+                          } else if (key.includes("risk")) {
+                            leftLabel = "Risk-Averse";
+                            rightLabel = "Risk-Taking";
+                          } else if (key.includes("communication")) {
+                            leftLabel = "Direct";
+                            rightLabel = "Diplomatic";
+                          }
+                          
+                          return (
+                            <div key={key}>
+                              <div className="text-sm font-medium text-gray-900 mb-1">{label}</div>
+                              <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                <span>{leftLabel}</span>
+                                <span>{rightLabel}</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="h-2 rounded-full" 
+                                  style={{ 
+                                    width: `${(Number(value) / 10) * 100}%`,
+                                    background: "#5ce1e6"
+                                  }}
+                                ></div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
