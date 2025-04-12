@@ -232,6 +232,20 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/* Demo Card Button - For testing purposes */}
+          <div className="mb-8 text-center">
+            <Button 
+              variant="outline"
+              size="lg"
+              onClick={() => setLocation("/demo-card")}
+              className="bg-white border-2 shadow-md transition-all hover:shadow-lg"
+              style={{borderImage: 'linear-gradient(to right, #5ce1e6, #ff66c4) 1'}}
+            >
+              View Match Card Demo
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+
           {/* CTA Section */}
           <div className="rounded-lg shadow-lg p-8 text-center" 
                style={{background: "linear-gradient(135deg, #5ce1e6, #ff66c4)"}}>
