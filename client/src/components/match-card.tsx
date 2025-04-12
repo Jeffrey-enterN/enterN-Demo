@@ -98,40 +98,25 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="h-40">
-        {/* Background image would be here in a real app */}
-        <div className="w-full h-full" style={{background: "linear-gradient(135deg, rgba(92, 225, 230, 0.2), rgba(255, 102, 196, 0.2))"}}></div>
-      </div>
-      
-      <div className="relative px-6 pb-6">
-        <div className="flex justify-center">
-          <div className="-mt-12 w-24 h-24 rounded-full border-4 border-white overflow-hidden"
-               style={{background: "linear-gradient(135deg, #5ce1e6, #ff66c4)"}}>
-            {/* Profile photo would be here in a real app */}
-            <div className="w-full h-full flex items-center justify-center text-white font-bold text-2xl">
-              {profile.firstName ? profile.firstName.charAt(0) : "J"}
-            </div>
+      <div className="h-24 flex items-center justify-center">
+        <div className="w-full h-full flex items-center justify-center" style={{background: "linear-gradient(135deg, rgba(92, 225, 230, 0.15), rgba(92, 225, 230, 0.05))"}}>
+          <div className="text-lg font-medium" style={{color: "#0097b1"}}>
+            {profile.school ? `${profile.degreeLevel || "Student"} • ${profile.major || "Education"}` : "Candidate"}
           </div>
         </div>
-        
-        <div className="mt-4 text-center">
-          <h3 className="text-xl font-heading font-bold text-gray-900">
-            {profile.firstName} {profile.lastName}
-          </h3>
-          <p className="text-gray-600">
-            {profile.school ? `${profile.degreeLevel || "Student"} • ${profile.major || "Education"}` : "Job Seeker"}
+      </div>
+      
+      <div className="px-6 pb-6">        
+        <div className="text-center">
+          <p className="mt-2 text-gray-600">
+            Looking for opportunities in {profile.preferredIndustries ? profile.preferredIndustries.join(", ") : "various fields"}
           </p>
           <div className="mt-2 flex flex-wrap justify-center gap-2">
             {profile.preferredIndustries && profile.preferredIndustries.slice(0, 3).map((industry: string, idx: number) => (
               <Badge 
                 key={idx} 
                 variant="secondary" 
-                className={idx % 3 === 0 
-                  ? "bg-[rgba(92,225,230,0.15)] text-[#0097b1] hover:bg-[rgba(92,225,230,0.25)]" 
-                  : idx % 3 === 1 
-                    ? "bg-[rgba(255,102,196,0.15)] text-[#ff66c4] hover:bg-[rgba(255,102,196,0.25)]" 
-                    : "bg-[rgba(200,253,4,0.15)] text-black hover:bg-[rgba(200,253,4,0.25)]"
-                }
+                className="bg-[rgba(92,225,230,0.15)] text-[#0097b1] hover:bg-[rgba(92,225,230,0.25)]"
               >
                 {industry}
               </Badge>
@@ -147,7 +132,7 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
         </div>
         
         <div className="mt-6">
-          <h4 className="font-medium text-gray-900 border-l-4 pl-2" style={{borderColor: "#ff66c4"}}>Education</h4>
+          <h4 className="font-medium text-gray-900 border-l-4 pl-2" style={{borderColor: "#5ce1e6"}}>Education</h4>
           <div className="mt-1">
             <p className="text-sm font-medium text-gray-900">{profile.school || "University"}</p>
             <p className="text-sm text-gray-600">{profile.degreeLevel} {profile.major}</p>
@@ -156,7 +141,7 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
         
         {profile.preferences && (
           <div className="mt-6">
-            <h4 className="font-medium text-gray-900 border-l-4 pl-2" style={{borderColor: "#c8fd04"}}>Key Preferences</h4>
+            <h4 className="font-medium text-gray-900 border-l-4 pl-2" style={{borderColor: "#5ce1e6"}}>Key Preferences</h4>
             <div className="mt-3 space-y-3">
               {/* Display some key preferences as slider visualizations */}
               {profile.preferences.preferences && (
@@ -173,7 +158,7 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                           className="h-2 rounded-full" 
                           style={{ 
                             width: `${(profile.preferences.preferences.remoteWork / 10) * 100}%`,
-                            background: "linear-gradient(90deg, #5ce1e6, #ff66c4)"
+                            background: "#5ce1e6"
                           }}
                         ></div>
                       </div>
@@ -192,7 +177,7 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                           className="h-2 rounded-full" 
                           style={{ 
                             width: `${(profile.preferences.preferences.organizationSize / 10) * 100}%`,
-                            background: "linear-gradient(90deg, #ff66c4, #c8fd04)"
+                            background: "#5ce1e6"
                           }}
                         ></div>
                       </div>
@@ -211,7 +196,7 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                           className="h-2 rounded-full" 
                           style={{ 
                             width: `${(profile.preferences.preferences.growthTrajectory / 10) * 100}%`,
-                            background: "linear-gradient(90deg, #c8fd04, #5ce1e6)"
+                            background: "#5ce1e6"
                           }}
                         ></div>
                       </div>
@@ -239,8 +224,8 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
           onClick={handleAccept}
           variant="outline" 
           size="icon" 
-          className="h-14 w-14 rounded-full shadow-lg bg-white hover:bg-[rgba(255,102,196,0.05)] border-[#ff66c4] transition"
-          style={{color: "#ff66c4"}}
+          className="h-14 w-14 rounded-full shadow-lg bg-white hover:bg-[rgba(92,225,230,0.05)] border-[#5ce1e6] transition"
+          style={{color: "#5ce1e6"}}
         >
           <Check className="h-7 w-7" />
         </Button>
