@@ -15,16 +15,11 @@ export default function EmployerMatchFeed() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<string>("job-fair");
-
-  // Get employer profile
-  const { data: employerProfile } = useQuery({
-    queryKey: ["/api/employer/profile"],
-    enabled: !!user,
-  });
-
-  // Use sample data for demonstration
+  
+  // Use sample data for demonstration instead of real API calls
   const [availableJobseekers, setAvailableJobseekers] = useState([...sampleJobseekers]);
   const isLoading = false; // Set loading to false since we have sample data
+  const employerProfile = { id: 1 }; // Mock employer profile
 
   // Simplified match handling for demo
   const handleMatch = (jobseekerId: number, status: string) => {
