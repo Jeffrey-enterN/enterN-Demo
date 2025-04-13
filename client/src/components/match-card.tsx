@@ -110,7 +110,7 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
 
   return (
     <div
-      className={`relative bg-white rounded-xl shadow-lg overflow-hidden ${showAllPreferences ? 'min-h-[650px] max-h-[90vh] overflow-y-auto overscroll-contain' : ''}`}
+      className={`relative bg-white rounded-xl shadow-lg overflow-hidden ${showAllPreferences ? 'min-h-[650px] max-h-[90vh]' : ''}`}
       style={cardStyle}
       onTouchStart={handleTouchStartWithPreventionCheck}
       onTouchMove={handleTouchMoveWithPreventionCheck}
@@ -177,74 +177,68 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
               {profile.preferences.preferences && (
                 <>
                   {/* Work Environment Preference - Remote vs Office */}
-                  {profile.preferences.preferences.officeVsRemote && (
-                    <div>
-                      <div className="text-sm font-medium text-gray-700 mb-1">Office vs Remote</div>
-                      <div className="flex justify-between text-xs text-gray-500 mb-1">
-                        <span>In-office</span>
-                        <span>Fully Remote</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="h-2 rounded-full" 
-                          style={{ 
-                            width: `${(profile.preferences.preferences.officeVsRemote / 10) * 100}%`,
-                            background: "#5ce1e6"
-                          }}
-                        ></div>
-                      </div>
+                  <div>
+                    <div className="text-sm font-medium text-gray-700 mb-1">Office vs Remote</div>
+                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                      <span>In-office</span>
+                      <span>Fully Remote</span>
                     </div>
-                  )}
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="h-2 rounded-full" 
+                        style={{ 
+                          width: `${((profile.preferences.preferences.officeVsRemote || 5) / 10) * 100}%`,
+                          background: "#5ce1e6"
+                        }}
+                      ></div>
+                    </div>
+                  </div>
                   
                   {/* Work Style Preference */}
-                  {profile.preferences.preferences.structureVsAmbiguity && (
-                    <div className="mt-3">
-                      <div className="text-sm font-medium text-gray-700 mb-1">Structure vs Ambiguity</div>
-                      <div className="flex justify-between text-xs text-gray-500 mb-1">
-                        <span>Prefers Structure</span>
-                        <span>Thrives in Ambiguity</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="h-2 rounded-full" 
-                          style={{ 
-                            width: `${(profile.preferences.preferences.structureVsAmbiguity / 10) * 100}%`,
-                            background: "#5ce1e6"
-                          }}
-                        ></div>
-                      </div>
+                  <div className="mt-3">
+                    <div className="text-sm font-medium text-gray-700 mb-1">Structure vs Ambiguity</div>
+                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                      <span>Prefers Structure</span>
+                      <span>Thrives in Ambiguity</span>
                     </div>
-                  )}
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="h-2 rounded-full" 
+                        style={{ 
+                          width: `${((profile.preferences.preferences.structureVsAmbiguity || 5) / 10) * 100}%`,
+                          background: "#5ce1e6"
+                        }}
+                      ></div>
+                    </div>
+                  </div>
                   
                   {/* Mission & Vision Preference */}
-                  {profile.preferences.preferences.purposeVsProfit && (
-                    <div className="mt-3">
-                      <div className="text-sm font-medium text-gray-700 mb-1">Purpose vs Profit</div>
-                      <div className="flex justify-between text-xs text-gray-500 mb-1">
-                        <span>Purpose-Driven Impact</span>
-                        <span>Profit-Driven Focus</span>
-                      </div>
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div 
-                          className="h-2 rounded-full" 
-                          style={{ 
-                            width: `${(profile.preferences.preferences.purposeVsProfit / 10) * 100}%`,
-                            background: "#5ce1e6"
-                          }}
-                        ></div>
-                      </div>
+                  <div className="mt-3">
+                    <div className="text-sm font-medium text-gray-700 mb-1">Purpose vs Profit</div>
+                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                      <span>Purpose-Driven Impact</span>
+                      <span>Profit-Driven Focus</span>
                     </div>
-                  )}
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="h-2 rounded-full" 
+                        style={{ 
+                          width: `${((profile.preferences.preferences.purposeVsProfit || 5) / 10) * 100}%`,
+                          background: "#5ce1e6"
+                        }}
+                      ></div>
+                    </div>
+                  </div>
                   
                   {/* Expandable section for all other preferences */}
-                  {showAllPreferences && profile.preferences.preferences && (
-                    <div className="mt-4 border-t pt-3">
+                  {showAllPreferences && (
+                    <div className="mt-4 border-t pt-3 pb-12">
                       <h5 className="font-medium text-gray-900 mb-3 text-center" style={{color: "#0097b1"}}>All Preferences</h5>
                       <div className="text-xs text-center text-gray-500 mb-3">
                         <span>Scroll to see more</span>
                         <ChevronDown className="mx-auto mt-1 h-4 w-4 text-gray-400 animate-bounce" />
                       </div>
-                      <div className="space-y-5 max-h-[400px] overflow-y-auto pr-2 pb-28 overscroll-contain" style={{WebkitOverflowScrolling: "touch"}}>
+                      <div className="space-y-5 max-h-[60vh] overflow-y-auto pr-2 pb-28 overscroll-contain rounded-lg shadow-inner p-4" style={{WebkitOverflowScrolling: "touch", scrollBehavior: "smooth", backgroundColor: "rgba(92,225,230,0.03)"}}>
                         
                         {/* Mission & Vision Section */}
                         <div className="space-y-3">
