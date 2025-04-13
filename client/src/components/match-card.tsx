@@ -91,12 +91,29 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
     opacity: swiping ? 0 : 1,
   };
 
+  // Prevent swiping when viewing expanded preferences
+  const handleTouchStartWithPreventionCheck = (e: React.TouchEvent) => {
+    if (showAllPreferences) {
+      // Don't initiate swipe when preferences are expanded
+      return;
+    }
+    handleTouchStart(e);
+  };
+
+  const handleTouchMoveWithPreventionCheck = (e: React.TouchEvent) => {
+    if (showAllPreferences) {
+      // Don't handle swipe when preferences are expanded
+      return;
+    }
+    handleTouchMove(e);
+  };
+
   return (
     <div
-      className={`relative bg-white rounded-xl shadow-lg overflow-hidden ${showAllPreferences ? 'min-h-[650px] max-h-[80vh] overflow-y-auto' : ''}`}
+      className={`relative bg-white rounded-xl shadow-lg overflow-hidden ${showAllPreferences ? 'min-h-[650px] max-h-[90vh] overflow-y-auto overscroll-contain' : ''}`}
       style={cardStyle}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
+      onTouchStart={handleTouchStartWithPreventionCheck}
+      onTouchMove={handleTouchMoveWithPreventionCheck}
       onTouchEnd={handleTouchEnd}
     >
       <div className="h-24 flex items-center justify-center">
