@@ -45,9 +45,9 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
   };
 
   const handleTouchEnd = () => {
-    if (offsetX > 100) {
+    if (offsetX > 80) {
       setSwiping("right");
-    } else if (offsetX < -100) {
+    } else if (offsetX < -80) {
       setSwiping("left");
     } else {
       setOffsetX(0);
