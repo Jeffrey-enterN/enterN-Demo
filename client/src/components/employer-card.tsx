@@ -38,6 +38,14 @@ export default function EmployerCard({ employer, onAccept, onReject }: EmployerC
 
   // Handle touch/mouse events for swiping
   const handlePointerDown = (e: React.PointerEvent) => {
+    // If we're targeting a button or in a scrollable area, don't start dragging
+    if (
+      e.target instanceof Element && 
+      (e.target.closest('button') || e.target.closest('.overflow-y-auto'))
+    ) {
+      return;
+    }
+    
     setIsDragging(true);
     setStartX(e.clientX);
     

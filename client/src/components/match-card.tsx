@@ -91,12 +91,21 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
     opacity: swiping ? 0 : 1,
   };
 
-  // Prevent swiping when viewing expanded preferences
+  // Prevent swiping when viewing expanded preferences or interacting with buttons
   const handleTouchStartWithPreventionCheck = (e: React.TouchEvent) => {
     if (showAllPreferences) {
       // Don't initiate swipe when preferences are expanded
       return;
     }
+    
+    // Prevent swiping when touching buttons or scrollable areas
+    if (
+      e.target instanceof Element && 
+      (e.target.closest('button') || e.target.closest('.overflow-y-auto'))
+    ) {
+      return;
+    }
+    
     handleTouchStart(e);
   };
 
@@ -105,6 +114,15 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
       // Don't handle swipe when preferences are expanded
       return;
     }
+    
+    // Prevent swiping when touching buttons or scrollable areas
+    if (
+      e.target instanceof Element && 
+      (e.target.closest('button') || e.target.closest('.overflow-y-auto'))
+    ) {
+      return;
+    }
+    
     handleTouchMove(e);
   };
 
