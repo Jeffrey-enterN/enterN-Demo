@@ -348,5 +348,281 @@ export const sampleEmployers = [
         salary: "$120,000 - $160,000"
       }
     ]
+  },
+  {
+    id: 9,
+    userId: 209,
+    companyName: "Caterpillar",
+    industry: "Heavy Equipment & Manufacturing",
+    companySize: "10,000+",
+    location: "Peoria, IL",
+    website: "https://www.caterpillar.com",
+    description: "Caterpillar is the world's leading manufacturer of construction and mining equipment, diesel and natural gas engines, industrial gas turbines and diesel-electric locomotives.",
+    mission: "Our mission is to enable economic growth through infrastructure and energy development, and to provide solutions that support communities and protect the planet.",
+    culture: "Caterpillar's culture is built on the foundation of integrity, excellence, teamwork, and commitment. We embrace diversity and inclusion, fostering an environment where everyone can contribute to their fullest potential.",
+    benefits: [
+      "Competitive compensation and bonus structure",
+      "Comprehensive health and retirement benefits",
+      "Continuous learning and development opportunities",
+      "Employee discount programs",
+      "Work-life balance initiatives"
+    ],
+    jobPostings: [
+      {
+        id: 901,
+        employerId: 9,
+        title: "Mechanical Engineer",
+        description: "Design and develop mechanical components and systems for heavy equipment.",
+        requirements: "BS in Mechanical Engineering, experience with 3D CAD software, knowledge of manufacturing processes.",
+        employmentType: "FULL_TIME",
+        locationType: "ONSITE",
+        salary: "$80,000 - $120,000"
+      },
+      {
+        id: 902,
+        employerId: 9,
+        title: "Supply Chain Analyst",
+        description: "Analyze and optimize global supply chain operations.",
+        requirements: "Bachelor's degree in Supply Chain, Business, or related field. Experience with data analysis and ERP systems.",
+        employmentType: "FULL_TIME",
+        locationType: "HYBRID",
+        salary: "$70,000 - $90,000"
+      },
+      {
+        id: 903,
+        employerId: 9,
+        title: "Manufacturing Engineering Intern",
+        description: "Support manufacturing process improvement initiatives.",
+        requirements: "Currently pursuing a degree in Engineering, Manufacturing, or related field.",
+        employmentType: "INTERNSHIP",
+        locationType: "ONSITE",
+        salary: "$20 - $25/hr"
+      }
+    ]
+  },
+  {
+    id: 10,
+    userId: 210,
+    companyName: "OSF HealthCare",
+    industry: "Healthcare",
+    companySize: "5,000+",
+    location: "Peoria, IL",
+    website: "https://www.osfhealthcare.org",
+    description: "OSF HealthCare is an integrated health system owned and operated by The Sisters of the Third Order of St. Francis, providing state-of-the-art healthcare throughout Illinois and Michigan.",
+    mission: "In the spirit of Christ and the example of Francis of Assisi, the Mission of OSF HealthCare is to serve persons with the greatest care and love in a community that celebrates the Gift of Life.",
+    culture: "Our culture is centered on our Mission and Values. We foster an environment of compassion, integrity, and excellence in all we do, seeing our work as a calling to serve others.",
+    benefits: [
+      "Competitive compensation packages",
+      "Comprehensive medical, dental, and vision coverage",
+      "Retirement savings plans",
+      "Tuition reimbursement",
+      "Employee wellness programs"
+    ],
+    jobPostings: [
+      {
+        id: 1001,
+        employerId: 10,
+        title: "Registered Nurse",
+        description: "Provide patient care in accordance with OSF nursing standards and protocols.",
+        requirements: "BSN, current RN license, BLS certification, 1+ year experience preferred.",
+        employmentType: "FULL_TIME",
+        locationType: "ONSITE",
+        salary: "$65,000 - $85,000"
+      },
+      {
+        id: 1002,
+        employerId: 10,
+        title: "Healthcare Data Analyst",
+        description: "Analyze clinical and operational data to improve healthcare delivery and outcomes.",
+        requirements: "Bachelor's degree in Health Informatics, Data Science, or related field. Experience with healthcare data analysis.",
+        employmentType: "FULL_TIME",
+        locationType: "HYBRID",
+        salary: "$70,000 - $90,000"
+      }
+    ]
+  },
+  {
+    id: 11,
+    userId: 211,
+    companyName: "SKB Cyber",
+    industry: "Cybersecurity",
+    companySize: "50-200",
+    location: "Peoria, IL",
+    website: "https://www.skbcyber.com",
+    description: "SKB Cyber provides cutting-edge cybersecurity solutions to protect businesses from evolving digital threats.",
+    mission: "Our mission is to secure the digital infrastructure of organizations through innovative cybersecurity solutions and services.",
+    culture: "We maintain a culture of continuous learning, intellectual curiosity, and technical excellence. We value teamwork, ethical conduct, and staying ahead of emerging security threats.",
+    benefits: [
+      "Industry-competitive salaries",
+      "Comprehensive health benefits",
+      "Flexible work arrangements",
+      "Professional development budget",
+      "Regular team building activities"
+    ],
+    jobPostings: [
+      {
+        id: 1101,
+        employerId: 11,
+        title: "Security Analyst",
+        description: "Monitor and respond to security incidents, implement security controls, and conduct vulnerability assessments.",
+        requirements: "Bachelor's degree in Cybersecurity, IT, or related field. Security certifications (Security+, CISSP, etc.) preferred.",
+        employmentType: "FULL_TIME",
+        locationType: "HYBRID",
+        salary: "$75,000 - $95,000"
+      },
+      {
+        id: 1102,
+        employerId: 11,
+        title: "Penetration Tester",
+        description: "Conduct security testing to identify vulnerabilities in client systems and applications.",
+        requirements: "Experience with penetration testing tools and methodologies. Security certifications (CEH, OSCP, etc.) preferred.",
+        employmentType: "FULL_TIME",
+        locationType: "REMOTE",
+        salary: "$90,000 - $120,000"
+      }
+    ]
+  },
+  {
+    id: 12,
+    userId: 212,
+    companyName: "Komatsu",
+    industry: "Heavy Equipment Manufacturing",
+    companySize: "5,000+",
+    location: "Peoria, IL",
+    website: "https://www.komatsu.com",
+    description: "Komatsu is a global manufacturer of construction, mining, forestry, and industrial equipment, providing cutting-edge solutions for various industries.",
+    mission: "Creating value through innovative manufacturing and technology to empower a sustainable future where people, businesses, and our planet thrive together.",
+    culture: "Our culture promotes safety, quality, innovation, and teamwork. We embrace diversity and inclusion while fostering a commitment to continuous improvement.",
+    benefits: [
+      "Competitive compensation package",
+      "Comprehensive health and wellness benefits",
+      "Retirement savings plan with company match",
+      "Educational assistance programs",
+      "Employee recognition programs"
+    ],
+    jobPostings: [
+      {
+        id: 1201,
+        employerId: 12,
+        title: "Manufacturing Technician",
+        description: "Operate and maintain manufacturing equipment to produce high-quality components.",
+        requirements: "High school diploma or equivalent, manufacturing experience preferred, mechanical aptitude.",
+        employmentType: "FULL_TIME",
+        locationType: "ONSITE",
+        salary: "$40,000 - $55,000"
+      },
+      {
+        id: 1202,
+        employerId: 12,
+        title: "Automation Engineer",
+        description: "Design and implement automation solutions to improve manufacturing processes.",
+        requirements: "Bachelor's degree in Engineering, experience with industrial automation systems and PLC programming.",
+        employmentType: "FULL_TIME",
+        locationType: "ONSITE",
+        salary: "$75,000 - $95,000"
+      },
+      {
+        id: 1203,
+        employerId: 12,
+        title: "Product Development Engineer",
+        description: "Develop new products and enhance existing ones to meet customer needs and market demands.",
+        requirements: "Bachelor's degree in Mechanical or Industrial Engineering, experience with CAD software.",
+        employmentType: "FULL_TIME",
+        locationType: "HYBRID",
+        salary: "$80,000 - $110,000"
+      }
+    ]
+  },
+  {
+    id: 13,
+    userId: 213,
+    companyName: "Carle Health",
+    industry: "Healthcare",
+    companySize: "1,000-5,000",
+    location: "Peoria, IL",
+    website: "https://www.carlehealth.com",
+    description: "Carle Health is an integrated healthcare system serving communities throughout Illinois with high-quality, accessible healthcare services.",
+    mission: "Our mission is to serve people through high-quality care, medical research, and education.",
+    culture: "We foster a culture of collaboration, excellence, and compassion. Our team members are committed to improving the health and well-being of the communities we serve.",
+    benefits: [
+      "Competitive salaries",
+      "Comprehensive medical, dental, and vision coverage",
+      "Generous PTO and holiday time",
+      "Retirement savings options",
+      "Career advancement opportunities"
+    ],
+    jobPostings: [
+      {
+        id: 1301,
+        employerId: 13,
+        title: "Medical Assistant",
+        description: "Assist healthcare providers with patient care and administrative tasks.",
+        requirements: "Medical Assistant certification, strong communication skills, electronic medical record experience.",
+        employmentType: "FULL_TIME",
+        locationType: "ONSITE",
+        salary: "$35,000 - $45,000"
+      },
+      {
+        id: 1302,
+        employerId: 13,
+        title: "Healthcare IT Specialist",
+        description: "Support and maintain healthcare information systems and applications.",
+        requirements: "Bachelor's degree in IT or related field, experience with healthcare information systems.",
+        employmentType: "FULL_TIME",
+        locationType: "HYBRID",
+        salary: "$65,000 - $85,000"
+      }
+    ]
+  },
+  {
+    id: 14,
+    userId: 214,
+    companyName: "Peoria Riverfront Museum",
+    industry: "Arts & Education",
+    companySize: "50-100",
+    location: "Peoria, IL",
+    website: "https://www.peoriariverfrontmuseum.org",
+    description: "The Peoria Riverfront Museum is the only multidisciplinary museum of its kind in the nation, combining art, science, history, and achievement to create a unique experience.",
+    mission: "To inspire learning for a lifetime through art, science, history, and achievement by creating engaging experiences for people of all ages.",
+    culture: "Our culture embraces creativity, curiosity, and community engagement. We value diverse perspectives and collaborative approaches to education and exhibition development.",
+    benefits: [
+      "Competitive wages",
+      "Health insurance options",
+      "Professional development opportunities",
+      "Free museum membership",
+      "Flexible scheduling opportunities"
+    ],
+    jobPostings: [
+      {
+        id: 1401,
+        employerId: 14,
+        title: "Museum Educator",
+        description: "Develop and deliver educational programs for museum visitors of all ages.",
+        requirements: "Bachelor's degree in Education, Museum Studies, or related field. Experience in educational programming preferred.",
+        employmentType: "FULL_TIME",
+        locationType: "ONSITE",
+        salary: "$38,000 - $48,000"
+      },
+      {
+        id: 1402,
+        employerId: 14,
+        title: "Exhibit Designer",
+        description: "Design engaging and educational museum exhibits that align with the museum's mission.",
+        requirements: "Degree in Design, Museum Studies, or related field. Experience with exhibit design and production.",
+        employmentType: "FULL_TIME",
+        locationType: "ONSITE",
+        salary: "$45,000 - $60,000"
+      },
+      {
+        id: 1403,
+        employerId: 14,
+        title: "Digital Media Specialist",
+        description: "Create and manage digital content for the museum's online presence and virtual exhibits.",
+        requirements: "Experience with digital media production, web content management, and social media strategies.",
+        employmentType: "PART_TIME",
+        locationType: "HYBRID",
+        salary: "$20 - $25/hr"
+      }
+    ]
   }
 ];

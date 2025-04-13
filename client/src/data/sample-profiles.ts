@@ -3,7 +3,7 @@ export const sampleJobseekers = [
   {
     id: 1,
     userId: 101,
-    school: "University of Technology",
+    school: "Bradley University",
     major: "Computer Science",
     degreeLevel: "Bachelor's",
     graduationYear: 2024,
@@ -65,9 +65,9 @@ export const sampleJobseekers = [
   {
     id: 2,
     userId: 102,
-    school: "Design Institute",
-    major: "User Experience Design",
-    degreeLevel: "Master's",
+    school: "Bradley University",
+    major: "Interactive Media",
+    degreeLevel: "Bachelor's",
     graduationYear: 2023,
     preferredIndustries: ["UX/UI Design", "Product Design", "Tech Startups"],
     summary: "UX designer focused on creating intuitive, accessible user experiences across web and mobile platforms.",
@@ -122,7 +122,7 @@ export const sampleJobseekers = [
   {
     id: 3,
     userId: 103,
-    school: "Business Academy",
+    school: "Bradley University",
     major: "Marketing",
     degreeLevel: "Bachelor's",
     graduationYear: 2023,
@@ -158,9 +158,9 @@ export const sampleJobseekers = [
   {
     id: 4,
     userId: 104,
-    school: "Engineering University",
-    major: "Data Science",
-    degreeLevel: "PhD",
+    school: "Bradley University",
+    major: "Computer Science",
+    degreeLevel: "Master's",
     graduationYear: 2024,
     preferredIndustries: ["AI/Machine Learning", "Research", "FinTech"],
     summary: "Data scientist with research focus on machine learning algorithms and predictive modeling.",
@@ -194,10 +194,10 @@ export const sampleJobseekers = [
   {
     id: 5,
     userId: 105,
-    school: "Business School",
-    major: "Project Management",
-    degreeLevel: "Master's",
-    graduationYear: 2022,
+    school: "Bradley University",
+    major: "Management & Leadership",
+    degreeLevel: "Bachelor's",
+    graduationYear: 2023,
     preferredIndustries: ["Project Management", "Consulting", "Tech Implementation"],
     summary: "Certified project manager with experience delivering complex technology projects across industries.",
     preferences: {
@@ -230,7 +230,7 @@ export const sampleJobseekers = [
   {
     id: 6,
     userId: 106,
-    school: "Creative Arts College",
+    school: "Bradley University",
     major: "Game Design",
     degreeLevel: "Bachelor's",
     graduationYear: 2023,
@@ -266,10 +266,10 @@ export const sampleJobseekers = [
   {
     id: 7,
     userId: 107,
-    school: "Cloud Computing Institute",
-    major: "Cloud Architecture",
-    degreeLevel: "Master's",
-    graduationYear: 2022,
+    school: "Bradley University",
+    major: "Computer Information Systems",
+    degreeLevel: "Bachelor's",
+    graduationYear: 2023,
     preferredIndustries: ["Cloud Services", "DevOps", "System Architecture"],
     summary: "Cloud architect with AWS certification and experience designing scalable infrastructure solutions.",
     preferences: {

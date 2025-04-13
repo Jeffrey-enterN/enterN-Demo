@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
 // Minimum swipe distance required to trigger accept/reject
-const SWIPE_THRESHOLD = 100;
+const SWIPE_THRESHOLD = 80; // Reduced from 100 to make swiping more responsive
 
 interface EmployerCardProps {
   employer: any; // Employer profile with job postings
