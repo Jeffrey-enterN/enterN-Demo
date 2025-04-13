@@ -624,5 +624,97 @@ export const sampleEmployers = [
         salary: "$20 - $25/hr"
       }
     ]
+  },
+  {
+    id: 14,
+    userId: 214,
+    companyName: "Ronald McDonald House Charities of Central Illinois",
+    industry: "Non-Profit",
+    companySize: "10-50",
+    location: "Peoria, IL",
+    website: "https://www.rmhc-centralillinois.org",
+    description: "Ronald McDonald House Charities of Central Illinois provides a home away from home for families of children receiving medical care and supports programs that directly improve the health and well-being of children.",
+    mission: "The mission of Ronald McDonald House Charities is to create, find, and support programs that directly improve the health and well-being of children and their families.",
+    culture: "Our culture is compassionate, supportive, and community-focused. We value empathy, teamwork, and a commitment to making a difference in the lives of families during difficult times.",
+    benefits: [
+      "Competitive nonprofit compensation",
+      "Comprehensive health benefits",
+      "Flexible scheduling options",
+      "Professional development opportunities",
+      "Meaningful work that impacts families in need"
+    ],
+    jobPostings: [
+      {
+        id: 1401,
+        employerId: 14,
+        title: "Volunteer Coordinator",
+        description: "Coordinate volunteer programs and activities to support families staying at Ronald McDonald House.",
+        requirements: "Experience in volunteer management, strong organizational skills, and a compassionate attitude.",
+        employmentType: "FULL_TIME",
+        locationType: "ONSITE",
+        salary: "$45,000 - $55,000"
+      },
+      {
+        id: 1402,
+        employerId: 14,
+        title: "Development Associate",
+        description: "Assist with fundraising efforts, donor relations, and community engagement activities.",
+        requirements: "Experience in nonprofit development, event planning, and relationship building.",
+        employmentType: "FULL_TIME",
+        locationType: "HYBRID",
+        salary: "$40,000 - $50,000"
+      }
+    ]
+  },
+  {
+    id: 15,
+    userId: 215,
+    companyName: "Distillery Labs",
+    industry: "Technology Incubator",
+    companySize: "10-50",
+    location: "Peoria, IL",
+    website: "https://www.distillerylabs.org",
+    description: "Distillery Labs is a technology and innovation hub designed to foster entrepreneurship, support startups, and drive economic growth in the Greater Peoria region.",
+    mission: "We aim to catalyze innovation, cultivate entrepreneurs, and create a vibrant ecosystem that attracts and retains talent in Central Illinois.",
+    culture: "Our entrepreneurial culture is collaborative, innovative, and focused on growth. We encourage risk-taking, creative problem-solving, and community engagement.",
+    benefits: [
+      "Competitive salary with performance incentives",
+      "Flexible work arrangements",
+      "Health and wellness benefits",
+      "Professional development opportunities",
+      "Access to startup ecosystem and networking events"
+    ],
+    jobPostings: [
+      {
+        id: 1501,
+        employerId: 15,
+        title: "Startup Program Manager",
+        description: "Develop and manage programs to support early-stage startups and entrepreneurs in the incubator.",
+        requirements: "Experience with startups, business incubation, and program management in innovation spaces.",
+        employmentType: "FULL_TIME",
+        locationType: "ONSITE",
+        salary: "$55,000 - $70,000"
+      },
+      {
+        id: 1502,
+        employerId: 15,
+        title: "Community Engagement Specialist",
+        description: "Build relationships with local businesses, universities, and community organizations to strengthen the innovation ecosystem.",
+        requirements: "Strong networking skills, experience in community outreach, and knowledge of economic development strategies.",
+        employmentType: "FULL_TIME",
+        locationType: "HYBRID",
+        salary: "$45,000 - $60,000"
+      },
+      {
+        id: 1503,
+        employerId: 15,
+        title: "Marketing & Events Coordinator",
+        description: "Coordinate marketing efforts and organize events to promote the incubator and its startups.",
+        requirements: "Experience in marketing, event planning, and digital media management.",
+        employmentType: "PART_TIME",
+        locationType: "HYBRID",
+        salary: "$20 - $25/hr"
+      }
+    ]
   }
 ];
