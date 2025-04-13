@@ -89,6 +89,9 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
       : "translateX(0) rotate(0)",
     transition: swiping ? "transform 0.3s ease-out" : "none",
     opacity: swiping ? 0 : 1,
+    // Add height transitions for smooth expansion
+    height: showAllPreferences ? 'auto' : undefined,
+    maxHeight: showAllPreferences ? '90vh' : undefined,
   };
 
   // Prevent swiping when viewing expanded preferences or interacting with buttons
@@ -128,8 +131,11 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
 
   return (
     <div
-      className={`relative bg-white rounded-xl shadow-lg overflow-hidden ${showAllPreferences ? 'min-h-[650px] max-h-[90vh]' : ''}`}
-      style={cardStyle}
+      className={`relative bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 ease-in-out ${showAllPreferences ? 'min-h-[650px] max-h-[90vh] overflow-y-auto' : ''}`}
+      style={{
+        ...cardStyle,
+        transitionProperty: 'transform, opacity, max-height, min-height',
+      }}
       onTouchStart={handleTouchStartWithPreventionCheck}
       onTouchMove={handleTouchMoveWithPreventionCheck}
       onTouchEnd={handleTouchEnd}
@@ -183,7 +189,12 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                 variant="ghost" 
                 size="sm"
                 className="text-[#5ce1e6] hover:text-[#0097b1] hover:bg-[rgba(92,225,230,0.1)]"
-                onClick={() => setShowAllPreferences(!showAllPreferences)}
+                onClick={() => {
+                  // Force update with a slight delay to ensure DOM updates properly
+                  setTimeout(() => {
+                    setShowAllPreferences(prev => !prev);
+                  }, 10);
+                }}
               >
                 <span className="mr-1">{showAllPreferences ? "Show Less" : "View All"}</span>
                 {showAllPreferences ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
