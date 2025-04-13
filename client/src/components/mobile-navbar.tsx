@@ -1,5 +1,5 @@
 import { useLocation } from "wouter";
-import { Home, Briefcase, MessageSquare, User, Calendar } from "lucide-react";
+import { Home, Briefcase, MessageSquare, User, Calendar, Building } from "lucide-react";
 
 interface MobileNavbarProps {
   activeItem?: string;
@@ -11,8 +11,8 @@ export function MobileNavbar({ activeItem = "home" }: MobileNavbarProps) {
   // Define navigation items based on user role (to be extended in a real app)
   const navItems = [
     { id: "home", label: "Home", icon: Home, path: "/" },
-    { id: "matches", label: "Matches", icon: Briefcase, path: "/jobseeker/match-feed" },
-    { id: "events", label: "Events", icon: Calendar, path: "/" },
+    { id: "employers", label: "Employers", icon: Building, path: "/jobseeker/employer-feed" },
+    { id: "matches", label: "Candidates", icon: Briefcase, path: "/jobseeker/match-feed" },
     { id: "messages", label: "Messages", icon: MessageSquare, path: "/" },
     { id: "profile", label: "Profile", icon: User, path: "/jobseeker/profile-setup" },
   ];

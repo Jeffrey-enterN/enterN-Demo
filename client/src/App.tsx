@@ -8,9 +8,11 @@ import EmployerMatchFeed from "@/pages/employer/match-feed";
 import JobseekerProfileSetup from "@/pages/jobseeker/profile-setup";
 import JobseekerPreferences from "@/pages/jobseeker/preferences";
 import JobseekerMatchFeed from "@/pages/jobseeker/match-feed";
+import JobseekerEmployerFeed from "@/pages/jobseeker/employer-feed";
 import JobInterest from "@/pages/shared/job-interest";
 import DemoCard from "@/pages/demo-card";
 import DemoMatchFeed from "@/pages/demo-match-feed";
+import DemoEmployerFeed from "@/pages/demo-employer-feed";
 import { AuthProvider } from "@/contexts/auth-context";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -33,6 +35,7 @@ function AppRoutes() {
       <ProtectedRoute path="/jobseeker/profile-setup" component={JobseekerProfileSetup} />
       <ProtectedRoute path="/jobseeker/preferences" component={JobseekerPreferences} />
       <ProtectedRoute path="/jobseeker/match-feed" component={JobseekerMatchFeed} />
+      <ProtectedRoute path="/jobseeker/employer-feed" component={JobseekerEmployerFeed} />
       
       {/* Shared Routes - Protected */}
       <ProtectedRoute path="/job-interest/:matchId" component={JobInterest} />
@@ -40,6 +43,7 @@ function AppRoutes() {
       {/* Demo Routes - Not Protected */}
       <Route path="/demo-card" component={DemoCard} />
       <Route path="/demo-match-feed" component={DemoMatchFeed} />
+      <Route path="/demo-employer-feed" component={DemoEmployerFeed} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
