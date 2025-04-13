@@ -4,6 +4,9 @@ import { Check, X, ChevronDown, Briefcase, Globe, MapPin, Users, Building } from
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
+// Minimum swipe distance required to trigger accept/reject
+const SWIPE_THRESHOLD = 100;
+
 interface EmployerCardProps {
   employer: any; // Employer profile with job postings
   onAccept: () => void;
@@ -13,6 +16,9 @@ interface EmployerCardProps {
 export default function EmployerCard({ employer, onAccept, onReject }: EmployerCardProps) {
   const [showAllJobs, setShowAllJobs] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [offsetX, setOffsetX] = useState(0);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -29,6 +35,74 @@ export default function EmployerCard({ employer, onAccept, onReject }: EmployerC
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [onAccept, onReject]);
+
+  // Handle touch/mouse events for swiping
+  const handlePointerDown = (e: React.PointerEvent) => {
+    setIsDragging(true);
+    setStartX(e.clientX);
+    
+    // Disable scrolling when dragging starts
+    if (cardRef.current) {
+      cardRef.current.style.transition = "none";
+    }
+
+    // Capture pointer to track movement even when leaving the element
+    if (e.pointerId) {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging) return;
+    
+    const currentX = e.clientX;
+    const diffX = currentX - startX;
+    setOffsetX(diffX);
+
+    if (cardRef.current) {
+      cardRef.current.style.transform = `translateX(${diffX}px)`;
+      
+      // Add rotation effect
+      const rotation = diffX * 0.05; // Adjust for desired rotation amount
+      cardRef.current.style.rotate = `${rotation}deg`;
+      
+      // Gradually change opacity as the card moves
+      const opacity = 1 - Math.abs(diffX) / 500;
+      cardRef.current.style.opacity = Math.max(opacity, 0.5).toString();
+    }
+  };
+  
+  const handlePointerUp = (e: React.PointerEvent) => {
+    setIsDragging(false);
+    
+    // Release pointer capture
+    if (e.pointerId) {
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch (err) {
+        // Ignore errors if pointer was already released
+      }
+    }
+    
+    if (cardRef.current) {
+      // Reset transition for smooth animation
+      cardRef.current.style.transition = "transform 0.3s ease, opacity 0.3s ease, rotate 0.3s ease";
+      
+      // Check if swipe was long enough
+      if (offsetX > SWIPE_THRESHOLD) {
+        handleAccept();
+      } else if (offsetX < -SWIPE_THRESHOLD) {
+        handleReject();
+      } else {
+        // Reset the card position if swipe was not enough
+        cardRef.current.style.transform = "translateX(0)";
+        cardRef.current.style.rotate = "0deg";
+        cardRef.current.style.opacity = "1";
+      }
+    }
+    
+    setOffsetX(0);
+  };
 
   const handleAccept = () => {
     if (cardRef.current) {
@@ -53,7 +127,11 @@ export default function EmployerCard({ employer, onAccept, onReject }: EmployerC
   return (
     <div 
       ref={cardRef} 
-      className="relative rounded-xl bg-white shadow-lg overflow-hidden max-w-2xl mx-auto transition-all duration-300 ease-in-out"
+      className="relative rounded-xl bg-white shadow-lg overflow-hidden max-w-2xl mx-auto transition-all duration-300 ease-in-out cursor-grab active:cursor-grabbing"
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
     >
       <div className="flex flex-col h-[80vh] md:h-[600px] overflow-hidden">
         {/* Company Header */}

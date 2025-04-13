@@ -1,5 +1,6 @@
 // Sample data for employer profiles with job postings
 export const sampleEmployers = [
+  // Expanded sample employers to enhance the demo experience
   {
     id: 1,
     userId: 201,
@@ -202,6 +203,149 @@ export const sampleEmployers = [
         employmentType: "FULL_TIME",
         locationType: "HYBRID",
         salary: "$100,000 - $140,000"
+      }
+    ]
+  },
+  {
+    id: 6,
+    userId: 206,
+    companyName: "DataFlow Systems",
+    industry: "Data Analytics",
+    companySize: "50-200",
+    location: "Austin, TX",
+    website: "https://dataflow.example.com",
+    description: "DataFlow Systems helps businesses make data-driven decisions through advanced analytics solutions.",
+    mission: "Our mission is to make data analytics accessible, actionable, and valuable for every organization.",
+    culture: "We maintain a culture of intellectual curiosity, analytical thinking, and continuous learning. We believe in empowering teams to solve complex problems.",
+    benefits: [
+      "Competitive salary with performance bonuses",
+      "Flexible remote work options",
+      "Comprehensive health and financial benefits",
+      "Education and certification reimbursement",
+      "Regular team events and hackathons"
+    ],
+    jobPostings: [
+      {
+        id: 601,
+        employerId: 6,
+        title: "Data Scientist",
+        description: "Apply statistical analysis and machine learning to solve complex business problems.",
+        requirements: "Strong background in statistics, machine learning, and data manipulation with Python or R.",
+        employmentType: "FULL_TIME",
+        locationType: "HYBRID",
+        salary: "$120,000 - $160,000"
+      },
+      {
+        id: 602,
+        employerId: 6,
+        title: "Data Engineer",
+        description: "Build and maintain scalable data pipelines and infrastructure.",
+        requirements: "Experience with data warehousing, ETL processes, and cloud-based data solutions.",
+        employmentType: "FULL_TIME",
+        locationType: "REMOTE",
+        salary: "$110,000 - $150,000"
+      },
+      {
+        id: 603,
+        employerId: 6,
+        title: "Analytics Product Manager",
+        description: "Lead the development of our data analytics products and features.",
+        requirements: "Product management experience with data or analytics products, technical background preferred.",
+        employmentType: "FULL_TIME",
+        locationType: "ONSITE",
+        salary: "$130,000 - $170,000"
+      }
+    ]
+  },
+  {
+    id: 7,
+    userId: 207,
+    companyName: "EduSpark",
+    industry: "Education Technology",
+    companySize: "10-50",
+    location: "Seattle, WA",
+    website: "https://eduspark.example.com",
+    description: "EduSpark is transforming education with innovative learning technologies and platforms.",
+    mission: "We're dedicated to making quality education accessible, engaging, and effective for learners of all ages.",
+    culture: "Our supportive culture values creativity, impact, and continuous learning. We're passionate about education and believe in our potential to make a difference.",
+    benefits: [
+      "Competitive compensation package",
+      "Flexible work arrangements",
+      "Comprehensive health benefits",
+      "Learning and development stipend",
+      "Impact-focused work environment"
+    ],
+    jobPostings: [
+      {
+        id: 701,
+        employerId: 7,
+        title: "Educational Content Developer",
+        description: "Create engaging learning content for our digital education platform.",
+        requirements: "Background in education or instructional design, content creation experience preferred.",
+        employmentType: "FULL_TIME",
+        locationType: "REMOTE",
+        salary: "$70,000 - $90,000"
+      },
+      {
+        id: 702,
+        employerId: 7,
+        title: "Full Stack Developer - EdTech",
+        description: "Build interactive learning features for our education platform.",
+        requirements: "Experience with full stack development, interactive web applications, and ideally EdTech.",
+        employmentType: "FULL_TIME",
+        locationType: "HYBRID",
+        salary: "$100,000 - $130,000"
+      }
+    ]
+  },
+  {
+    id: 8,
+    userId: 208,
+    companyName: "Quantum Robotics",
+    industry: "Robotics & Automation",
+    companySize: "100-300",
+    location: "Denver, CO",
+    website: "https://quantumrobotics.example.com",
+    description: "Quantum Robotics develops next-generation robotic systems for manufacturing and logistics.",
+    mission: "We aim to revolutionize manufacturing and logistics through intelligent robotics and automation solutions.",
+    culture: "Our engineering-driven culture values innovation, technical excellence, and solving complex real-world problems.",
+    benefits: [
+      "Highly competitive salary and equity options",
+      "Flexible work schedule with hybrid options",
+      "Comprehensive benefits package",
+      "Advanced labs and equipment access",
+      "Continuous learning and professional development"
+    ],
+    jobPostings: [
+      {
+        id: 801,
+        employerId: 8,
+        title: "Robotics Engineer",
+        description: "Design and implement robotic systems for industrial applications.",
+        requirements: "Experience in robotics engineering, computer vision, and control systems.",
+        employmentType: "FULL_TIME",
+        locationType: "HYBRID",
+        salary: "$130,000 - $170,000"
+      },
+      {
+        id: 802,
+        employerId: 8,
+        title: "Computer Vision Specialist",
+        description: "Develop vision systems for our robotic platforms.",
+        requirements: "Strong background in computer vision, deep learning, and practical implementation.",
+        employmentType: "FULL_TIME",
+        locationType: "ONSITE",
+        salary: "$140,000 - $180,000"
+      },
+      {
+        id: 803,
+        employerId: 8,
+        title: "ML Operations Engineer",
+        description: "Build infrastructure for deploying and managing ML models in production robotic systems.",
+        requirements: "Experience with MLOps, cloud infrastructure, and production ML deployments.",
+        employmentType: "FULL_TIME",
+        locationType: "HYBRID",
+        salary: "$120,000 - $160,000"
       }
     ]
   }
