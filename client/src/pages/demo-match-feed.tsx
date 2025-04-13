@@ -50,9 +50,8 @@ export default function DemoMatchFeed() {
       // Logic for job fair filter - for demo, show all with Bachelor's or Master's degree
       return jobseeker.degreeLevel.includes("Bachelor") || jobseeker.degreeLevel.includes("Master");
     } else if (activeTab === "local") {
-      // Logic for local candidates - for demo, show all with tech-related majors
-      const techMajors = ["Computer Science", "Data Science", "Cloud Architecture", "Information Security", "Game Design"];
-      return techMajors.some(tech => jobseeker.major.includes(tech));
+      // Logic for local candidates - for demo, show only Bradley University students
+      return jobseeker.school === "Bradley University";
     } else {
       // All candidates
       return true;

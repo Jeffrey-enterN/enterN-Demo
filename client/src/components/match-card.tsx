@@ -93,7 +93,7 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
 
   return (
     <div
-      className={`relative bg-white rounded-xl shadow-lg overflow-hidden ${showAllPreferences ? 'min-h-[650px]' : ''}`}
+      className={`relative bg-white rounded-xl shadow-lg overflow-hidden ${showAllPreferences ? 'min-h-[650px] max-h-[80vh] overflow-y-auto' : ''}`}
       style={cardStyle}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
@@ -227,7 +227,7 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                         <span>Scroll to see more</span>
                         <ChevronDown className="mx-auto mt-1 h-4 w-4 text-gray-400 animate-bounce" />
                       </div>
-                      <div className="space-y-5 max-h-[300px] overflow-y-auto pr-2 pb-28 overscroll-contain" style={{WebkitOverflowScrolling: "touch"}}>
+                      <div className="space-y-5 max-h-[400px] overflow-y-auto pr-2 pb-28 overscroll-contain" style={{WebkitOverflowScrolling: "touch"}}>
                         
                         {/* Mission & Vision Section */}
                         <div className="space-y-3">
