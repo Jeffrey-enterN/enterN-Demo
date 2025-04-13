@@ -26,9 +26,18 @@ export default function DemoEmployerFeed() {
         
         if (activeTab === "local") {
           // Filter to only show Peoria, IL companies
-          filteredEmployers = sampleEmployers.filter(employer => 
+          console.log("Total employers:", sampleEmployers.length);
+          
+          // Debug info for Peoria companies
+          const peoriaEmployers = sampleEmployers.filter(employer => 
             employer.location && employer.location.includes("Peoria, IL")
           );
+          
+          console.log("Peoria employers found:", peoriaEmployers.length);
+          console.log("Peoria employer IDs:", peoriaEmployers.map(e => e.id).join(", "));
+          console.log("Peoria employer names:", peoriaEmployers.map(e => e.companyName).join(", "));
+          
+          filteredEmployers = peoriaEmployers;
         } else if (activeTab === "tech") {
           // Filter to show only tech companies
           filteredEmployers = sampleEmployers.filter(employer => 
