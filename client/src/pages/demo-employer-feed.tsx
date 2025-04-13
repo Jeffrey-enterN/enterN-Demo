@@ -14,6 +14,16 @@ export default function DemoEmployerFeed() {
   const [activeTab, setActiveTab] = useState<string>("all");
   const { toast } = useToast();
 
+  // Debug currentIndex changes
+  useEffect(() => {
+    console.log(`Current index changed to: ${currentIndex}`);
+    if (employers.length > 0 && currentIndex < employers.length) {
+      console.log(`Now showing: ${employers[currentIndex].companyName}`);
+    } else if (currentIndex >= employers.length && employers.length > 0) {
+      console.log(`Reached the end of employers list (${employers.length} total)`);
+    }
+  }, [currentIndex, employers]);
+  
   useEffect(() => {
     // Simulate API fetch
     const fetchEmployers = async () => {
@@ -89,7 +99,16 @@ export default function DemoEmployerFeed() {
   const handleAccept = () => {
     // In a real app, this would call an API to update the match status
     const employer = employers[currentIndex];
-    setMatches({ ...matches, [employer.id]: "INTERESTED" });
+    
+    console.log(`Accepting employer: ${employer.companyName} (ID: ${employer.id})`);
+    console.log(`Current index: ${currentIndex}, Total employers: ${employers.length}`);
+    
+    setMatches(prev => {
+      const newMatches = { ...prev, [employer.id]: "INTERESTED" };
+      console.log("Updated matches:", newMatches);
+      return newMatches;
+    });
+    
     console.log(`Matched with ID ${employer.id}, status: INTERESTED`);
     
     // Show toast notification
@@ -99,14 +118,27 @@ export default function DemoEmployerFeed() {
       className: "bg-green-50 border-green-200",
     });
     
-    // Move to next employer
-    setCurrentIndex(prevIndex => prevIndex + 1);
+    // Move to next employer using function form to guarantee the latest state
+    setCurrentIndex(prevIndex => {
+      const nextIndex = prevIndex + 1;
+      console.log(`Setting index from ${prevIndex} to ${nextIndex}`);
+      return nextIndex;
+    });
   };
 
   const handleReject = () => {
     // In a real app, this would call an API to update the match status
     const employer = employers[currentIndex];
-    setMatches({ ...matches, [employer.id]: "NOT_INTERESTED" });
+    
+    console.log(`Rejecting employer: ${employer.companyName} (ID: ${employer.id})`);
+    console.log(`Current index: ${currentIndex}, Total employers: ${employers.length}`);
+    
+    setMatches(prev => {
+      const newMatches = { ...prev, [employer.id]: "NOT_INTERESTED" };
+      console.log("Updated matches:", newMatches);
+      return newMatches;
+    });
+    
     console.log(`Matched with ID ${employer.id}, status: NOT_INTERESTED`);
     
     // Show toast notification
@@ -116,8 +148,12 @@ export default function DemoEmployerFeed() {
       variant: "destructive",
     });
     
-    // Move to next employer
-    setCurrentIndex(prevIndex => prevIndex + 1);
+    // Move to next employer using function form to guarantee the latest state
+    setCurrentIndex(prevIndex => {
+      const nextIndex = prevIndex + 1;
+      console.log(`Setting index from ${prevIndex} to ${nextIndex}`);
+      return nextIndex;
+    });
   };
 
   const currentEmployer = employers[currentIndex];
@@ -209,6 +245,7 @@ export default function DemoEmployerFeed() {
             </div>
           ) : (
             <EmployerCard 
+              key={`employer-${currentEmployer.id}`} 
               employer={currentEmployer} 
               onAccept={handleAccept} 
               onReject={handleReject} 
