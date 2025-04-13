@@ -626,8 +626,8 @@ export const sampleEmployers = [
     ]
   },
   {
-    id: 14,
-    userId: 214,
+    id: 16,
+    userId: 216,
     companyName: "Ronald McDonald House Charities of Central Illinois",
     industry: "Non-Profit",
     companySize: "10-50",
@@ -645,8 +645,8 @@ export const sampleEmployers = [
     ],
     jobPostings: [
       {
-        id: 1401,
-        employerId: 14,
+        id: 1601,
+        employerId: 16,
         title: "Volunteer Coordinator",
         description: "Coordinate volunteer programs and activities to support families staying at Ronald McDonald House.",
         requirements: "Experience in volunteer management, strong organizational skills, and a compassionate attitude.",
@@ -655,8 +655,8 @@ export const sampleEmployers = [
         salary: "$45,000 - $55,000"
       },
       {
-        id: 1402,
-        employerId: 14,
+        id: 1602,
+        employerId: 16,
         title: "Development Associate",
         description: "Assist with fundraising efforts, donor relations, and community engagement activities.",
         requirements: "Experience in nonprofit development, event planning, and relationship building.",

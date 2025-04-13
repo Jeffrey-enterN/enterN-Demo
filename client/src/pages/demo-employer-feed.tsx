@@ -49,7 +49,27 @@ export default function DemoEmployerFeed() {
           );
         }
         
-        setEmployers(filteredEmployers);
+        // Additional debugging for final list
+        console.log("Final filtered list:", filteredEmployers.map(e => `${e.id}: ${e.companyName}`).join(", "));
+        
+        // Ensure we don't have duplicate IDs which could cause rendering issues
+        const uniqueEmployers = filteredEmployers.reduce((acc, current) => {
+          const exists = acc.find(item => item.id === current.id);
+          if (!exists) {
+            acc.push(current);
+          } else {
+            console.warn(`Duplicate employer ID found: ${current.id} (${current.companyName})`);
+          }
+          return acc;
+        }, [] as typeof filteredEmployers);
+        
+        if (uniqueEmployers.length !== filteredEmployers.length) {
+          console.warn(`Removed ${filteredEmployers.length - uniqueEmployers.length} duplicate employers`);
+        }
+        
+        console.log("Final employer count:", uniqueEmployers.length);
+        
+        setEmployers(uniqueEmployers);
         setCurrentIndex(0); // Reset the index when changing filters
         setLoading(false);
       } catch (error) {
@@ -141,10 +161,15 @@ export default function DemoEmployerFeed() {
             </TabsList>
           </Tabs>
           <p className="text-sm text-center text-gray-500">
-            {activeTab === "local" ? "Showing employers in Peoria, IL" : 
-             activeTab === "tech" ? "Showing tech companies" : 
-             "Showing all employers"}
+            {activeTab === "local" ? `Showing employers in Peoria, IL (${employers.length} total)` : 
+             activeTab === "tech" ? `Showing tech companies (${employers.length} total)` : 
+             `Showing all employers (${employers.length} total)`}
           </p>
+          {!loading && employers.length > 0 && currentIndex < employers.length && (
+            <p className="text-xs text-center text-[#0097b1] mt-1">
+              Viewing company {currentIndex + 1} of {employers.length}: {employers[currentIndex].companyName}
+            </p>
+          )}
         </div>
         
         <div className="min-h-[600px] flex items-center justify-center">
