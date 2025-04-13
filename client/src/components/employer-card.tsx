@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Check, X, ChevronDown, Briefcase, Globe, MapPin, Users, Building } from "lucide-react";
+import { Check, X, ChevronDown, ChevronUp, Briefcase, Globe, MapPin, Users, Building } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
@@ -127,7 +127,7 @@ export default function EmployerCard({ employer, onAccept, onReject }: EmployerC
   return (
     <div 
       ref={cardRef} 
-      className="relative rounded-xl bg-white shadow-lg overflow-hidden max-w-2xl mx-auto transition-all duration-300 ease-in-out cursor-grab active:cursor-grabbing"
+      className={`relative rounded-xl bg-white shadow-lg overflow-hidden max-w-2xl mx-auto transition-all duration-300 ease-in-out cursor-grab active:cursor-grabbing ${showAllJobs ? 'min-h-[650px] max-h-[90vh]' : ''}`}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
@@ -168,7 +168,7 @@ export default function EmployerCard({ employer, onAccept, onReject }: EmployerC
         </div>
 
         {/* Company Details */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 pb-24">
           <div className="space-y-4">
             <div>
               <h3 className="text-lg font-semibold text-gray-800">About</h3>
@@ -196,17 +196,22 @@ export default function EmployerCard({ employer, onAccept, onReject }: EmployerC
             
             <div>
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-800">Job Openings</h3>
+                <h3 className={`text-lg font-semibold ${showAllJobs ? 'text-[#0097b1]' : 'text-gray-800'} transition-colors`}>
+                  Job Openings {showAllJobs && <span className="text-sm font-normal">({employer.jobPostings.length})</span>}
+                </h3>
                 <Button 
                   onClick={() => setShowAllJobs(!showAllJobs)} 
                   variant="ghost" 
-                  className="text-xs text-[#5ce1e6] hover:text-[#0097b1]"
+                  size="sm"
+                  className="text-[#5ce1e6] hover:text-[#0097b1] hover:bg-[rgba(92,225,230,0.1)]"
                 >
-                  {showAllJobs ? "Show less" : "Show all"}
+                  <span className="mr-1">{showAllJobs ? "Show Less" : "View All"}</span>
+                  {showAllJobs ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </Button>
               </div>
               
-              <div className="mt-2 space-y-4">
+              <div className={`mt-2 space-y-4 ${showAllJobs ? 'max-h-[400px] overflow-y-auto pr-2 pb-10 rounded-lg shadow-inner p-4 overscroll-contain' : ''}`} 
+                style={showAllJobs ? {WebkitOverflowScrolling: "touch", scrollBehavior: "smooth", backgroundColor: "rgba(92,225,230,0.03)"} : {}}>
                 {employer.jobPostings
                   .slice(0, showAllJobs ? undefined : 2)
                   .map((job: any) => (
@@ -239,11 +244,15 @@ export default function EmployerCard({ employer, onAccept, onReject }: EmployerC
                   ))}
                 
                 {!showAllJobs && employer.jobPostings.length > 2 && (
-                  <div className="text-center text-sm text-gray-500">
+                  <div className="text-center text-sm text-gray-500 mt-4">
+                    <div className="text-xs text-center text-gray-500 mb-2">
+                      <span>Click to view all job openings</span>
+                      <ChevronDown className="mx-auto mt-1 h-4 w-4 text-gray-400 animate-bounce" />
+                    </div>
                     <Button 
                       onClick={() => setShowAllJobs(true)} 
                       variant="ghost" 
-                      className="flex items-center text-[#5ce1e6] hover:text-[#0097b1]"
+                      className="flex items-center text-[#5ce1e6] hover:text-[#0097b1] hover:bg-[rgba(92,225,230,0.1)]"
                     >
                       See {employer.jobPostings.length - 2} more job openings
                       <ChevronDown className="ml-1 h-4 w-4" />
