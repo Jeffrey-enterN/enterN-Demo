@@ -302,8 +302,8 @@ export const sampleJobseekers = [
   {
     id: 8,
     userId: 108,
-    school: "Cybersecurity Academy",
-    major: "Information Security",
+    school: "Bradley University",
+    major: "Cybersecurity",
     degreeLevel: "Bachelor's",
     graduationYear: 2023,
     preferredIndustries: ["Cybersecurity", "FinTech", "Healthcare Tech"],
