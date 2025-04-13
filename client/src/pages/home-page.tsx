@@ -234,15 +234,20 @@ export default function HomePage() {
 
           {/* Demo Buttons - For testing purposes */}
           <div className="mb-8 text-center space-y-4">
+            <h3 className="text-xl font-medium text-gray-900 mb-4">Try our matching features</h3>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4">
               <Button 
                 variant="outline"
                 size="lg"
-                onClick={() => setLocation("/demo-card")}
-                className="bg-white border-2 shadow-md transition-all hover:shadow-lg"
+                onClick={() => setLocation("/demo-employer-feed")}
+                className="bg-white border-2 shadow-md transition-all hover:shadow-lg relative"
                 style={{borderImage: 'linear-gradient(to right, #5ce1e6, #ff66c4) 1'}}
               >
-                View Match Card Demo
+                <Building className="h-4 w-4 mr-2" style={{color: "#5ce1e6"}} />
+                <div>
+                  <span className="block">Jobseeker View</span>
+                  <span className="text-xs block text-gray-500">Swipe on employer profiles</span>
+                </div>
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
               
@@ -253,7 +258,11 @@ export default function HomePage() {
                 className="bg-white border-2 shadow-md transition-all hover:shadow-lg"
                 style={{borderImage: 'linear-gradient(to right, #5ce1e6, #ff66c4) 1'}}
               >
-                View Match Feed Demo
+                <User className="h-4 w-4 mr-2" style={{color: "#5ce1e6"}} />
+                <div>
+                  <span className="block">Employer View</span>
+                  <span className="text-xs block text-gray-500">Swipe on candidate profiles</span>
+                </div>
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
             </div>
