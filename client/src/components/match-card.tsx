@@ -159,9 +159,10 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
               {/* Always display key preferences */}
               {profile.preferences.preferences && (
                 <>
-                  {/* Remote Work Preference */}
-                  {profile.preferences.preferences.remoteWork && (
+                  {/* Work Environment Preference - Remote vs Office */}
+                  {profile.preferences.preferences.officeVsRemote && (
                     <div>
+                      <div className="text-sm font-medium text-gray-700 mb-1">Office vs Remote</div>
                       <div className="flex justify-between text-xs text-gray-500 mb-1">
                         <span>In-office</span>
                         <span>Fully Remote</span>
@@ -170,7 +171,7 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                         <div 
                           className="h-2 rounded-full" 
                           style={{ 
-                            width: `${(profile.preferences.preferences.remoteWork / 10) * 100}%`,
+                            width: `${(profile.preferences.preferences.officeVsRemote / 10) * 100}%`,
                             background: "#5ce1e6"
                           }}
                         ></div>
@@ -178,18 +179,19 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                     </div>
                   )}
                   
-                  {/* Organization Size Preference */}
-                  {profile.preferences.preferences.organizationSize && (
-                    <div>
+                  {/* Work Style Preference */}
+                  {profile.preferences.preferences.structureVsAmbiguity && (
+                    <div className="mt-3">
+                      <div className="text-sm font-medium text-gray-700 mb-1">Structure vs Ambiguity</div>
                       <div className="flex justify-between text-xs text-gray-500 mb-1">
-                        <span>Small Startup</span>
-                        <span>Large Enterprise</span>
+                        <span>Prefers Structure</span>
+                        <span>Thrives in Ambiguity</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
                           className="h-2 rounded-full" 
                           style={{ 
-                            width: `${(profile.preferences.preferences.organizationSize / 10) * 100}%`,
+                            width: `${(profile.preferences.preferences.structureVsAmbiguity / 10) * 100}%`,
                             background: "#5ce1e6"
                           }}
                         ></div>
@@ -197,18 +199,19 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                     </div>
                   )}
                   
-                  {/* Growth Trajectory Preference */}
-                  {profile.preferences.preferences.growthTrajectory && (
-                    <div>
+                  {/* Mission & Vision Preference */}
+                  {profile.preferences.preferences.purposeVsProfit && (
+                    <div className="mt-3">
+                      <div className="text-sm font-medium text-gray-700 mb-1">Purpose vs Profit</div>
                       <div className="flex justify-between text-xs text-gray-500 mb-1">
-                        <span>Specialist/Expert</span>
-                        <span>Management Track</span>
+                        <span>Purpose-Driven Impact</span>
+                        <span>Profit-Driven Focus</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div 
                           className="h-2 rounded-full" 
                           style={{ 
-                            width: `${(profile.preferences.preferences.growthTrajectory / 10) * 100}%`,
+                            width: `${(profile.preferences.preferences.purposeVsProfit / 10) * 100}%`,
                             background: "#5ce1e6"
                           }}
                         ></div>
@@ -226,41 +229,38 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                       </div>
                       <div className="space-y-5 max-h-[300px] overflow-y-auto pr-2 pb-28 overscroll-contain" style={{WebkitOverflowScrolling: "touch"}}>
                         
-                        {/* Workplace Environment Section */}
+                        {/* Mission & Vision Section */}
                         <div className="space-y-3">
-                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Workplace Environment</h6>
+                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Mission & Vision</h6>
                           {Object.entries(profile.preferences.preferences)
                             .filter(([key]) => 
-                              ["remoteWork", "workStructure", "openOffice", "dressCasual", "workFromAnywhere", "flexibleHours"]
+                              ["purposeVsProfit", "innovationVsTradition", "diversityVsPerformance", "cooperativeVsCompetitive", "socialResponsibilityVsPragmatism"]
                               .includes(key))
                             .map(([key, value]) => {
-                              if (key === 'remoteWork') return null; // Skip, already displayed above
+                              if (key === 'purposeVsProfit') return null; // Skip, already displayed above
                               
                               // Create human-readable labels from camelCase
                               const label = key
                                 .replace(/([A-Z])/g, ' $1')
                                 .replace(/^./, str => str.toUpperCase());
                                 
-                              // Generate opposites for slider labels
-                              let leftLabel = "Low";
-                              let rightLabel = "High";
+                              // Generate opposites for slider labels based on actual form
+                              let leftLabel = "";
+                              let rightLabel = "";
                               
-                              // Custom labels for workplace environment
-                              if (key === "workStructure") {
-                                leftLabel = "Structured";
-                                rightLabel = "Flexible";  
-                              } else if (key === "openOffice") {
-                                leftLabel = "Private";
-                                rightLabel = "Open Space";
-                              } else if (key === "dressCasual") {
-                                leftLabel = "Formal";
-                                rightLabel = "Casual";
-                              } else if (key === "workFromAnywhere") {
-                                leftLabel = "Fixed Location";
-                                rightLabel = "Anywhere";
-                              } else if (key === "flexibleHours") {
-                                leftLabel = "Fixed Hours";
-                                rightLabel = "Flexible";
+                              // Custom labels based on the jobseeker form
+                              if (key === "innovationVsTradition") {
+                                leftLabel = "Innovation & Disruption";
+                                rightLabel = "Tradition & Stability";
+                              } else if (key === "diversityVsPerformance") {
+                                leftLabel = "Diversity & Inclusion";
+                                rightLabel = "Performance-First Culture";
+                              } else if (key === "cooperativeVsCompetitive") {
+                                leftLabel = "Cooperative & Supportive";
+                                rightLabel = "Highly Competitive";
+                              } else if (key === "socialResponsibilityVsPragmatism") {
+                                leftLabel = "Social Responsibility";
+                                rightLabel = "Business Pragmatism";
                               }
                               
                               return (
@@ -285,30 +285,38 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                           }
                         </div>
                         
-                        {/* Company Characteristics Section */}
+                        {/* Work Style Preferences Section */}
                         <div className="space-y-3">
-                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Company Characteristics</h6>
+                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Work Style Preferences</h6>
                           {Object.entries(profile.preferences.preferences)
                             .filter(([key]) => 
-                              ["organizationSize", "growthTrajectory", "innovationFocus", "companyStability", 
-                              "socialImpact", "environmentalFocus", "diversityCommitment", "internationalPresence", "companyAge"]
+                              ["logicalVsIntuitive", "structureVsAmbiguity", "focusVsMultitasking", "deadlinesVsFlexibility", "planningVsAdaptability"]
                               .includes(key))
                             .map(([key, value]) => {
-                              if (key === 'organizationSize' || key === 'growthTrajectory') return null; // Skip, already displayed above
+                              if (key === 'structureVsAmbiguity') return null; // Skip, already displayed above
                               
                               // Create human-readable labels from camelCase
                               const label = key
                                 .replace(/([A-Z])/g, ' $1')
                                 .replace(/^./, str => str.toUpperCase());
                                 
-                              // Generate opposites for slider labels
-                              let leftLabel = "Low";
-                              let rightLabel = "High";
+                              // Generate opposites for slider labels based on actual form
+                              let leftLabel = "";
+                              let rightLabel = "";
                               
-                              // Custom labels for company characteristics
-                              if (key === "companyAge") {
-                                leftLabel = "Startup";
-                                rightLabel = "Established";
+                              // Custom labels based on the jobseeker form
+                              if (key === "logicalVsIntuitive") {
+                                leftLabel = "Logical Decision-Making";
+                                rightLabel = "Intuitive Decision-Making";
+                              } else if (key === "focusVsMultitasking") {
+                                leftLabel = "Deep Focus";
+                                rightLabel = "Multitasking";
+                              } else if (key === "deadlinesVsFlexibility") {
+                                leftLabel = "Strict Deadlines";
+                                rightLabel = "Flexible Timelines";
+                              } else if (key === "planningVsAdaptability") {
+                                leftLabel = "Detailed Planning";
+                                rightLabel = "Adaptability";
                               }
                               
                               return (
@@ -333,13 +341,12 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                           }
                         </div>
                         
-                        {/* Team & Management Section */}
+                        {/* Preferred Style for Supervisor Section */}
                         <div className="space-y-3">
-                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Team & Management</h6>
+                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Preferred Style for Supervisor</h6>
                           {Object.entries(profile.preferences.preferences)
                             .filter(([key]) => 
-                              ["communicationStyle", "feedbackFrequency", "decisionMaking", "managementStyle", 
-                              "teamSize", "crossFunctionalWork", "mentorshipAccess", "autonomyLevel", "teamDynamics"]
+                              ["handsOnVsHandsOff", "directVsDiplomatic", "professionalVsCasual", "frequentVsInfrequentFeedback", "fixedVsFlexibleHours"]
                               .includes(key))
                             .map(([key, value]) => {
                               // Create human-readable labels from camelCase
@@ -347,29 +354,26 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                                 .replace(/([A-Z])/g, ' $1')
                                 .replace(/^./, str => str.toUpperCase());
                                 
-                              // Generate opposites for slider labels
-                              let leftLabel = "Low";
-                              let rightLabel = "High";
+                              // Generate opposites for slider labels based on actual form
+                              let leftLabel = "";
+                              let rightLabel = "";
                               
-                              // Custom labels for team & management
-                              if (key === "communicationStyle") {
-                                leftLabel = "Direct";
-                                rightLabel = "Diplomatic";
-                              } else if (key === "decisionMaking") {
-                                leftLabel = "Consensus";
-                                rightLabel = "Decisive";
-                              } else if (key === "managementStyle") {
-                                leftLabel = "Hands-off";
-                                rightLabel = "Involved";
-                              } else if (key === "teamSize") {
-                                leftLabel = "Small";
-                                rightLabel = "Large";
-                              } else if (key === "teamDynamics") {
-                                leftLabel = "Individual";
-                                rightLabel = "Team-based";
-                              } else if (key === "autonomyLevel") {
-                                leftLabel = "Directed";
-                                rightLabel = "Autonomous";
+                              // Custom labels based on the jobseeker form
+                              if (key === "handsOnVsHandsOff") {
+                                leftLabel = "Hands-On Guidance";
+                                rightLabel = "Hands-Off Autonomy";
+                              } else if (key === "directVsDiplomatic") {
+                                leftLabel = "Direct Feedback";
+                                rightLabel = "Diplomatic Approach";
+                              } else if (key === "professionalVsCasual") {
+                                leftLabel = "Professional Formality";
+                                rightLabel = "Casual Informality";
+                              } else if (key === "frequentVsInfrequentFeedback") {
+                                leftLabel = "Frequent Check-ins";
+                                rightLabel = "Infrequent Check-ins";
+                              } else if (key === "fixedVsFlexibleHours") {
+                                leftLabel = "Fixed Work Hours";
+                                rightLabel = "Flexible Work Hours";
                               }
                               
                               return (
@@ -394,29 +398,38 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                           }
                         </div>
                         
-                        {/* Professional Development Section */}
+                        {/* Preferred Work Environment Section */}
                         <div className="space-y-3">
-                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Professional Development</h6>
+                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Preferred Work Environment</h6>
                           {Object.entries(profile.preferences.preferences)
                             .filter(([key]) => 
-                              ["learningOpportunities", "careerAdvancement", "performanceRecognition", 
-                              "skillDevelopment", "industryNetworking", "certificationSupport", 
-                              "conferencesSupport", "continuousLearning", "learningStyle"]
+                              ["officeVsRemote", "openVsEnclosed", "formalVsInformal", "quietVsEnergetic", "smallTeamVsLargeTeam"]
                               .includes(key))
                             .map(([key, value]) => {
+                              if (key === 'officeVsRemote') return null; // Skip, already displayed above
+                              
                               // Create human-readable labels from camelCase
                               const label = key
                                 .replace(/([A-Z])/g, ' $1')
                                 .replace(/^./, str => str.toUpperCase());
                                 
-                              // Generate opposites for slider labels
-                              let leftLabel = "Low";
-                              let rightLabel = "High";
+                              // Generate opposites for slider labels based on actual form
+                              let leftLabel = "";
+                              let rightLabel = "";
                               
-                              // Custom labels
-                              if (key === "learningStyle") {
-                                leftLabel = "Independent";
-                                rightLabel = "Collaborative";
+                              // Custom labels based on the jobseeker form
+                              if (key === "openVsEnclosed") {
+                                leftLabel = "Open Floor Plan";
+                                rightLabel = "Private Offices";
+                              } else if (key === "formalVsInformal") {
+                                leftLabel = "Formal Atmosphere";
+                                rightLabel = "Informal Culture";
+                              } else if (key === "quietVsEnergetic") {
+                                leftLabel = "Quiet Environment";
+                                rightLabel = "Energetic Atmosphere";
+                              } else if (key === "smallTeamVsLargeTeam") {
+                                leftLabel = "Small Team";
+                                rightLabel = "Large Team";
                               }
                               
                               return (
@@ -441,13 +454,13 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                           }
                         </div>
                         
-                        {/* Compensation & Benefits Section */}
+                        {/* Preferred Collaboration Styles Section */}
                         <div className="space-y-3">
-                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Compensation & Benefits</h6>
+                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Preferred Collaboration Styles</h6>
                           {Object.entries(profile.preferences.preferences)
                             .filter(([key]) => 
-                              ["compensationPreference", "equityVsSalary", "benefitsPackage", "retirementBenefits", 
-                              "healthWellnessFocus", "paidTimeOff", "parentalLeave", "tuitionReimbursement"]
+                              ["independentVsCollaborative", "specialistVsGeneralist", "writtenVsVerbalCommunication", 
+                              "projectVsTaskFocus", "leaderVsSupporter"]
                               .includes(key))
                             .map(([key, value]) => {
                               // Create human-readable labels from camelCase
@@ -455,14 +468,26 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                                 .replace(/([A-Z])/g, ' $1')
                                 .replace(/^./, str => str.toUpperCase());
                                 
-                              // Generate opposites for slider labels
-                              let leftLabel = "Low";
-                              let rightLabel = "High";
+                              // Generate opposites for slider labels based on actual form
+                              let leftLabel = "";
+                              let rightLabel = "";
                               
-                              // Custom labels
-                              if (key === "equityVsSalary") {
-                                leftLabel = "Salary";
-                                rightLabel = "Equity";
+                              // Custom labels based on the jobseeker form
+                              if (key === "independentVsCollaborative") {
+                                leftLabel = "Independent Work";
+                                rightLabel = "Collaborative Work";
+                              } else if (key === "specialistVsGeneralist") {
+                                leftLabel = "Specialist Focus";
+                                rightLabel = "Generalist Approach";
+                              } else if (key === "writtenVsVerbalCommunication") {
+                                leftLabel = "Written Communication";
+                                rightLabel = "Verbal Communication";
+                              } else if (key === "projectVsTaskFocus") {
+                                leftLabel = "Project-Based Work";
+                                rightLabel = "Task-Based Work";
+                              } else if (key === "leaderVsSupporter") {
+                                leftLabel = "Leader Role";
+                                rightLabel = "Supporter Role";
                               }
                               
                               return (
@@ -487,14 +512,13 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                           }
                         </div>
                         
-                        {/* Work Dynamics Section */}
+                        {/* Growth & Development Goals Section */}
                         <div className="space-y-3">
-                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Work Dynamics</h6>
+                          <h6 className="font-medium text-gray-800 border-l-2 pl-2" style={{borderColor: "#5ce1e6"}}>Growth & Development Goals</h6>
                           {Object.entries(profile.preferences.preferences)
                             .filter(([key]) => 
-                              ["riskTolerance", "travelRequirements", "projectVariety", "deadlinePressure", 
-                              "customerInteraction", "workIndependence", "mentorshipImportance", "recognitionStyle",
-                              "problemSolvingApproach", "paceOfWork", "adaptabilityRequirement"]
+                              ["technicalVsLeadership", "depthVsBreadth", "onTheJobVsFormalTraining", 
+                              "mentorshipVsIndependentGrowth", "internalVsExternalPrograms"]
                               .includes(key))
                             .map(([key, value]) => {
                               // Create human-readable labels from camelCase
@@ -502,29 +526,26 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
                                 .replace(/([A-Z])/g, ' $1')
                                 .replace(/^./, str => str.toUpperCase());
                                 
-                              // Generate opposites for slider labels
-                              let leftLabel = "Low";
-                              let rightLabel = "High";
+                              // Generate opposites for slider labels based on actual form
+                              let leftLabel = "";
+                              let rightLabel = "";
                               
-                              // Custom labels for work dynamics
-                              if (key === "riskTolerance") {
-                                leftLabel = "Risk-Averse";
-                                rightLabel = "Risk-Taking";
-                              } else if (key === "deadlinePressure") {
-                                leftLabel = "Relaxed";
-                                rightLabel = "Deadline-Driven";
-                              } else if (key === "workIndependence") {
-                                leftLabel = "Collaborative";
-                                rightLabel = "Independent";
-                              } else if (key === "recognitionStyle") {
-                                leftLabel = "Private";
-                                rightLabel = "Public";
-                              } else if (key === "problemSolvingApproach") {
-                                leftLabel = "Analytical";
-                                rightLabel = "Creative";
-                              } else if (key === "paceOfWork") {
-                                leftLabel = "Measured";
-                                rightLabel = "Fast-Paced";
+                              // Custom labels based on the jobseeker form
+                              if (key === "technicalVsLeadership") {
+                                leftLabel = "Technical Path";
+                                rightLabel = "Leadership Path";
+                              } else if (key === "depthVsBreadth") {
+                                leftLabel = "Depth in Specialty";
+                                rightLabel = "Breadth of Knowledge";
+                              } else if (key === "onTheJobVsFormalTraining") {
+                                leftLabel = "On-the-job Learning";
+                                rightLabel = "Formal Training";
+                              } else if (key === "mentorshipVsIndependentGrowth") {
+                                leftLabel = "Mentorship";
+                                rightLabel = "Independent Growth";
+                              } else if (key === "internalVsExternalPrograms") {
+                                leftLabel = "Internal Programs";
+                                rightLabel = "External Programs";
                               }
                               
                               return (

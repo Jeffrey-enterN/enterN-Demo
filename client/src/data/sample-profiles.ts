@@ -13,65 +13,47 @@ export const sampleJobseekers = [
       id: 1,
       jobseekerId: 1,
       preferences: {
-        // Workplace Environment
-        remoteWork: 8,
-        organizationSize: 3, 
-        workLifeBalance: 9,
-        workStructure: 4,
-        openOffice: 7,
-        dressCasual: 9,
-        workFromAnywhere: 8,
-        flexibleHours: 9,
+        // Mission & Vision
+        purposeVsProfit: 4,
+        innovationVsTradition: 8,
+        diversityVsPerformance: 6,
+        cooperativeVsCompetitive: 3,
+        socialResponsibilityVsPragmatism: 6,
         
-        // Company Characteristics  
-        growthTrajectory: 6,
-        innovationFocus: 9,
-        companyStability: 6,
-        socialImpact: 7,
-        environmentalFocus: 8,
-        diversityCommitment: 9,
-        internationalPresence: 4,
-        companyAge: 3,
+        // Work Style Preferences
+        logicalVsIntuitive: 7,
+        structureVsAmbiguity: 5,
+        focusVsMultitasking: 4,
+        deadlinesVsFlexibility: 6,
+        planningVsAdaptability: 7,
         
-        // Team & Management
-        communicationStyle: 5,
-        feedbackFrequency: 8,
-        decisionMaking: 7,
-        managementStyle: 6,
-        teamSize: 5,
-        crossFunctionalWork: 8,
-        mentorshipAccess: 9,
-        autonomyLevel: 7,
+        // Preferred Style for Supervisor
+        handsOnVsHandsOff: 4,
+        directVsDiplomatic: 6,
+        professionalVsCasual: 7,
+        frequentVsInfrequentFeedback: 8,
+        fixedVsFlexibleHours: 9,
         
-        // Professional Development
-        learningOpportunities: 9,
-        careerAdvancement: 8,
-        performanceRecognition: 7,
-        skillDevelopment: 9,
-        industryNetworking: 6,
-        certificationSupport: 8,
-        conferencesSupport: 7,
-        continuousLearning: 9,
+        // Preferred Work Environment
+        officeVsRemote: 8,
+        openVsEnclosed: 6,
+        formalVsInformal: 7,
+        quietVsEnergetic: 5,
+        smallTeamVsLargeTeam: 4,
         
-        // Compensation & Benefits
-        compensationPreference: 7,
-        equityVsSalary: 6,
-        benefitsPackage: 8,
-        retirementBenefits: 7,
-        healthWellnessFocus: 8,
-        paidTimeOff: 9,
-        parentalLeave: 8,
-        tuitionReimbursement: 7,
+        // Preferred Collaboration Styles
+        independentVsCollaborative: 6,
+        specialistVsGeneralist: 7,
+        writtenVsVerbalCommunication: 5,
+        projectVsTaskFocus: 6,
+        leaderVsSupporter: 4,
         
-        // Work Dynamics
-        riskTolerance: 4,
-        teamDynamics: 8,
-        learningStyle: 7,
-        travelRequirements: 3,
-        projectVariety: 8,
-        deadlinePressure: 6,
-        customerInteraction: 5,
-        workIndependence: 7,
+        // Growth & Development Goals
+        technicalVsLeadership: 7,
+        depthVsBreadth: 8,
+        onTheJobVsFormalTraining: 6,
+        mentorshipVsIndependentGrowth: 7,
+        internalVsExternalPrograms: 5,
         mentorshipImportance: 8,
         recognitionStyle: 6,
         problemSolvingApproach: 8,
@@ -93,26 +75,47 @@ export const sampleJobseekers = [
       id: 2,
       jobseekerId: 2,
       preferences: {
-        remoteWork: 9,
-        organizationSize: 2,
-        growthTrajectory: 5,
-        workLifeBalance: 8,
-        communicationStyle: 7,
-        feedbackFrequency: 9,
-        decisionMaking: 6,
-        riskTolerance: 7,
-        teamDynamics: 9,
-        learningStyle: 6,
-        workStructure: 3,
-        innovationFocus: 9,
-        companyStability: 4,
-        travelRequirements: 5,
-        compensationPreference: 6,
-        mentorshipImportance: 7,
-        recognitionStyle: 8,
-        problemSolvingApproach: 7,
-        paceOfWork: 6,
-        adaptabilityRequirement: 9
+        // Mission & Vision
+        purposeVsProfit: 7,
+        innovationVsTradition: 9,
+        diversityVsPerformance: 8,
+        cooperativeVsCompetitive: 2,
+        socialResponsibilityVsPragmatism: 7,
+        
+        // Work Style Preferences
+        logicalVsIntuitive: 8,
+        structureVsAmbiguity: 9,
+        focusVsMultitasking: 3,
+        deadlinesVsFlexibility: 6,
+        planningVsAdaptability: 8,
+        
+        // Preferred Style for Supervisor
+        handsOnVsHandsOff: 8,
+        directVsDiplomatic: 5,
+        professionalVsCasual: 8,
+        frequentVsInfrequentFeedback: 9,
+        fixedVsFlexibleHours: 7,
+        
+        // Preferred Work Environment
+        officeVsRemote: 9,
+        openVsEnclosed: 8,
+        formalVsInformal: 8,
+        quietVsEnergetic: 4,
+        smallTeamVsLargeTeam: 2,
+        
+        // Preferred Collaboration Styles
+        independentVsCollaborative: 4,
+        specialistVsGeneralist: 3,
+        writtenVsVerbalCommunication: 7,
+        projectVsTaskFocus: 8,
+        leaderVsSupporter: 3,
+        
+        // Growth & Development Goals
+        technicalVsLeadership: 4,
+        depthVsBreadth: 3,
+        onTheJobVsFormalTraining: 5,
+        mentorshipVsIndependentGrowth: 7,
+        internalVsExternalPrograms: 8
       }
     }
   },
