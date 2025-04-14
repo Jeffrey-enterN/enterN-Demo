@@ -319,6 +319,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Message Routes
+  app.post("/api/messages/:matchId", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      
+      const matchId = parseInt(req.params.matchId);
+      const { content } = req.body;
+      
+      // Verify that the user is a part of this match
+      const userIsPartOfMatch = await storage.verifyUserInMatch(req.user.id, matchId);
+      if (!userIsPartOfMatch) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      const message = await storage.createMessage({
+        matchId,
+        userId: req.user.id,
+        content,
+      });
+      
+      res.status(201).json(message);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/messages/:matchId", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      
+      const matchId = parseInt(req.params.matchId);
+      
+      // Verify that the user is a part of this match
+      const userIsPartOfMatch = await storage.verifyUserInMatch(req.user.id, matchId);
+      if (!userIsPartOfMatch) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      const messages = await storage.getMessagesByMatchId(matchId);
+      res.json(messages);
+    } catch (error) {
+      next(error);
+    }
+  });
+
   // Create HTTP server
   const httpServer = createServer(app);
 

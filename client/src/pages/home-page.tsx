@@ -308,14 +308,25 @@ export default function HomePage() {
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
             ) : user?.role === "employer" ? (
-              <Button 
-                size="lg" 
-                variant="secondary" 
-                onClick={() => setLocation("/employer/profile-setup")}
-              >
-                Complete Your Profile
-                <ArrowRight className="h-4 w-4 ml-2" />
-              </Button>
+              <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+                <Button 
+                  size="lg" 
+                  variant="secondary" 
+                  onClick={() => setLocation("/employer/profile-setup")}
+                >
+                  Complete Your Profile
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline" 
+                  className="bg-white/20 border-white hover:bg-white/30"
+                  onClick={() => setLocation("/employer/match-feed")}
+                >
+                  Skip to Match Feed
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
             ) : (
               <Button 
                 size="lg" 
