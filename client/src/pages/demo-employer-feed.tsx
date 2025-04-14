@@ -103,9 +103,15 @@ export default function DemoEmployerFeed() {
     console.log(`Accepting employer: ${employer.companyName} (ID: ${employer.id})`);
     console.log(`Current index: ${currentIndex}, Total employers: ${employers.length}`);
     
+    // Update local matches state
     setMatches(prev => {
       const newMatches = { ...prev, [employer.id]: "INTERESTED" };
       console.log("Updated matches:", newMatches);
+      
+      // Store matches in localStorage to persist for the messaging demo
+      // This will let us track which companies the user has expressed interest in
+      localStorage.setItem('pendingMatches', JSON.stringify(newMatches));
+      
       return newMatches;
     });
     
@@ -236,12 +242,24 @@ export default function DemoEmployerFeed() {
               <p className="text-sm text-gray-500 mb-4">
                 Matched with {Object.values(matches).filter(status => status === "INTERESTED").length} employers
               </p>
-              <Button 
-                onClick={() => setActiveTab(activeTab === "all" ? "local" : activeTab === "local" ? "tech" : "all")}
-                className="bg-[#5ce1e6] hover:bg-[#4bced3] text-white"
-              >
-                Try {activeTab === "all" ? "Peoria, IL" : activeTab === "local" ? "Tech" : "All"} Employers
-              </Button>
+              <div className="flex flex-col space-y-2">
+                {Object.values(matches).filter(status => status === "INTERESTED").length > 0 && (
+                  <Button 
+                    onClick={() => window.location.href = "/demo-matches"}
+                    className="bg-[#5ce1e6] hover:bg-[#4bced3] text-white"
+                  >
+                    View Your Matches
+                  </Button>
+                )}
+                <Button 
+                  onClick={() => setActiveTab(activeTab === "all" ? "local" : activeTab === "local" ? "tech" : "all")}
+                  className={Object.values(matches).filter(status => status === "INTERESTED").length > 0 
+                    ? "bg-gray-100 hover:bg-gray-200 text-gray-800" 
+                    : "bg-[#5ce1e6] hover:bg-[#4bced3] text-white"}
+                >
+                  Try {activeTab === "all" ? "Peoria, IL" : activeTab === "local" ? "Tech" : "All"} Employers
+                </Button>
+              </div>
             </div>
           ) : (
             <EmployerCard 

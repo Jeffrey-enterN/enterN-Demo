@@ -265,6 +265,21 @@ export default function HomePage() {
                 </div>
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
+              
+              <Button 
+                variant="outline"
+                size="lg"
+                onClick={() => setLocation("/demo-matches")}
+                className="bg-white border-2 shadow-md transition-all hover:shadow-lg"
+                style={{borderImage: 'linear-gradient(to right, #5ce1e6, #ff66c4) 1'}}
+              >
+                <MessageSquare className="h-4 w-4 mr-2" style={{color: "#0097b1"}} />
+                <div>
+                  <span className="block">Messaging</span>
+                  <span className="text-xs block text-gray-500">Chat with your matches</span>
+                </div>
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
             </div>
             <p className="text-sm text-gray-500">
               No login required - see how our matching system works
