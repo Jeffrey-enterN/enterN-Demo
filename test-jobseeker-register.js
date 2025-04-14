@@ -9,7 +9,7 @@ async function registerJobseeker() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        email: 'jobseeker@example.com',
+        email: 'test-jobseeker@example.com',
         password: 'password123',
         role: 'jobseeker'
       })
