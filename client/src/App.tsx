@@ -1,5 +1,4 @@
-import { Switch, Route, useLocation } from "wouter";
-import { useEffect } from "react";
+import { Switch, Route } from "wouter";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
 import HomePage from "@/pages/home-page";
@@ -21,8 +20,8 @@ import DemoCard from "@/pages/demo-card";
 import DemoMatchFeed from "@/pages/demo-match-feed";
 import DemoEmployerFeed from "@/pages/demo-employer-feed";
 import DemoMatchesPage from "@/pages/demo-matches-page";
-import { AuthProvider, useAuth } from "@/contexts/auth-context";
-import { MascotProvider, useMascot } from "@/contexts/mascot-context";
+import { AuthProvider } from "@/contexts/auth-context";
+import { MascotProvider } from "@/contexts/mascot-context";
 import { CatMascot } from "@/components/cat-mascot";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -31,20 +30,6 @@ import { ProtectedRoute } from "./lib/protected-route";
 
 // This is a very simple component that just renders the routes
 function AppRoutes() {
-  // Access the mascot context to control visibility
-  const { setIsVisible } = useMascot();
-  const { user } = useAuth();
-  const [location] = useLocation();
-  
-  // Control mascot visibility based on route
-  useEffect(() => {
-    // Check if the current route is a jobseeker route
-    const isJobseekerRoute = location.startsWith('/jobseeker');
-    
-    // Only show mascot on jobseeker routes and for jobseeker users
-    setIsVisible(isJobseekerRoute && user?.role === 'jobseeker');
-  }, [location, user, setIsVisible]);
-
   return (
     <Switch>
       <Route path="/" component={HomePage} />
