@@ -15,17 +15,36 @@ export default function JobseekerMatchFeed() {
   const { user } = useAuth();
   const isMobile = useIsMobile();
   const [currentEmployerIndex, setCurrentEmployerIndex] = useState(0);
+  const { setMood, showMessage, setIsVisible } = useMascot();
   
   // Fetch employer profiles for the jobseeker to match with
   const { data: employers, isLoading, error } = useQuery({
     queryKey: ["/api/jobseeker/match-feed"],
     enabled: !!user,
   });
+  
+  // Ensure the mascot is visible on this page
+  useEffect(() => {
+    setIsVisible(true);
+    
+    // Show a welcome message when landing on the match feed
+    showMessage("Ready to find your next opportunity? Remember to review each company carefully!", "excited");
+    
+    return () => {
+      // Reset mood when leaving the page
+      setMood("default");
+    };
+  }, []);
 
   // Handle accepting an employer (interested in some roles)
   const handleAcceptEmployer = (employerId: number) => {
     // Make API call to update match status
     console.log(`Interested in roles at employer ID ${employerId}`);
+    
+    // Show positive mascot message
+    setMood("matched");
+    showMessage("Great choice! This employer has some exciting opportunities that match your skills!", "matched");
+    
     toast({
       title: "Employer Added to Matches",
       description: "You'll be notified if they're interested in your profile as well.",
@@ -38,6 +57,11 @@ export default function JobseekerMatchFeed() {
   const handleRejectEmployer = (employerId: number) => {
     // Make API call to update match status and remove from this employer's feed
     console.log(`Not interested in employer ID ${employerId}`);
+    
+    // Show supportive mascot message
+    setMood("rejected");
+    showMessage("That's okay! It's important to be selective in your job search. Let's see who's next!", "rejected");
+    
     toast({
       title: "Employer Removed",
       description: "This employer won't see your profile in their feed.",
@@ -72,6 +96,12 @@ export default function JobseekerMatchFeed() {
   }
 
   if (error) {
+    // Show frustrated mascot when there's an error
+    useEffect(() => {
+      setMood("frustrated");
+      showMessage("Oh no! We're having trouble loading companies. Let's try again in a little while!", "frustrated", false);
+    }, []);
+    
     return (
       <div className="min-h-screen flex flex-col">
         {isMobile ? <MobileNavbar activeItem="matches" /> : <Navbar />}
@@ -207,6 +237,12 @@ export default function JobseekerMatchFeed() {
 
   // If no more employers to show
   if (!currentEmployer) {
+    // Show an encouraging message when there are no more employers
+    useEffect(() => {
+      setMood("excited");
+      showMessage("You've reviewed all the available companies! That's great progress. Check back later for new opportunities!", "excited", false);
+    }, []);
+    
     return (
       <div className="min-h-screen flex flex-col">
         {isMobile ? <MobileNavbar activeItem="matches" /> : <Navbar />}
