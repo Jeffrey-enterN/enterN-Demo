@@ -285,6 +285,53 @@ export default function HomePage() {
               No login required - see how our matching system works
             </p>
           </div>
+          
+          {/* Test Account Login - For testing purposes */}
+          <div className="mb-8 text-center space-y-4">
+            <h3 className="text-xl font-medium text-gray-900 mb-4">For Testing: Quick Login</h3>
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+              <Button 
+                variant="outline"
+                size="lg"
+                onClick={() => {
+                  const loginData = {
+                    email: "testjobseeker@example.com",
+                    password: "password123"
+                  };
+                  
+                  fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(loginData),
+                  })
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error('Login failed');
+                    }
+                    return response.json();
+                  })
+                  .then(user => {
+                    window.location.href = "/jobseeker/profile-setup";
+                  })
+                  .catch(error => {
+                    console.error('Error logging in:', error);
+                  });
+                }}
+                className="bg-white border-2 border-blue-400 shadow-md transition-all hover:shadow-lg"
+              >
+                <User className="h-4 w-4 mr-2" style={{color: "#0097b1"}} />
+                <div>
+                  <span className="block">Login as Test Jobseeker</span>
+                  <span className="text-xs block text-gray-500">Email: testjobseeker@example.com</span>
+                </div>
+              </Button>
+            </div>
+            <p className="text-sm text-gray-500">
+              For testing purposes only - access the jobseeker side of the application
+            </p>
+          </div>
 
           {/* CTA Section */}
           <div className="rounded-lg shadow-lg p-8 text-center" 
