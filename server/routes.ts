@@ -319,6 +319,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Match Routes for Employer
+  app.get("/api/employer/matches", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "employer") return res.status(403).json({ message: "Forbidden" });
+      
+      const employerProfile = await storage.getEmployerProfileByUserId(req.user.id);
+      if (!employerProfile) {
+        return res.status(404).json({ message: "Employer profile not found" });
+      }
+      
+      const matches = await storage.getMatchesByEmployerId(employerProfile.id);
+      res.json(matches);
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  // Match Routes for Jobseeker
+  app.get("/api/jobseeker/matches", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "jobseeker") return res.status(403).json({ message: "Forbidden" });
+      
+      const jobseekerProfile = await storage.getJobseekerProfileByUserId(req.user.id);
+      if (!jobseekerProfile) {
+        return res.status(404).json({ message: "Jobseeker profile not found" });
+      }
+      
+      const matches = await storage.getMatchesByJobseekerId(jobseekerProfile.id);
+      res.json(matches);
+    } catch (error) {
+      next(error);
+    }
+  });
+  
   // Message Routes
   app.post("/api/messages/:matchId", async (req, res, next) => {
     try {

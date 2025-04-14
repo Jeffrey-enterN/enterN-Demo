@@ -28,6 +28,19 @@ interface MatchedProfile {
   hasUnreadMessages?: boolean;
 }
 
+// Match user type (matches the structure expected by MatchList)
+interface MatchUser {
+  id: number;
+  userId: number;
+  name: string;
+  company?: string;
+  position?: string;
+  matchId: number;
+  matchDate: string;
+  recentMessage?: string;
+  hasUnreadMessages?: boolean;
+}
+
 export default function MessagesPage() {
   const { user } = useAuth();
   const [activeMatchId, setActiveMatchId] = useState<number | null>(null);
@@ -59,7 +72,7 @@ export default function MessagesPage() {
   });
   
   // Format matches for the MatchList component
-  const formattedMatches = (matches || []).map((match) => {
+  const formattedMatches: MatchUser[] = (matches || []).map((match) => {
     const isEmployerView = user?.role === "employer";
     const matchUser = isEmployerView ? match.jobseeker : match.employer;
     
@@ -69,8 +82,8 @@ export default function MessagesPage() {
       name: isEmployerView 
         ? `${match.jobseeker.firstName} ${match.jobseeker.lastName}` 
         : match.employer.companyName,
-      company: isEmployerView ? null : match.employer.companyName,
-      position: isEmployerView ? match.jobseeker.firstName : null, // Using firstName as placeholder for position
+      company: isEmployerView ? undefined : match.employer.companyName,
+      position: isEmployerView ? match.jobseeker.firstName : undefined, // Using firstName as placeholder for position
       matchId: match.id,
       matchDate: match.matchedAt,
       recentMessage: match.recentMessage || "",
@@ -124,7 +137,7 @@ export default function MessagesPage() {
                 <MessageInterface 
                   matchId={activeMatchId}
                   currentUserId={user?.id || 0}
-                  currentUserName={user?.name || ""}
+                  currentUserName={getUserName()}
                   matchUserName={activeMatchName}
                   matchUserCompany={activeMatchCompany}
                   onClose={() => setActiveMatchId(null)}
