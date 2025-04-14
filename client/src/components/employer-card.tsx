@@ -162,12 +162,12 @@ export default function EmployerCard({ employer, onAccept, onReject }: EmployerC
             <span className="text-sm">{employer.companySize} employees</span>
           </div>
           <div className="mt-4 flex flex-wrap gap-2">
-            {employer.jobPostings.slice(0, 3).map((job: any) => (
+            {employer.jobPostings && employer.jobPostings.slice(0, 3).map((job: any) => (
               <Badge key={job.id} variant="outline" className="bg-[rgba(92,225,230,0.1)] text-gray-700 border-[#5ce1e6]">
                 {job.title}
               </Badge>
             ))}
-            {employer.jobPostings.length > 3 && (
+            {employer.jobPostings && employer.jobPostings.length > 3 && (
               <Badge variant="outline" className="bg-[rgba(92,225,230,0.1)] text-gray-700 border-[#5ce1e6]">
                 +{employer.jobPostings.length - 3} more
               </Badge>
@@ -196,7 +196,7 @@ export default function EmployerCard({ employer, onAccept, onReject }: EmployerC
             <div>
               <h3 className="text-lg font-semibold text-gray-800">Benefits</h3>
               <ul className="list-disc list-inside text-gray-600 mt-1">
-                {employer.benefits.map((benefit: string, index: number) => (
+                {employer.benefits && employer.benefits.map((benefit: string, index: number) => (
                   <li key={index}>{benefit}</li>
                 ))}
               </ul>
@@ -205,7 +205,7 @@ export default function EmployerCard({ employer, onAccept, onReject }: EmployerC
             <div>
               <div className="flex justify-between items-center">
                 <h3 className={`text-lg font-semibold ${showAllJobs ? 'text-[#0097b1]' : 'text-gray-800'} transition-colors`}>
-                  Job Openings {showAllJobs && <span className="text-sm font-normal">({employer.jobPostings.length})</span>}
+                  Job Openings {showAllJobs && employer.jobPostings && <span className="text-sm font-normal">({employer.jobPostings.length})</span>}
                 </h3>
                 <Button 
                   onClick={() => setShowAllJobs(!showAllJobs)} 
@@ -220,7 +220,7 @@ export default function EmployerCard({ employer, onAccept, onReject }: EmployerC
               
               <div className={`mt-2 space-y-4 ${showAllJobs ? 'max-h-[400px] overflow-y-auto pr-2 pb-10 rounded-lg shadow-inner p-4 overscroll-contain' : ''}`} 
                 style={showAllJobs ? {WebkitOverflowScrolling: "touch", scrollBehavior: "smooth", backgroundColor: "rgba(92,225,230,0.03)"} : {}}>
-                {employer.jobPostings
+                {employer.jobPostings && employer.jobPostings
                   .slice(0, showAllJobs ? undefined : 2)
                   .map((job: any) => (
                     <Card key={job.id} className="p-4 bg-[rgba(92,225,230,0.05)] border-[#e3fcfd]">
@@ -251,7 +251,7 @@ export default function EmployerCard({ employer, onAccept, onReject }: EmployerC
                     </Card>
                   ))}
                 
-                {!showAllJobs && employer.jobPostings.length > 2 && (
+                {!showAllJobs && employer.jobPostings && employer.jobPostings.length > 2 && (
                   <div className="text-center text-sm text-gray-500 mt-4">
                     <div className="text-xs text-center text-gray-500 mb-2">
                       <span>Click to view all job openings</span>
