@@ -153,11 +153,11 @@ export class DatabaseStorage implements IStorage {
       );
     }
     
-    const jobseekerProfiles = await query;
+    const jobseekerProfilesData = await query;
 
     // For each jobseeker profile, get their preferences
     const results = await Promise.all(
-      jobseekerProfiles.map(async (profile: JobseekerProfile) => {
+      jobseekerProfilesData.map(async (profile: JobseekerProfile) => {
         const preferences = await this.getJobseekerPreferencesByJobseekerId(profile.id);
         return {
           ...profile,
@@ -188,11 +188,11 @@ export class DatabaseStorage implements IStorage {
       );
     }
     
-    const employerProfiles = await query;
+    const employerProfilesData = await query;
 
     // For each employer profile, get their job postings
     const results = await Promise.all(
-      employerProfiles.map(async (profile: EmployerProfile) => {
+      employerProfilesData.map(async (profile: EmployerProfile) => {
         const jobPostings = await this.getJobPostingsByEmployerId(profile.id);
         return {
           ...profile,
