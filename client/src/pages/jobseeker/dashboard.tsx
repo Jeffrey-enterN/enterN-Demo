@@ -27,7 +27,8 @@ import {
   School,
   CheckCircle,
   User,
-  MailCheck
+  MailCheck,
+  RefreshCw
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -50,6 +51,9 @@ interface JobseekerAnalytics {
     notInterested: number;
     pending: number;
   };
+  secondLook: {
+    total: number;
+  };
 }
 
 export default function JobseekerDashboard() {
@@ -68,6 +72,9 @@ export default function JobseekerDashboard() {
     queryKey: ['/api/jobseeker/analytics'],
     enabled: !!user,
   });
+  
+  // Calculate if we have second look opportunities
+  const hasSecondLookOpportunities = analytics?.secondLook?.total ? analytics.secondLook.total > 0 : false;
 
   // Transform analytics data for charts 
   const swipeData = analytics ? [
@@ -94,7 +101,8 @@ export default function JobseekerDashboard() {
 
   const completionPercentage = 80; // This would be calculated based on profile completion
   const isSchoolVerified = false; // This would come from the user's profile
-  const hasEduEmail = profile?.email?.endsWith('.edu') || false;
+  // Check if user has a .edu email in their profile
+  const hasEduEmail = profile?.school && profile.school.toLowerCase().includes('.edu') || false;
 
   // Check if user has a .edu email
   const needsVerification = !hasEduEmail && !isSchoolVerified;
@@ -234,6 +242,27 @@ export default function JobseekerDashboard() {
               </div>
             </CardContent>
           </Card>
+          
+          {hasSecondLookOpportunities && (
+            <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/jobseeker/second-look')}>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
+                    <RefreshCw className="h-6 w-6 text-[#5ce1e6]" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-medium text-gray-900">Second Look</h3>
+                      {analytics?.secondLook?.total && analytics.secondLook.total > 0 && (
+                        <Badge className="bg-[#ff66c4]">{analytics.secondLook.total}</Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-500">Review previously rejected employers</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Analytics Section */}

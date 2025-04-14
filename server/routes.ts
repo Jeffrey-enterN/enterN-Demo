@@ -272,6 +272,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         match.employerStatus === 'matched' && match.jobseekerStatus === 'matched'
       ).length;
       
+      // Count rejected employers (second look candidates)
+      const rejectedEmployers = matches.filter(match => 
+        match.jobseekerStatus === 'rejected' && match.employerStatus !== 'rejected'
+      ).length;
+      
       // Get all job interests for this jobseeker's matches
       const jobInterests = await Promise.all(
         matches
@@ -305,8 +310,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
           interested: interestedJobs,
           notInterested: notInterestedJobs,
           pending: pendingJobs
+        },
+        secondLook: {
+          total: rejectedEmployers
         }
       });
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  // Second Look Route - get previously rejected employers
+  app.get("/api/jobseeker/second-look", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "jobseeker") return res.status(403).json({ message: "Forbidden" });
+      
+      const jobseekerProfile = await storage.getJobseekerProfileByUserId(req.user.id);
+      if (!jobseekerProfile) {
+        return res.status(404).json({ message: "Jobseeker profile not found" });
+      }
+      
+      // Get all matches for this jobseeker
+      const matches = await storage.getMatchesByJobseekerId(jobseekerProfile.id);
+      
+      // Filter for employers that were rejected by jobseeker but not by employer
+      const rejectedMatchIds = matches
+        .filter(match => match.jobseekerStatus === 'rejected' && match.employerStatus !== 'rejected')
+        .map(match => match.employerId);
+      
+      // Get the employer profiles for these matches
+      const secondLookEmployers = await Promise.all(
+        rejectedMatchIds.map(async (employerId) => {
+          const profile = await storage.getEmployerProfile(employerId);
+          if (profile) {
+            const jobPostings = await storage.getJobPostingsByEmployerId(employerId);
+            return { ...profile, jobPostings };
+          }
+          return null;
+        })
+      );
+      
+      // Filter out any null values
+      const validEmployers = secondLookEmployers.filter(employer => employer !== null);
+      
+      res.json(validEmployers);
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  // Update Second Look Status - allow jobseeker to update previous rejection
+  app.patch("/api/jobseeker/second-look/:matchId", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "jobseeker") return res.status(403).json({ message: "Forbidden" });
+      
+      const matchId = parseInt(req.params.matchId);
+      const { status } = req.body;
+      
+      const jobseekerProfile = await storage.getJobseekerProfileByUserId(req.user.id);
+      if (!jobseekerProfile) {
+        return res.status(404).json({ message: "Jobseeker profile not found" });
+      }
+      
+      // Verify the match is for this jobseeker
+      const match = await storage.getMatchById(matchId);
+      if (!match || match.jobseekerId !== jobseekerProfile.id) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      // Only allow updating previously rejected matches
+      if (match.jobseekerStatus !== 'rejected') {
+        return res.status(400).json({ message: "Can only update previously rejected matches" });
+      }
+      
+      // Update the match status
+      const updatedMatch = await storage.updateJobseekerMatchStatus(
+        jobseekerProfile.id, 
+        match.employerId, 
+        status
+      );
+      
+      res.json(updatedMatch);
     } catch (error) {
       next(error);
     }
