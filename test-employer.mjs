@@ -16,7 +16,7 @@ async function createEmployerWithJob() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        email: 'test-employer@example.com',
+        email: 'test-employer2@example.com',
         password: 'password123',
         role: 'employer'
       })
@@ -34,15 +34,15 @@ async function createEmployerWithJob() {
       body: JSON.stringify({
         companyName: 'Test Company',
         industry: 'Technology',
-        companySize: '51-200',
-        foundedYear: 2015,
-        website: 'https://testcompany.com',
+        employeeCount: '51-200',
+        yearFounded: 2015,
         headquarters: 'San Francisco, CA',
-        description: 'An innovative technology company focusing on AI solutions.',
-        missionStatement: 'Making technology accessible to everyone.',
-        cultureValues: ['Innovation', 'Collaboration', 'Excellence'],
-        benefitsPerks: ['Health Insurance', 'Remote Work', '401k', 'Professional Development'],
-        diversityInitiatives: 'Committed to diversity and inclusion in all hiring practices.'
+        additionalOffices: 'New York, London',
+        about: 'An innovative technology company focusing on AI solutions.',
+        missionValues: 'Making technology accessible to everyone. Innovation, Collaboration, Excellence.',
+        perksAndBenefits: 'Health Insurance, Remote Work, 401k, Professional Development',
+        calendarLink: 'https://calendly.com/testcompany',
+        atsLink: 'https://testcompany.applicanttracking.com'
       })
     });
 
@@ -57,15 +57,12 @@ async function createEmployerWithJob() {
       },
       body: JSON.stringify({
         title: 'Full Stack Developer',
-        description: 'Looking for an experienced full stack developer to join our team.',
-        responsibilities: 'Build scalable web applications, collaborate with product team, and maintain existing systems.',
-        qualifications: 'Experience with React, Node.js, and PostgreSQL. 3+ years of experience.',
-        employmentType: 'full-time',
-        locationType: 'remote',
+        function: 'Engineering',
+        type: 'full_time',
         location: 'Remote - US',
-        minSalary: 90000,
-        maxSalary: 120000,
-        applicationInstructions: 'Apply through our website or this platform.'
+        locationType: 'remote',
+        description: 'Looking for an experienced full stack developer to join our team.',
+        responsibilities: 'Build scalable web applications, collaborate with product team, and maintain existing systems.'
       })
     });
 
