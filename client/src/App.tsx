@@ -6,6 +6,7 @@ import EmployerProfileSetup from "@/pages/employer/profile-setup";
 import EmployerJobPosting from "@/pages/employer/job-posting";
 import EmployerMatchFeed from "@/pages/employer/match-feed";
 import EmployerMatchesPage from "@/pages/employer/matches-page";
+import EmployerAnalyticsDashboard from "@/pages/employer/analytics-dashboard";
 import JobseekerProfileSetup from "@/pages/jobseeker/profile-setup";
 import JobseekerPreferences from "@/pages/jobseeker/preferences";
 import JobseekerMatchFeed from "@/pages/jobseeker/match-feed";

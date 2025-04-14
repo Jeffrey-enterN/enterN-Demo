@@ -206,6 +206,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Employer Analytics Route
+  app.get("/api/employer/analytics", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "employer") return res.status(403).json({ message: "Forbidden" });
+      
+      const employerProfile = await storage.getEmployerProfileByUserId(req.user.id);
+      if (!employerProfile) {
+        return res.status(404).json({ message: "Employer profile not found" });
+      }
+      
+      // Get all matches for this employer
+      const matches = await storage.getMatchesByEmployerId(employerProfile.id);
+      
+      // Count total, yes, and no matches
+      const totalMatches = matches.length;
+      const yesMatches = matches.filter(match => match.jobseekerStatus === 'matched').length;
+      const noMatches = matches.filter(match => match.jobseekerStatus === 'rejected').length;
+      const pendingMatches = totalMatches - yesMatches - noMatches;
+      
+      // Calculate yes:no ratio
+      const ratio = noMatches > 0 ? (yesMatches / noMatches).toFixed(2) : yesMatches > 0 ? "∞" : "0";
+      
+      res.json({
+        totalSwipes: totalMatches,
+        yesSwipes: yesMatches,
+        noSwipes: noMatches,
+        pendingSwipes: pendingMatches,
+        yesToNoRatio: ratio
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
   // Match Routes
   app.post("/api/employer/match", async (req, res, next) => {
     try {

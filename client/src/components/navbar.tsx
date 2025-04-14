@@ -49,8 +49,8 @@ export function Navbar() {
       return [
         { label: "Match Feed", href: "/employer/match-feed" },
         { label: "Job Postings", href: "/employer/job-posting" },
-        { label: "Messages", href: "#" },
-        { label: "Dashboard", href: "#" },
+        { label: "Messages", href: "/employer/matches" },
+        { label: "Analytics", href: "/employer/analytics" },
       ];
     }
 
