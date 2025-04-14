@@ -480,11 +480,11 @@ export default function JobseekerProfileSetup() {
                   type="button"
                   variant="outline"
                   onClick={() => {
-                    console.log("Test navigation button clicked");
-                    window.location.href = "/jobseeker/preferences";
+                    console.log("Skip to dashboard button clicked");
+                    window.location.href = "/jobseeker/dashboard";
                   }}
                 >
-                  Test Direct Navigation
+                  Skip to Dashboard
                 </Button>
                 
                 <Button 

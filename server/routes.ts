@@ -240,6 +240,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
       next(error);
     }
   });
+  
+  // Jobseeker Analytics Route
+  app.get("/api/jobseeker/analytics", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "jobseeker") return res.status(403).json({ message: "Forbidden" });
+      
+      const jobseekerProfile = await storage.getJobseekerProfileByUserId(req.user.id);
+      if (!jobseekerProfile) {
+        return res.status(404).json({ message: "Jobseeker profile not found" });
+      }
+      
+      // Get all matches for this jobseeker
+      const matches = await storage.getMatchesByJobseekerId(jobseekerProfile.id);
+      
+      // Count employer swipes
+      const totalMatches = matches.length;
+      const yesMatches = matches.filter(match => match.employerStatus === 'matched').length;
+      const noMatches = matches.filter(match => match.employerStatus === 'rejected').length;
+      const pendingMatches = totalMatches - yesMatches - noMatches;
+      
+      // Count jobseeker swipes
+      const totalSwipes = matches.length;
+      const yesSwipes = matches.filter(match => match.jobseekerStatus === 'matched').length;
+      const noSwipes = matches.filter(match => match.jobseekerStatus === 'rejected').length;
+      const pendingSwipes = totalSwipes - yesSwipes - noSwipes;
+      
+      // Count mutual matches (where both sides matched)
+      const mutualMatches = matches.filter(match => 
+        match.employerStatus === 'matched' && match.jobseekerStatus === 'matched'
+      ).length;
+      
+      // Get all job interests for this jobseeker's matches
+      const jobInterests = await Promise.all(
+        matches
+          .filter(match => match.matchedAt !== null) // Only consider completed matches
+          .map(async match => {
+            return await storage.getJobInterestsByMatchId(match.id);
+          })
+      );
+      
+      // Flatten the array of arrays
+      const flatJobInterests = jobInterests.flat();
+      
+      // Count job reviews
+      const totalJobReviews = flatJobInterests.length;
+      const interestedJobs = flatJobInterests.filter(interest => interest.status === 'interested').length;
+      const notInterestedJobs = flatJobInterests.filter(interest => interest.status === 'not_interested').length;
+      const pendingJobs = totalJobReviews - interestedJobs - notInterestedJobs;
+      
+      res.json({
+        swipes: {
+          total: totalSwipes,
+          yes: yesSwipes,
+          no: noSwipes,
+          pending: pendingSwipes
+        },
+        matches: {
+          total: mutualMatches
+        },
+        jobReviews: {
+          total: totalJobReviews,
+          interested: interestedJobs,
+          notInterested: notInterestedJobs,
+          pending: pendingJobs
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
 
   // Match Routes
   app.post("/api/employer/match", async (req, res, next) => {

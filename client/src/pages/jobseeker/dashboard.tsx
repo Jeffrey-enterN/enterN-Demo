@@ -32,6 +32,25 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from "@/components/ui/progress";
+import { JobseekerProfile } from '@shared/schema';
+
+interface JobseekerAnalytics {
+  swipes: {
+    total: number;
+    yes: number;
+    no: number;
+    pending: number;
+  };
+  matches: {
+    total: number;
+  };
+  jobReviews: {
+    total: number;
+    interested: number;
+    notInterested: number;
+    pending: number;
+  };
+}
 
 export default function JobseekerDashboard() {
   const { user } = useAuth();
@@ -44,19 +63,33 @@ export default function JobseekerDashboard() {
     enabled: !!user,
   });
 
-  // Mock data for charts - this would be replaced with actual API data
-  const swipeData = [
-    { name: 'Yes', value: 24, fill: '#5ce1e6' },
-    { name: 'No', value: 32, fill: '#ff66c4' },
+  // Get analytics data
+  const { data: analytics, isLoading: isLoadingAnalytics } = useQuery({
+    queryKey: ['/api/jobseeker/analytics'],
+    enabled: !!user,
+  });
+
+  // Transform analytics data for charts 
+  const swipeData = analytics ? [
+    { name: 'Yes', value: analytics.swipes.yes, fill: '#5ce1e6' },
+    { name: 'No', value: analytics.swipes.no, fill: '#ff66c4' },
+  ] : [
+    { name: 'Yes', value: 0, fill: '#5ce1e6' },
+    { name: 'No', value: 0, fill: '#ff66c4' },
   ];
 
-  const matchData = [
-    { name: 'Matches', value: 8, fill: '#5ce1e6' },
+  const matchData = analytics ? [
+    { name: 'Matches', value: analytics.matches.total, fill: '#5ce1e6' },
+  ] : [
+    { name: 'Matches', value: 0, fill: '#5ce1e6' },
   ];
 
-  const jobReviewData = [
-    { name: 'Interested', value: 12, fill: '#5ce1e6' },
-    { name: 'Not Interested', value: 15, fill: '#ff66c4' },
+  const jobReviewData = analytics ? [
+    { name: 'Interested', value: analytics.jobReviews.interested, fill: '#5ce1e6' },
+    { name: 'Not Interested', value: analytics.jobReviews.notInterested, fill: '#ff66c4' },
+  ] : [
+    { name: 'Interested', value: 0, fill: '#5ce1e6' },
+    { name: 'Not Interested', value: 0, fill: '#ff66c4' },
   ];
 
   const completionPercentage = 80; // This would be calculated based on profile completion
