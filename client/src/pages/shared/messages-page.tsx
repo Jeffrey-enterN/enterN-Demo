@@ -8,6 +8,26 @@ import { Navbar } from "@/components/navbar";
 import { MobileNavbar } from "@/components/mobile-navbar";
 import { Loader2 } from "lucide-react";
 
+// Types for matched profiles
+interface MatchedProfile {
+  id: number;
+  matchId: number;
+  matchedAt: string;
+  employer: {
+    id: number;
+    companyName: string;
+    userId: number;
+  };
+  jobseeker: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    userId: number;
+  };
+  recentMessage?: string;
+  hasUnreadMessages?: boolean;
+}
+
 export default function MessagesPage() {
   const { user } = useAuth();
   const [activeMatchId, setActiveMatchId] = useState<number | null>(null);
@@ -17,6 +37,15 @@ export default function MessagesPage() {
   const isEmployer = user?.role === "employer";
   const userRole = isEmployer ? "employer" : "jobseeker";
   
+  // Get a display name for the current user
+  const getUserName = () => {
+    if (!user) return "";
+    
+    // We'll construct a name from the email until we fetch the profile
+    const emailName = user.email.split("@")[0];
+    return emailName.charAt(0).toUpperCase() + emailName.slice(1);
+  };
+  
   // Fetch user's profile
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: [isEmployer ? `/api/employer-profile` : `/api/jobseeker-profile`],
@@ -24,24 +53,24 @@ export default function MessagesPage() {
   });
 
   // Fetch user's matches
-  const { data: matches = [], isLoading: matchesLoading } = useQuery({
+  const { data: matches = [], isLoading: matchesLoading } = useQuery<MatchedProfile[]>({
     queryKey: [isEmployer ? `/api/employer/matches` : `/api/jobseeker/matches`],
     enabled: !!user && !!profile,
   });
   
   // Format matches for the MatchList component
-  const formattedMatches = matches.map((match: any) => {
+  const formattedMatches = (matches || []).map((match) => {
     const isEmployerView = user?.role === "employer";
     const matchUser = isEmployerView ? match.jobseeker : match.employer;
     
     return {
       id: match.id,
-      userId: matchUser.id,
+      userId: isEmployerView ? match.jobseeker.userId : match.employer.userId,
       name: isEmployerView 
-        ? `${matchUser.firstName} ${matchUser.lastName}` 
-        : matchUser.companyName,
-      company: isEmployerView ? null : matchUser.companyName,
-      position: isEmployerView ? matchUser.title : null,
+        ? `${match.jobseeker.firstName} ${match.jobseeker.lastName}` 
+        : match.employer.companyName,
+      company: isEmployerView ? null : match.employer.companyName,
+      position: isEmployerView ? match.jobseeker.firstName : null, // Using firstName as placeholder for position
       matchId: match.id,
       matchDate: match.matchedAt,
       recentMessage: match.recentMessage || "",
@@ -83,7 +112,7 @@ export default function MessagesPage() {
                 <MatchList 
                   matches={formattedMatches}
                   currentUserId={user?.id || 0}
-                  currentUserName={user?.name || ""}
+                  currentUserName={getUserName()}
                   type={userRole as "employer" | "jobseeker"}
                   onSelectMatch={handleMatchSelect}
                 />

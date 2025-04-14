@@ -17,7 +17,7 @@ export function MobileNavbar({ activeItem = "home" }: MobileNavbarProps) {
     navItems = [
       { id: "home", label: "Home", icon: Home, path: "/" },
       { id: "matches", label: "Candidates", icon: Briefcase, path: "/employer/match-feed" },
-      { id: "messages", label: "Messages", icon: MessageSquare, path: "/employer/matches" },
+      { id: "messages", label: "Messages", icon: MessageSquare, path: "/messages" },
       { id: "analytics", label: "Analytics", icon: BarChart, path: "/employer/analytics" },
       { id: "profile", label: "Profile", icon: User, path: "/employer/profile-setup" },
     ];
@@ -27,7 +27,7 @@ export function MobileNavbar({ activeItem = "home" }: MobileNavbarProps) {
       { id: "home", label: "Home", icon: Home, path: "/" },
       { id: "employers", label: "Employers", icon: Building, path: "/jobseeker/employer-feed" },
       { id: "matches", label: "Candidates", icon: Briefcase, path: "/jobseeker/match-feed" },
-      { id: "messages", label: "Messages", icon: MessageSquare, path: "/jobseeker/matches" },
+      { id: "messages", label: "Messages", icon: MessageSquare, path: "/messages" },
       { id: "profile", label: "Profile", icon: User, path: "/jobseeker/profile-setup" },
     ];
   }

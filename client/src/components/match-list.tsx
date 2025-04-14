@@ -85,7 +85,16 @@ export default function MatchList({
       {matches.map((match) => (
         <Card 
           key={match.matchId}
-          className="relative overflow-hidden border border-[#e0f7fa] hover:shadow-md transition-all"
+          className="relative overflow-hidden border border-[#e0f7fa] hover:shadow-md transition-all cursor-pointer"
+          onClick={() => {
+            // If onSelectMatch is provided, use it (for messages page)
+            if (onSelectMatch) {
+              onSelectMatch(match.matchId, match.name, match.company);
+            } else {
+              // Otherwise use the dialog (for other components using this list)
+              setSelectedMatch(match);
+            }
+          }}
         >
           {match.hasUnreadMessages && (
             <div className="absolute top-0 right-0 h-3 w-3 bg-[#5ce1e6] rounded-full m-2" />
@@ -120,39 +129,36 @@ export default function MatchList({
             </CardContent>
           )}
           
-          <CardFooter className="pt-0 pb-3 px-4">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button 
-                  onClick={() => setSelectedMatch(match)}
-                  className="w-full bg-[#5ce1e6] hover:bg-[#4bced3] text-white"
-                >
-                  <MessageSquare className="h-4 w-4 mr-2" /> Message
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-3xl p-0">
-                {selectedMatch && (
-                  <MessageInterface
-                    matchId={selectedMatch.matchId}
-                    currentUserId={currentUserId}
-                    currentUserName={currentUserName}
-                    matchUserName={selectedMatch.name}
-                    matchUserCompany={selectedMatch.company}
-                    onClose={() => setSelectedMatch(null)}
-                    initialMessages={[
-                      // Demo messages for now
-                      {
-                        id: 1,
-                        senderId: currentUserId === 101 ? 102 : 101,
-                        content: `Hey there! Thanks for connecting. I'd love to learn more about ${type === 'employer' ? 'your background and skills' : 'your company and team'}.`,
-                        createdAt: new Date(Date.now() - 86400000).toISOString(),
-                      }
-                    ]}
-                  />
-                )}
-              </DialogContent>
-            </Dialog>
-          </CardFooter>
+          {!onSelectMatch && (
+            <CardFooter className="pt-0 pb-3 px-4">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button 
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent card click from firing
+                      setSelectedMatch(match);
+                    }}
+                    className="w-full bg-[#5ce1e6] hover:bg-[#4bced3] text-white"
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" /> Message
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl p-0">
+                  {selectedMatch && (
+                    <MessageInterface
+                      matchId={selectedMatch.matchId}
+                      currentUserId={currentUserId}
+                      currentUserName={currentUserName}
+                      matchUserName={selectedMatch.name}
+                      matchUserCompany={selectedMatch.company}
+                      onClose={() => setSelectedMatch(null)}
+                      initialMessages={[]}
+                    />
+                  )}
+                </DialogContent>
+              </Dialog>
+            </CardFooter>
+          )}
         </Card>
       ))}
     </div>
