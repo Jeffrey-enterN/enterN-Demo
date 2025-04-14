@@ -35,12 +35,14 @@ const jobseekerProfileSchema = insertJobseekerProfileSchema.extend({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   phoneNumber: z.string().optional(),
-  summary: z.string().optional(),
+  portfolioUrl: z.string().url("Please enter a valid URL").optional().or(z.literal("")),
   school: z.string().optional(),
   degreeLevel: z.string().optional(),
   major: z.string().optional(),
   preferredIndustries: z.array(z.string()).optional(),
   preferredLocations: z.array(z.string()).optional(),
+  preferredLocationTypes: z.array(z.string()).optional(),
+  preferredFunctionalAreas: z.array(z.string()).optional(),
 });
 
 type JobseekerProfileFormData = z.infer<typeof jobseekerProfileSchema>;
@@ -53,18 +55,23 @@ export default function JobseekerProfileSetup() {
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
 
+  const [selectedFunctionalAreas, setSelectedFunctionalAreas] = useState<string[]>([]);
+  const [selectedLocationTypes, setSelectedLocationTypes] = useState<string[]>([]);
+
   const form = useForm<JobseekerProfileFormData>({
     resolver: zodResolver(jobseekerProfileSchema),
     defaultValues: {
       firstName: "",
       lastName: "",
       phoneNumber: "",
-      summary: "",
+      portfolioUrl: "",
       school: "",
       degreeLevel: "",
       major: "",
       preferredIndustries: [],
       preferredLocations: [],
+      preferredLocationTypes: [],
+      preferredFunctionalAreas: [],
     },
   });
 

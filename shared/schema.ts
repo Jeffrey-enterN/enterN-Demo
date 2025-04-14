@@ -20,6 +20,7 @@ export const LocationTypeEnum = {
   ONSITE: "onsite",
   HYBRID: "hybrid",
   REMOTE: "remote",
+  NO_PREFERENCE: "no_preference",
 } as const;
 
 export const JobStatusEnum = {
@@ -90,12 +91,14 @@ export const jobseekerProfiles = pgTable("jobseeker_profiles", {
   firstName: text("first_name").notNull(),
   lastName: text("last_name").notNull(),
   phoneNumber: text("phone_number"),
-  summary: text("summary"),
+  portfolioUrl: text("portfolio_url"),
   school: text("school"),
   degreeLevel: text("degree_level"),
   major: text("major"),
   preferredIndustries: text("preferred_industries").array(),
   preferredLocations: text("preferred_locations").array(),
+  preferredLocationTypes: text("preferred_location_types").array(),
+  preferredFunctionalAreas: text("preferred_functional_areas").array(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
