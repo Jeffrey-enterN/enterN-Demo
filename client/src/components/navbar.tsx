@@ -49,7 +49,7 @@ export function Navbar() {
       return [
         { label: "Match Feed", href: "/employer/match-feed" },
         { label: "Job Postings", href: "/employer/job-posting" },
-        { label: "Messages", href: "/employer/matches" },
+        { label: "Messages", href: "/messages" },
         { label: "Analytics", href: "/employer/analytics" },
       ];
     }
@@ -57,9 +57,9 @@ export function Navbar() {
     // Jobseeker navigation
     return [
       { label: "Match Feed", href: "/jobseeker/match-feed" },
-      { label: "My Matches", href: "#" },
-      { label: "Messages", href: "#" },
-      { label: "Events", href: "#" },
+      { label: "My Matches", href: "/jobseeker/matches" },
+      { label: "Messages", href: "/messages" },
+      { label: "Events", href: "/jobseeker/events" },
     ];
   };
 
@@ -112,7 +112,11 @@ export function Navbar() {
 
               {/* Messages - Desktop */}
               <div className="hidden md:flex-shrink-0 md:flex md:ml-2">
-                <Button variant="ghost" size="icon">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => navigate("/messages")}
+                >
                   <MessageSquare className="h-5 w-5 text-gray-400" />
                 </Button>
               </div>
