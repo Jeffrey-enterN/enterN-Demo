@@ -181,6 +181,27 @@ export default function JobseekerProfileSetup() {
     setSelectedLocations(event.target.value.split(';'));
   };
 
+  const handleFunctionalAreaSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const options = event.target.options;
+    const values: string[] = [];
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].selected) {
+        values.push(options[i].value);
+      }
+    }
+    setSelectedFunctionalAreas(values);
+  };
+
+  const handleLocationTypeChange = (locationType: string) => {
+    setSelectedLocationTypes((prev) => {
+      if (prev.includes(locationType)) {
+        return prev.filter(type => type !== locationType);
+      } else {
+        return [...prev, locationType];
+      }
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       <header className="bg-white shadow-sm sticky top-0 z-10">
@@ -258,15 +279,13 @@ export default function JobseekerProfileSetup() {
 
                 <FormField
                   control={form.control}
-                  name="summary"
+                  name="portfolioUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Professional Summary</FormLabel>
+                      <FormLabel>Portfolio URL <span className="text-gray-500 text-xs">(optional)</span></FormLabel>
                       <FormControl>
-                        <Textarea 
-                          placeholder="Briefly describe your skills, experience, and career goals..." 
-                          className="resize-none" 
-                          rows={4} 
+                        <Input 
+                          placeholder="https://myportfolio.com" 
                           {...field} 
                         />
                       </FormControl>
@@ -281,7 +300,7 @@ export default function JobseekerProfileSetup() {
                     name="school"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>School</FormLabel>
+                        <FormLabel>School <span className="text-gray-500 text-xs">(optional)</span></FormLabel>
                         <FormControl>
                           <Input placeholder="University of California, Berkeley" {...field} />
                         </FormControl>
@@ -368,6 +387,37 @@ export default function JobseekerProfileSetup() {
                 </div>
 
                 <div>
+                  <Label htmlFor="preferred-functional-areas">Functional Areas of Interest</Label>
+                  <select 
+                    id="preferred-functional-areas" 
+                    multiple 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition mt-1"
+                    onChange={handleFunctionalAreaSelect}
+                    size={8}
+                  >
+                    <option value="software-development">Software Development</option>
+                    <option value="data-science">Data Science</option>
+                    <option value="product-management">Product Management</option>
+                    <option value="project-management">Project Management</option>
+                    <option value="ux-design">UX/UI Design</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="sales">Sales</option>
+                    <option value="customer-support">Customer Support</option>
+                    <option value="human-resources">Human Resources</option>
+                    <option value="finance">Finance</option>
+                    <option value="legal">Legal</option>
+                    <option value="operations">Operations</option>
+                    <option value="administration">Administration</option>
+                    <option value="executive">Executive Leadership</option>
+                    <option value="consulting">Consulting</option>
+                    <option value="research">Research</option>
+                    <option value="education">Education</option>
+                    <option value="healthcare">Healthcare</option>
+                  </select>
+                  <p className="mt-1 text-xs text-gray-500">Hold Ctrl (or Cmd) to select multiple functional areas</p>
+                </div>
+
+                <div>
                   <Label htmlFor="preferred-locations">Preferred Locations</Label>
                   <Input 
                     id="preferred-locations" 
@@ -376,6 +426,52 @@ export default function JobseekerProfileSetup() {
                     onChange={handleLocationChange}
                   />
                   <p className="mt-1 text-xs text-gray-500">Separate locations with semicolons (;)</p>
+                </div>
+                
+                <div>
+                  <Label>Preferred Location Type</Label>
+                  <div className="flex flex-wrap gap-3 mt-2">
+                    <div className="flex items-center space-x-2">
+                      <input 
+                        type="checkbox" 
+                        id="location-remote"
+                        className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                        checked={selectedLocationTypes.includes('remote')}
+                        onChange={() => handleLocationTypeChange('remote')}
+                      />
+                      <label htmlFor="location-remote" className="text-sm text-gray-700">Remote</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input 
+                        type="checkbox" 
+                        id="location-hybrid"
+                        className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                        checked={selectedLocationTypes.includes('hybrid')}
+                        onChange={() => handleLocationTypeChange('hybrid')}
+                      />
+                      <label htmlFor="location-hybrid" className="text-sm text-gray-700">Hybrid</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input 
+                        type="checkbox" 
+                        id="location-onsite"
+                        className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                        checked={selectedLocationTypes.includes('onsite')}
+                        onChange={() => handleLocationTypeChange('onsite')}
+                      />
+                      <label htmlFor="location-onsite" className="text-sm text-gray-700">Onsite</label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input 
+                        type="checkbox" 
+                        id="location-no-preference"
+                        className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                        checked={selectedLocationTypes.includes('no_preference')}
+                        onChange={() => handleLocationTypeChange('no_preference')}
+                      />
+                      <label htmlFor="location-no-preference" className="text-sm text-gray-700">No Preference</label>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
 
@@ -410,6 +506,8 @@ export default function JobseekerProfileSetup() {
                         userId: user?.id,
                         preferredIndustries: selectedIndustries || [],
                         preferredLocations: (selectedLocations || []).map(loc => loc.trim()),
+                        preferredLocationTypes: selectedLocationTypes || [],
+                        preferredFunctionalAreas: selectedFunctionalAreas || [],
                       };
                       
                       console.log("Manual submit with data:", profileData);
