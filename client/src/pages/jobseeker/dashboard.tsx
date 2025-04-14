@@ -58,13 +58,13 @@ export default function JobseekerDashboard() {
   const [notificationsCount, setNotificationsCount] = useState<number>(3);
 
   // Get jobseeker profile
-  const { data: profile } = useQuery({
+  const { data: profile } = useQuery<JobseekerProfile>({
     queryKey: ['/api/jobseeker/profile'],
     enabled: !!user,
   });
 
   // Get analytics data
-  const { data: analytics, isLoading: isLoadingAnalytics } = useQuery({
+  const { data: analytics, isLoading: isLoadingAnalytics } = useQuery<JobseekerAnalytics>({
     queryKey: ['/api/jobseeker/analytics'],
     enabled: !!user,
   });
