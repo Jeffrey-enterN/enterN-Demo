@@ -13,6 +13,7 @@ import JobseekerDashboard from "@/pages/jobseeker/dashboard";
 import JobseekerMatchFeed from "@/pages/jobseeker/match-feed";
 import JobseekerEmployerFeed from "@/pages/jobseeker/employer-feed";
 import JobseekerMatchesPage from "@/pages/jobseeker/matches-page";
+import JobseekerSecondLook from "@/pages/jobseeker/second-look";
 import JobInterest from "@/pages/shared/job-interest";
 import MessagesPage from "@/pages/shared/messages-page";
 import DemoCard from "@/pages/demo-card";
@@ -46,6 +47,7 @@ function AppRoutes() {
       <ProtectedRoute path="/jobseeker/match-feed" component={JobseekerMatchFeed} />
       <ProtectedRoute path="/jobseeker/employer-feed" component={JobseekerEmployerFeed} />
       <ProtectedRoute path="/jobseeker/matches" component={JobseekerMatchesPage} />
+      <ProtectedRoute path="/jobseeker/second-look" component={JobseekerSecondLook} />
       
       {/* Shared Routes - Protected */}
       <ProtectedRoute path="/job-interest/:matchId" component={JobInterest} />
