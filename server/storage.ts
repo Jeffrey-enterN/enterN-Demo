@@ -415,4 +415,9 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// If we want to use in-memory storage for development
+// export const storage = new MemStorage();
+
+// Use PostgreSQL database storage
+import { DatabaseStorage } from "./database-storage";
+export const storage = new DatabaseStorage();
