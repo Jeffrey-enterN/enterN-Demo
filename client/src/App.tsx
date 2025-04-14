@@ -35,6 +35,7 @@ function AppRoutes() {
       <ProtectedRoute path="/employer/job-posting" component={EmployerJobPosting} />
       <ProtectedRoute path="/employer/match-feed" component={EmployerMatchFeed} />
       <ProtectedRoute path="/employer/matches" component={EmployerMatchesPage} />
+      <ProtectedRoute path="/employer/analytics" component={EmployerAnalyticsDashboard} />
       
       {/* Jobseeker Routes - Protected */}
       <ProtectedRoute path="/jobseeker/profile-setup" component={JobseekerProfileSetup} />
