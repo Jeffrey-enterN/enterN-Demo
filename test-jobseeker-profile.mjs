@@ -1,8 +1,7 @@
 // Script to create a jobseeker profile
-const fetch = require('node-fetch');
-const { CookieJar } = require('tough-cookie');
-const { promisify } = require('util');
-const fetchCookie = require('fetch-cookie');
+import fetch from 'node-fetch';
+import { CookieJar } from 'tough-cookie';
+import fetchCookie from 'fetch-cookie';
 
 // Create a cookie jar and wrapper for fetch that handles cookies
 const jar = new CookieJar();
