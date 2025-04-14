@@ -6,6 +6,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { queryClient, apiRequest } from "@/lib/queryClient";
+import { Message as MessageType } from "@shared/schema";
 
 interface Message {
   id: number;
@@ -34,58 +37,69 @@ export default function MessageInterface({
   initialMessages = [],
   onClose
 }: MessageInterfaceProps) {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [newMessage, setNewMessage] = useState<string>("");
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Fetch messages for this match
+  const { data: fetchedMessages = [], isLoading } = useQuery<MessageType[]>({
+    queryKey: [`/api/messages/${matchId}`],
+    refetchInterval: 5000, // Poll for new messages every 5 seconds
+  });
+
+  // Use a combination of initial messages and fetched messages, prioritizing fetched messages
+  const messages = fetchedMessages.length > 0 
+    ? fetchedMessages.map(msg => ({
+        id: msg.id,
+        senderId: msg.senderId,
+        content: msg.content,
+        createdAt: msg.createdAt.toString(),
+        senderName: msg.senderId === currentUserId ? currentUserName : matchUserName
+      }))
+    : initialMessages;
+
+  // Send message mutation
+  const sendMessageMutation = useMutation({
+    mutationFn: async (content: string) => {
+      const response = await apiRequest(
+        "POST", 
+        `/api/messages/${matchId}`, 
+        { content }
+      );
+      return await response.json();
+    },
+    onSuccess: () => {
+      // Clear the input field
+      setNewMessage("");
+      
+      // Invalidate and refetch messages
+      queryClient.invalidateQueries({ queryKey: [`/api/messages/${matchId}`] });
+      
+      // Show success toast
+      toast({
+        title: "Message Sent",
+        description: "Your message has been sent successfully.",
+        duration: 2000,
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: `Failed to send message: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  });
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // In a real application, this would connect to a WebSocket to receive real-time updates
-  // useEffect(() => {
-  //   const socket = new WebSocket("ws://localhost:5000/ws");
-  //   socket.onmessage = (event) => {
-  //     const message = JSON.parse(event.data);
-  //     if (message.matchId === matchId) {
-  //       setMessages(prevMessages => [...prevMessages, message]);
-  //     }
-  //   };
-  //   return () => socket.close();
-  // }, [matchId]);
-
   // Function to send a message
   const sendMessage = () => {
     if (!newMessage.trim()) return;
-
-    // For demo purposes, create a local message
-    const messageObj: Message = {
-      id: Date.now(), // Temporary ID
-      senderId: currentUserId,
-      content: newMessage,
-      createdAt: new Date().toISOString(),
-      senderName: currentUserName,
-    };
-
-    // In a real app, this would call an API
-    // const response = await fetch("/api/messages", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ matchId, content: newMessage }),
-    // });
-    
-    // Add message locally for now
-    setMessages([...messages, messageObj]);
-    setNewMessage("");
-
-    // Show toast notification
-    toast({
-      title: "Message Sent",
-      description: "Your message has been sent.",
-      duration: 2000,
-    });
+    sendMessageMutation.mutate(newMessage);
   };
 
   // Handle Enter key press

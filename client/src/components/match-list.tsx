@@ -37,13 +37,15 @@ interface MatchListProps {
   currentUserId: number;
   currentUserName: string;
   type: "employer" | "jobseeker";
+  onSelectMatch?: (matchId: number, userName: string, company?: string) => void;
 }
 
 export default function MatchList({ 
   matches, 
   currentUserId,
   currentUserName,
-  type 
+  type,
+  onSelectMatch
 }: MatchListProps) {
   const [selectedMatch, setSelectedMatch] = useState<MatchUser | null>(null);
 

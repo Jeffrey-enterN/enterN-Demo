@@ -335,7 +335,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const message = await storage.createMessage({
         matchId,
-        userId: req.user.id,
+        senderId: req.user.id,
         content,
       });
       
