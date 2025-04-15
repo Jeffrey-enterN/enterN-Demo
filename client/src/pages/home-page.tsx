@@ -32,14 +32,14 @@ export default function HomePage() {
   // Redirect to appropriate setup page if user has not completed profile
   useEffect(() => {
     if (user && !isLoading && !isLoadingEmployer && !isLoadingJobseeker) {
-      if (user.role === "employer" && !employerProfile && !isLoadingEmployer) {
+      if (user.role === "EMPLOYER" && !employerProfile && !isLoadingEmployer) {
         setLocation("/employer/profile-setup");
-      } else if (user.role === "jobseeker" && !jobseekerProfile && !isLoadingJobseeker) {
+      } else if (user.role === "JOBSEEKER" && !jobseekerProfile && !isLoadingJobseeker) {
         setLocation("/jobseeker/profile-setup");
-      } else if (user.role === "employer" && employerProfile) {
-        setLocation("/employer/match-feed");
-      } else if (user.role === "jobseeker" && jobseekerProfile) {
-        setLocation("/jobseeker/match-feed");
+      } else if (user.role === "EMPLOYER" && employerProfile) {
+        setLocation("/employer/dashboard");
+      } else if (user.role === "JOBSEEKER" && jobseekerProfile) {
+        setLocation("/jobseeker/dashboard");
       }
     }
   }, [user, employerProfile, jobseekerProfile, isLoading, isLoadingEmployer, isLoadingJobseeker, setLocation]);

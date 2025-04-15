@@ -85,13 +85,6 @@ export function CatMascot({ className, triggerType = 'default', user }: CatMasco
   // Select user from props or auth context
   const userData = user || authUser;
   
-  // Only show for authenticated jobseekers
-  const shouldShowMascot = () => {
-    // Check if user exists and is a jobseeker
-    if (!userData) return false;
-    return userData.role === 'JOBSEEKER';
-  };
-
   // Find the appropriate message based on mood or trigger type
   useEffect(() => {
     const effectiveTrigger = mood !== 'default' ? mood : triggerType;
@@ -155,8 +148,8 @@ export function CatMascot({ className, triggerType = 'default', user }: CatMasco
     return `Good evening, ${name}!`;
   };
 
-  // Don't render if not visible or not a jobseeker
-  if (!isVisible || !shouldShowMascot()) return null;
+  // Don't render if not visible
+  if (!isVisible) return null;
 
   return (
     <div className={cn("fixed bottom-4 right-4 z-50", className)}>

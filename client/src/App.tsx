@@ -4,6 +4,7 @@ import AuthPage from "@/pages/auth-page";
 import HomePage from "@/pages/home-page";
 import EmployerProfileSetup from "@/pages/employer/profile-setup";
 import EmployerJobPosting from "@/pages/employer/job-posting";
+import EmployerDashboard from "@/pages/employer/dashboard";
 import EmployerMatchFeed from "@/pages/employer/match-feed";
 import EmployerMatchesPage from "@/pages/employer/matches-page";
 import EmployerAnalyticsDashboard from "@/pages/employer/analytics-dashboard";
@@ -36,6 +37,7 @@ function AppRoutes() {
       <Route path="/auth" component={AuthPage} />
       
       {/* Employer Routes - Protected */}
+      <ProtectedRoute path="/employer/dashboard" component={EmployerDashboard} />
       <ProtectedRoute path="/employer/profile-setup" component={EmployerProfileSetup} />
       <ProtectedRoute path="/employer/job-posting" component={EmployerJobPosting} />
       <ProtectedRoute path="/employer/match-feed" component={EmployerMatchFeed} />

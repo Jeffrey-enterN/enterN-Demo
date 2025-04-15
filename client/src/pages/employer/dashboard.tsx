@@ -11,7 +11,8 @@ import {
   Plus, 
   Users, 
   Briefcase,
-  MessageSquare
+  MessageSquare,
+  Loader2
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { MobileNavbar } from "@/components/mobile-navbar";
@@ -23,15 +24,17 @@ export default function EmployerDashboard() {
   const isMobile = useIsMobile();
   
   // Get employer profile
-  const { data: employerProfile, isLoading: loadingProfile } = useQuery({
+  const { data: employerProfile, isLoading: loadingProfile, error: profileError } = useQuery({
     queryKey: ["/api/employer/profile"],
     enabled: !!user,
+    retry: false, // Don't retry if profile doesn't exist
   });
   
   // Get job postings for this employer
-  const { data: jobPostings, isLoading: loadingJobs } = useQuery({
+  const { data: jobPostings = [], isLoading: loadingJobs } = useQuery({
     queryKey: ["/api/job-postings/employer"],
     enabled: !!user && !!employerProfile,
+    retry: false, // Don't retry if no job postings
   });
   
   // Make sure only employers can access this page
@@ -40,7 +43,7 @@ export default function EmployerDashboard() {
   }
   
   const isLoading = loadingProfile || loadingJobs;
-  const hasProfile = !!employerProfile;
+  const hasProfile = !!employerProfile && !profileError;
   const hasJobPostings = jobPostings && jobPostings.length > 0;
 
   return (
