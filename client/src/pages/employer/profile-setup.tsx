@@ -82,8 +82,8 @@ export default function EmployerProfileSetup() {
         description: "Your company profile has been saved successfully.",
       });
       
-      // Redirect to job posting page
-      setLocation("/employer/job-posting");
+      // Redirect to employer dashboard
+      setLocation("/employer/dashboard");
     },
     onError: (error: Error) => {
       toast({

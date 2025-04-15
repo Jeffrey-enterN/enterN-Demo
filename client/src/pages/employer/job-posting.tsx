@@ -82,8 +82,8 @@ export default function EmployerJobPosting() {
         description: "Your job posting has been created successfully.",
       });
       
-      // Redirect to match feed page
-      setLocation("/employer/match-feed");
+      // Redirect to employer dashboard
+      setLocation("/employer/dashboard");
     },
     onError: (error: Error) => {
       toast({
