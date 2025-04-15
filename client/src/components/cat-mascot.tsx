@@ -15,54 +15,57 @@ import peekingCat from '../assets/mascot/40.png';
 import angryCat from '../assets/mascot/43.png';
 import loveCat from '../assets/mascot/44.png';
 
-// Emotional support messages
+// Emotional support messages with Star Wars references
 const supportMessages = [
   {
     trigger: 'rejected',
-    message: "Don't worry about that rejection! It just means that wasn't the right fit for you. There are many more opportunities to explore!",
+    message: "These aren't the droids you're looking for! It's perfectly okay to pass on opportunities that don't align with your goals. The perfect match is still out there in the galaxy!",
     image: sadCat,
   },
   {
     trigger: 'matched',
-    message: "Congratulations on your match! That's fantastic news! Remember to prepare well before you reach out.",
+    message: "This is the way! Congratulations on finding a potential match. Like finding a good companion for your galactic adventures, this could be the start of something amazing!",
     image: happyCat,
   },
   {
     trigger: 'nervous',
-    message: "It's completely normal to feel nervous during your job search. Take it one step at a time, and remember that each interaction is a learning opportunity.",
+    message: "Do or do not, there is no try! It's normal to feel nervous during your job search. Remember, even Jedi Knights get nervous before big missions. Take deep breaths and trust in your abilities!",
     image: cryingCat,
   },
   {
     trigger: 'interview',
-    message: "Got an interview coming up? You've got this! Remember to research the company, prepare examples of your work, and be yourself.",
+    message: "Before your interview: Study their base like a good Rebel scout, prepare examples of your missions, practice answering questions, and remember to ask thoughtful questions yourself. You'll be more prepared than a Jedi with a lightsaber!",
     image: peekingCat,
   },
   {
     trigger: 'frustration',
-    message: "Job searching can be frustrating, but don't give up! Take a short break, do something you enjoy, and come back with fresh energy.",
+    message: "The job search can be more frustrating than a malfunctioning hyperdrive! Take short breaks when needed, and remember - it took Luke many attempts to master the Force. Persistence is your path to success!",
     image: angryCat,
   },
   {
     trigger: 'excited',
-    message: "Your enthusiasm is contagious! Keep that positive energy as you continue your job search journey!",
+    message: "The Force is strong with this one! Your positive energy will come across in your applications and interviews. Keep that excitement going, and may the Force be with you!",
     image: loveCat,
   },
   {
     trigger: 'default',
-    message: "I'm your emotional support cat during your job search! Let me know how you're feeling, and I'll be here for you.",
+    message: "I'm Luke Skywhisker, and I'm here to rescue you from frustration in your job search. Tell me how you're feeling and I'll help you along the way!",
     image: peekingCat,
   },
 ];
 
-// Random encouragement messages for periodic display
+// Random encouragement messages with Star Wars references
 const randomMessages = [
-  "Keep going! You're doing great in your job search!",
-  "Remember to take breaks during your job search. Self-care is important!",
-  "Each application brings you one step closer to your dream job!",
-  "You have unique skills and talents that the right employer will value!",
-  "Don't compare your job search journey to others. Your path is unique!",
-  "Rejection is just redirection to something better suited for you.",
-  "Your efforts today are building your success tomorrow!",
+  "Keep going, young Padawan! You're making excellent progress in your job search!",
+  "Remember to take breaks during your search. Even Jedi Masters need to recharge their lightsabers!",
+  "Each application brings you one parsec closer to your dream job in the galaxy!",
+  "The Force is strong with you! Your unique talents will be valued by the right employer!",
+  "Never tell me the odds! Your job search journey is uniquely yours - trust the Force!",
+  "When one door closes, another opens - that's the way of the Force. The right opportunity awaits!",
+  "Do or do not, there is no try! Your efforts today are building your success tomorrow!",
+  "Stay on target! You're getting closer to landing that perfect role!",
+  "Remember: Your focus determines your reality. Keep your mind on your goals!",
+  "In my experience, there's no such thing as luck - just preparation and opportunity meeting!",
 ];
 
 interface CatMascotProps {
@@ -179,7 +182,7 @@ export function CatMascot({ className, triggerType = 'default', user }: CatMasco
             <div className="p-3 border-b bg-[#e3fcfd] rounded-t-lg flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <img src={peekingCat} alt="Cat mascot" className="w-8 h-8 object-contain" />
-                <h3 className="font-medium">Job Search Buddy</h3>
+                <h3 className="font-medium">Luke Skywhisker</h3>
               </div>
               <Button 
                 variant="ghost" 
@@ -192,7 +195,7 @@ export function CatMascot({ className, triggerType = 'default', user }: CatMasco
             </div>
             <CardContent className="p-3 h-80 flex flex-col gap-3 overflow-y-auto">
               <div className="bg-gray-100 rounded-lg p-2 max-w-[80%]">
-                <p className="text-sm">{getGreeting()} I'm your emotional support cat during your job search! How are you feeling today?</p>
+                <p className="text-sm">{getGreeting()} I'm Luke Skywhisker, and I'm here to rescue you from frustration in your job search. Tell me how you're feeling and I'll help you along the way!</p>
               </div>
               
               {currentMessage && (
