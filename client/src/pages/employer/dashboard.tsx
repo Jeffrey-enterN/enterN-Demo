@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { useQuery } from "@tanstack/react-query";
 import { Redirect, useLocation } from "wouter";
@@ -17,6 +18,7 @@ import {
 import { Navbar } from "@/components/navbar";
 import { MobileNavbar } from "@/components/mobile-navbar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { EmployerProfile, JobPosting } from "@shared/schema";
 
 export default function EmployerDashboard() {
   const { user } = useAuth();
@@ -24,27 +26,46 @@ export default function EmployerDashboard() {
   const isMobile = useIsMobile();
   
   // Get employer profile
-  const { data: employerProfile, isLoading: loadingProfile, error: profileError } = useQuery({
+  const { data: employerProfile, isLoading: loadingProfile, error: profileError } = useQuery<EmployerProfile>({
     queryKey: ["/api/employer/profile"],
     enabled: !!user,
     retry: false, // Don't retry if profile doesn't exist
   });
   
   // Get job postings for this employer
-  const { data: jobPostings = [], isLoading: loadingJobs } = useQuery({
+  const { data: jobPostings = [], isLoading: loadingJobs } = useQuery<JobPosting[]>({
     queryKey: ["/api/job-postings/employer"],
     enabled: !!user && !!employerProfile,
     retry: false, // Don't retry if no job postings
   });
+
+  // Calculate loading state
+  const isLoading = loadingProfile || loadingJobs;
+  
+  // If we're dealing with an employer that doesn't have a profile yet,
+  // redirect them to the profile setup page
+  useEffect(() => {
+    if (user && !isLoading && profileError) {
+      setLocation("/employer/profile-setup");
+    }
+  }, [user, profileError, isLoading, setLocation]);
   
   // Make sure only employers can access this page
-  if (user && user.role !== "EMPLOYER") {
+  if (user && user.role !== "employer" && user.role !== "EMPLOYER") {
     return <Redirect to="/" />;
   }
   
-  const isLoading = loadingProfile || loadingJobs;
+  // If still loading, show a loading spinner
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-[#5ce1e6]" />
+      </div>
+    );
+  }
+  
   const hasProfile = !!employerProfile && !profileError;
-  const hasJobPostings = jobPostings && jobPostings.length > 0;
+  const hasJobPostings = jobPostings && Array.isArray(jobPostings) && jobPostings.length > 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -69,11 +90,11 @@ export default function EmployerDashboard() {
               </div>
             </CardHeader>
             <CardContent>
-              {hasProfile ? (
+              {hasProfile && employerProfile ? (
                 <div className="space-y-2">
-                  <p className="font-medium">{employerProfile.companyName}</p>
-                  <p className="text-sm text-gray-600">{employerProfile.industry}</p>
-                  <p className="text-sm text-gray-600">{employerProfile.headquarters}</p>
+                  <p className="font-medium">{employerProfile?.companyName || 'Company Name'}</p>
+                  <p className="text-sm text-gray-600">{employerProfile?.industry || 'Industry'}</p>
+                  <p className="text-sm text-gray-600">{employerProfile?.headquarters || 'Headquarters'}</p>
                 </div>
               ) : (
                 <div className="text-center py-6">
