@@ -28,6 +28,54 @@ export default function JobseekerMatchFeed() {
     enabled: !!user,
   });
   
+  // Define employer type to fix TypeScript errors
+  type Employer = {
+    id: number;
+    userId: number;
+    companyName: string;
+    location?: string;
+    industry?: string;
+    industries?: string[];
+    jobPostings?: any[];
+    [key: string]: any;
+  };
+
+  // Filter employers based on the active tab
+  useEffect(() => {
+    if (employers && Array.isArray(employers)) {
+      let filtered = [...employers] as Employer[];
+      
+      if (activeTab === "local") {
+        // Filter to only show local companies (e.g., containing "Peoria, IL")
+        filtered = employers.filter((employer: Employer) => 
+          employer.location && employer.location.includes("Peoria, IL")
+        );
+      } else if (activeTab === "tech") {
+        // Filter to show only tech companies
+        filtered = employers.filter((employer: Employer) => {
+          if (employer.industry) {
+            return (
+              employer.industry.includes("Tech") || 
+              employer.industry.includes("Software") || 
+              employer.industry.includes("Data")
+            );
+          }
+          if (employer.industries && Array.isArray(employer.industries)) {
+            return employer.industries.some(industry => 
+              industry.includes("Tech") || 
+              industry.includes("Software") || 
+              industry.includes("Data")
+            );
+          }
+          return false;
+        });
+      }
+      
+      setFilteredEmployers(filtered);
+      setCurrentEmployerIndex(0); // Reset index when filter changes
+    }
+  }, [employers, activeTab]);
+
   // Ensure the mascot is visible on this page
   useEffect(() => {
     setIsVisible(true);
@@ -77,7 +125,9 @@ export default function JobseekerMatchFeed() {
 
   // Move to the next employer profile
   const moveToNextEmployer = () => {
-    if (employers && currentEmployerIndex < employers.length - 1) {
+    const employersArray = filteredEmployers.length > 0 ? filteredEmployers : (employers && Array.isArray(employers) ? employers : []);
+    
+    if (employersArray.length > 0 && currentEmployerIndex < employersArray.length - 1) {
       setCurrentEmployerIndex(currentEmployerIndex + 1);
     } else {
       // No more employers to show
@@ -237,8 +287,11 @@ export default function JobseekerMatchFeed() {
     }
   ];
 
-  const employersToShow = employers || sampleEmployers;
-  const currentEmployer = employersToShow[currentEmployerIndex];
+  // Determine which employers to display
+  const sourceEmployers = (employers && Array.isArray(employers)) ? employers : sampleEmployers;
+  // Use filtered list if available
+  const employersToShow = filteredEmployers.length > 0 ? filteredEmployers : sourceEmployers;
+  const currentEmployer = employersToShow[currentEmployerIndex] as Employer | undefined;
 
   // If no more employers to show
   if (!currentEmployer) {
@@ -269,10 +322,87 @@ export default function JobseekerMatchFeed() {
       {isMobile ? <MobileNavbar activeItem="matches" /> : <Navbar />}
       
       <div className="flex-1 max-w-3xl mx-auto w-full p-4 md:p-6">
-        <h1 className="text-2xl font-bold text-center mb-4 text-[#0097b1]">Potential Employers</h1>
-        <p className="text-gray-600 text-center mb-8">
+        <h1 className="text-2xl font-bold text-center mb-2 text-[#0097b1]">Potential Employers</h1>
+        <p className="text-gray-600 text-center mb-4">
           Swipe right if you're interested in potential roles, or left if you're not interested.
         </p>
+        
+        {/* Filtering tabs */}
+        <div className="mb-6">
+          <Tabs value={activeTab} className="w-full justify-center">
+            <TabsList className="grid grid-cols-3 w-full max-w-md mx-auto">
+              <TabsTrigger 
+                value="all" 
+                onClick={() => setActiveTab("all")}
+                className={activeTab === "all" ? "bg-[#5ce1e6] text-white" : ""}
+              >
+                All
+              </TabsTrigger>
+              <TabsTrigger 
+                value="local" 
+                onClick={() => setActiveTab("local")}
+                className={activeTab === "local" ? "bg-[#5ce1e6] text-white" : ""}
+              >
+                Local
+              </TabsTrigger>
+              <TabsTrigger 
+                value="tech" 
+                onClick={() => setActiveTab("tech")}
+                className={activeTab === "tech" ? "bg-[#5ce1e6] text-white" : ""}
+              >
+                Tech
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+          
+          <div className="mt-2 flex justify-between items-center">
+            <span className="text-sm text-gray-500">
+              Showing {employersToShow.length} {activeTab !== "all" ? activeTab : ""} companies
+            </span>
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setShowFilters(!showFilters)}
+              className="text-xs flex items-center gap-1"
+            >
+              <Filter className="h-3 w-3" />
+              {showFilters ? "Hide Filters" : "More Filters"}
+            </Button>
+          </div>
+          
+          {/* Advanced filter options (hidden by default) */}
+          {showFilters && (
+            <div className="mt-4 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+              <h3 className="font-medium text-sm mb-2">Additional Filters</h3>
+              <div className="space-y-2">
+                <div className="flex flex-wrap gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-xs"
+                  >
+                    Remote Only
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-xs"
+                  >
+                    Junior Roles
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-xs"
+                  >
+                    Startups
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
         
         <EmployerCard 
           employer={currentEmployer} 
