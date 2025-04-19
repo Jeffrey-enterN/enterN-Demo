@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { useQuery } from "@tanstack/react-query";
 import { Redirect, useLocation } from "wouter";
@@ -6,24 +6,74 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   BarChart, 
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart, 
+  Pie,
+  Cell,
+} from "recharts";
+import { 
   Building, 
   FileText, 
-  PieChart, 
   Plus, 
   Users, 
   Briefcase,
   MessageSquare,
-  Loader2
+  Loader2,
+  Settings,
+  Bell,
+  Edit,
+  Mail,
+  Calendar,
+  Search,
+  BarChart2,
+  Zap,
+  DollarSign
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { MobileNavbar } from "@/components/mobile-navbar";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Progress } from "@/components/ui/progress";
 import { EmployerProfile, JobPosting } from "@shared/schema";
+
+interface EmployerAnalytics {
+  jobPostings: {
+    total: number;
+    active: number;
+    closed: number;
+  };
+  candidates: {
+    totalViewed: number;
+    interested: number;
+    rejected: number;
+    matches: number;
+  };
+  applications: {
+    total: number;
+    reviewed: number;
+    shortlisted: number;
+    rejected: number;
+  };
+  interviews: {
+    scheduled: number;
+    completed: number;
+    offered: number;
+    accepted: number;
+  };
+}
 
 export default function EmployerDashboard() {
   const { user } = useAuth();
   const [_, setLocation] = useLocation();
   const isMobile = useIsMobile();
+  const [notificationsCount, setNotificationsCount] = useState<number>(2);
   
   // Get employer profile
   const { data: employerProfile, isLoading: loadingProfile, error: profileError } = useQuery<EmployerProfile>({
@@ -38,9 +88,70 @@ export default function EmployerDashboard() {
     enabled: !!user && !!employerProfile,
     retry: false, // Don't retry if no job postings
   });
+  
+  // Get analytics data
+  const { data: analytics, isLoading: loadingAnalytics } = useQuery<EmployerAnalytics>({
+    queryKey: ["/api/employer/analytics"],
+    enabled: !!user && !!employerProfile,
+    // Mock data for display purposes - remove in production
+    placeholderData: {
+      jobPostings: {
+        total: 5,
+        active: 3,
+        closed: 2
+      },
+      candidates: {
+        totalViewed: 28,
+        interested: 15,
+        rejected: 13,
+        matches: 8
+      },
+      applications: {
+        total: 20,
+        reviewed: 18,
+        shortlisted: 12,
+        rejected: 6
+      },
+      interviews: {
+        scheduled: 10,
+        completed: 8,
+        offered: 5,
+        accepted: 3
+      }
+    }
+  });
 
   // Calculate loading state
-  const isLoading = loadingProfile || loadingJobs;
+  const isLoading = loadingProfile || loadingJobs || loadingAnalytics;
+  
+  // Transform analytics data for charts
+  const candidateData = analytics ? [
+    { name: 'Interested', value: analytics.candidates.interested, fill: '#5ce1e6' },
+    { name: 'Rejected', value: analytics.candidates.rejected, fill: '#ff66c4' },
+  ] : [
+    { name: 'Interested', value: 0, fill: '#5ce1e6' },
+    { name: 'Rejected', value: 0, fill: '#ff66c4' },
+  ];
+  
+  const applicationData = analytics ? [
+    { name: 'Shortlisted', value: analytics.applications.shortlisted, fill: '#5ce1e6' },
+    { name: 'Rejected', value: analytics.applications.rejected, fill: '#ff66c4' },
+  ] : [
+    { name: 'Shortlisted', value: 0, fill: '#5ce1e6' },
+    { name: 'Rejected', value: 0, fill: '#ff66c4' },
+  ];
+  
+  const interviewData = analytics ? [
+    { name: 'Scheduled', value: analytics.interviews.scheduled },
+    { name: 'Completed', value: analytics.interviews.completed },
+    { name: 'Offered', value: analytics.interviews.offered },
+    { name: 'Accepted', value: analytics.interviews.accepted },
+  ] : [
+    { name: 'Scheduled', value: 0 },
+    { name: 'Completed', value: 0 },
+    { name: 'Offered', value: 0 },
+    { name: 'Accepted', value: 0 },
+  ];
   
   // If we're dealing with an employer that doesn't have a profile yet,
   // redirect them to the profile setup page
@@ -67,171 +178,373 @@ export default function EmployerDashboard() {
   const hasProfile = !!employerProfile && !profileError;
   const hasJobPostings = jobPostings && Array.isArray(jobPostings) && jobPostings.length > 0;
 
+  // Calculate profile completion percentage based on available data
+  const calculateProfileCompletion = () => {
+    if (!hasProfile) return 0;
+    
+    let completedFields = 0;
+    let totalFields = 0;
+    
+    // Check company profile fields
+    if (employerProfile) {
+      totalFields += 5; // companyName, industry, headquarters, description, website
+      if (employerProfile.companyName) completedFields += 1;
+      if (employerProfile.industry) completedFields += 1;
+      if (employerProfile.headquarters) completedFields += 1;
+      if (employerProfile.description) completedFields += 1;
+      if (employerProfile.website) completedFields += 1;
+    }
+    
+    // Check job postings
+    if (hasJobPostings) {
+      completedFields += Math.min(jobPostings.length, 2); // Count up to 2 job postings
+      totalFields += 2;
+    }
+    
+    const percentage = Math.round((completedFields / totalFields) * 100);
+    return Math.min(100, percentage); // Cap at 100%
+  };
+  
+  const profileCompletionPercentage = calculateProfileCompletion();
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Global navigation */}
       {isMobile ? <MobileNavbar activeItem="dashboard" /> : <Navbar />}
       
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Employer Dashboard</h1>
-        <p className="text-gray-600 mb-6">Manage your company profile, job postings, and candidates</p>
+      {/* Top Bar */}
+      <div className="bg-white border-b border-gray-200 p-4 shadow-sm flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Employer Dashboard</h1>
+          <p className="text-gray-500">Welcome back, {employerProfile?.companyName || 'there'}!</p>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <Bell className="h-6 w-6 text-gray-500 cursor-pointer" />
+            {notificationsCount > 0 && (
+              <Badge className="absolute -top-1 -right-1 bg-[#ff66c4] h-5 w-5 flex items-center justify-center p-0">
+                {notificationsCount}
+              </Badge>
+            )}
+          </div>
+          <Button variant="ghost" size="icon">
+            <Settings className="h-5 w-5" />
+          </Button>
+          <div className="h-8 w-8 bg-[#5ce1e6] rounded-full flex items-center justify-center">
+            <span className="text-white font-medium">{(employerProfile?.companyName || 'C')?.charAt(0)}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div className="container mx-auto py-8 px-4">
+        {/* Profile Completion Progress */}
+        <Card className="mb-8">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg font-medium">Profile Completion</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Completion</span>
+                <span className="font-medium">{profileCompletionPercentage}%</span>
+              </div>
+              <Progress value={profileCompletionPercentage} className="h-2" />
+              
+              {!hasJobPostings && (
+                <div className="bg-amber-50 border border-amber-100 rounded-md p-3 mt-3 flex items-start gap-2">
+                  <Briefcase className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm text-amber-800 font-medium">Add job postings to find candidates</p>
+                    <p className="text-xs text-amber-700 mt-1">Create job postings to get matched with qualified candidates.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Company Profile Card */}
-          <Card>
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
+        {/* Quick Actions */}
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/match-feed')}>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
+                  <Users className="h-6 w-6 text-[#5ce1e6]" />
+                </div>
                 <div>
-                  <CardTitle className="text-xl flex items-center">
-                    <Building className="h-5 w-5 mr-2 text-[#5ce1e6]" />
-                    Company Profile
-                  </CardTitle>
-                  <CardDescription>Manage your company information</CardDescription>
+                  <h3 className="font-medium text-gray-900">View Candidates</h3>
+                  <p className="text-sm text-gray-500">Find potential matches for your jobs</p>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              {hasProfile && employerProfile ? (
-                <div className="space-y-2">
-                  <p className="font-medium">{employerProfile?.companyName || 'Company Name'}</p>
-                  <p className="text-sm text-gray-600">{employerProfile?.industry || 'Industry'}</p>
-                  <p className="text-sm text-gray-600">{employerProfile?.headquarters || 'Headquarters'}</p>
-                </div>
-              ) : (
-                <div className="text-center py-6">
-                  <Building className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                  <p className="text-gray-500 mb-2">No company profile setup yet</p>
-                  <p className="text-sm text-gray-400 mb-4">Create your profile to attract more candidates</p>
-                </div>
-              )}
             </CardContent>
-            <CardFooter className="border-t pt-4">
-              <Button 
-                className="w-full"
-                style={{background: "#5ce1e6", color: "white"}}
-                onClick={() => setLocation("/employer/profile-setup")}
-              >
-                {hasProfile ? "Edit Profile" : "Create Profile"}
-              </Button>
-            </CardFooter>
           </Card>
-
-          {/* Job Postings Card */}
-          <Card>
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/job-posting')}>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
+                  <Briefcase className="h-6 w-6 text-[#5ce1e6]" />
+                </div>
                 <div>
-                  <CardTitle className="text-xl flex items-center">
-                    <Briefcase className="h-5 w-5 mr-2 text-[#ff66c4]" />
-                    Job Postings
-                  </CardTitle>
-                  <CardDescription>Manage your open positions</CardDescription>
+                  <h3 className="font-medium text-gray-900">Post New Job</h3>
+                  <p className="text-sm text-gray-500">Create a new job posting</p>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
-              {hasJobPostings ? (
-                <div className="space-y-3">
-                  {jobPostings.slice(0, 3).map((job: any) => (
-                    <div key={job.id} className="flex justify-between items-center p-2 rounded border border-gray-100 hover:bg-gray-50">
-                      <div>
-                        <p className="font-medium">{job.title}</p>
-                        <p className="text-sm text-gray-600">{job.location}</p>
-                      </div>
-                      <div className="text-xs bg-gray-100 px-2 py-1 rounded-full">
-                        {job.applicants || 0} applicants
-                      </div>
-                    </div>
-                  ))}
-                  {jobPostings.length > 3 && (
-                    <p className="text-center text-sm text-gray-500 mt-2">
-                      +{jobPostings.length - 3} more job postings
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="text-center py-6">
-                  <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                  <p className="text-gray-500 mb-2">No job postings yet</p>
-                  <p className="text-sm text-gray-400 mb-4">Create job postings to find candidates</p>
-                </div>
-              )}
             </CardContent>
-            <CardFooter className="border-t pt-4">
-              <Button 
-                className="w-full"
-                style={{background: "#ff66c4", color: "white"}}
-                onClick={() => setLocation("/employer/job-posting")}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                {hasJobPostings ? "Add New Job" : "Create Job Posting"}
-              </Button>
-            </CardFooter>
           </Card>
-
-          {/* Candidate Matches Card */}
-          <Card>
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/profile-setup')}>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
+                  <Edit className="h-6 w-6 text-[#5ce1e6]" />
+                </div>
                 <div>
-                  <CardTitle className="text-xl flex items-center">
-                    <Users className="h-5 w-5 mr-2 text-[#5ce1e6]" />
-                    Candidate Matches
-                  </CardTitle>
-                  <CardDescription>View and manage potential candidates</CardDescription>
+                  <h3 className="font-medium text-gray-900">Edit Company Profile</h3>
+                  <p className="text-sm text-gray-500">Update your company information</p>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent className="min-h-[180px] flex flex-col justify-center">
-              <div className="text-center py-4">
-                <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p className="text-gray-500 mb-2">Find your ideal candidates</p>
-                <p className="text-sm text-gray-400 mb-4">Review profiles that match your job postings</p>
-              </div>
             </CardContent>
-            <CardFooter className="border-t pt-4">
-              <Button 
-                className="w-full"
-                style={{background: "#5ce1e6", color: "white"}}
-                onClick={() => setLocation("/employer/match-feed")}
-                disabled={!hasJobPostings}
-              >
-                View Candidates
-              </Button>
-            </CardFooter>
           </Card>
-
-          {/* Analytics Card */}
-          <Card>
-            <CardHeader className="pb-2">
-              <div className="flex justify-between items-start">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/messages')}>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
+                  <MessageSquare className="h-6 w-6 text-[#5ce1e6]" />
+                </div>
                 <div>
-                  <CardTitle className="text-xl flex items-center">
-                    <BarChart className="h-5 w-5 mr-2 text-[#ff66c4]" />
-                    Analytics
-                  </CardTitle>
-                  <CardDescription>Track your recruitment metrics</CardDescription>
+                  <h3 className="font-medium text-gray-900">Messages</h3>
+                  <p className="text-sm text-gray-500">Chat with potential candidates</p>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent className="min-h-[180px] flex flex-col justify-center">
-              <div className="text-center py-4">
-                <PieChart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-                <p className="text-gray-500 mb-2">Track your recruitment performance</p>
-                <p className="text-sm text-gray-400 mb-4">View stats on views, matches, and applications</p>
+            </CardContent>
+          </Card>
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/analytics-dashboard')}>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
+                  <BarChart2 className="h-6 w-6 text-[#5ce1e6]" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-gray-900">Analytics Dashboard</h3>
+                  <p className="text-sm text-gray-500">View detailed recruitment metrics</p>
+                </div>
               </div>
             </CardContent>
-            <CardFooter className="border-t pt-4">
-              <Button 
-                className="w-full"
-                style={{background: "#ff66c4", color: "white"}}
-                onClick={() => setLocation("/employer/analytics-dashboard")}
-                disabled={!hasJobPostings}
-              >
-                View Analytics
-              </Button>
-            </CardFooter>
+          </Card>
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/interviews')}>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-[#5ce1e6]" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-gray-900">Interview Schedule</h3>
+                  <p className="text-sm text-gray-500">Manage upcoming interviews</p>
+                </div>
+              </div>
+            </CardContent>
           </Card>
         </div>
+        
+        {/* Analytics Section */}
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Recruitment Analytics</h2>
+        <Tabs defaultValue="all" className="mb-8">
+          <TabsList className="mb-6">
+            <TabsTrigger value="all">Overview</TabsTrigger>
+            <TabsTrigger value="candidates">Candidates</TabsTrigger>
+            <TabsTrigger value="applications">Applications</TabsTrigger>
+            <TabsTrigger value="interviews">Interviews</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="all">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <Card>
+                <CardContent className="pt-6 text-center">
+                  <div className="flex flex-col items-center">
+                    <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center mb-2">
+                      <Briefcase className="h-6 w-6 text-[#5ce1e6]" />
+                    </div>
+                    <p className="text-4xl font-bold">{analytics?.jobPostings.active || 0}</p>
+                    <p className="text-sm text-gray-500">Active Jobs</p>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="pt-6 text-center">
+                  <div className="flex flex-col items-center">
+                    <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center mb-2">
+                      <Users className="h-6 w-6 text-[#5ce1e6]" />
+                    </div>
+                    <p className="text-4xl font-bold">{analytics?.candidates.totalViewed || 0}</p>
+                    <p className="text-sm text-gray-500">Candidates Viewed</p>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="pt-6 text-center">
+                  <div className="flex flex-col items-center">
+                    <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center mb-2">
+                      <Zap className="h-6 w-6 text-[#5ce1e6]" />
+                    </div>
+                    <p className="text-4xl font-bold">{analytics?.candidates.matches || 0}</p>
+                    <p className="text-sm text-gray-500">Total Matches</p>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="pt-6 text-center">
+                  <div className="flex flex-col items-center">
+                    <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center mb-2">
+                      <DollarSign className="h-6 w-6 text-[#5ce1e6]" />
+                    </div>
+                    <p className="text-4xl font-bold">{analytics?.interviews.accepted || 0}</p>
+                    <p className="text-sm text-gray-500">Hires</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Candidate Stats Card */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg font-medium">Candidate Interest</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[250px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={candidateData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={50}
+                        outerRadius={70}
+                        paddingAngle={5}
+                        dataKey="value"
+                        labelLine={false}
+                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {candidateData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+              
+              {/* Interview Stats Card */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg font-medium">Hiring Funnel</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[250px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={interviewData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <RechartsTooltip />
+                      <Bar dataKey="value" fill="#5ce1e6" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="candidates">
+            <div className="grid grid-cols-1 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg font-medium">Candidate Response</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={candidateData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={90}
+                        paddingAngle={5}
+                        dataKey="value"
+                        labelLine={true}
+                        label
+                      >
+                        {candidateData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="applications">
+            <div className="grid grid-cols-1 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg font-medium">Application Status</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={applicationData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={90}
+                        paddingAngle={5}
+                        dataKey="value"
+                        labelLine={true}
+                        label
+                      >
+                        {applicationData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                      <RechartsTooltip />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="interviews">
+            <div className="grid grid-cols-1 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg font-medium">Interview Pipeline</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[300px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={interviewData}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <RechartsTooltip />
+                      <Legend />
+                      <Bar dataKey="value" fill="#5ce1e6" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
