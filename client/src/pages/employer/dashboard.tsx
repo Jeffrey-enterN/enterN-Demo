@@ -33,7 +33,8 @@ import {
   Search,
   BarChart2,
   Zap,
-  DollarSign
+  DollarSign,
+  AlertCircle
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { MobileNavbar } from "@/components/mobile-navbar";
@@ -153,14 +154,6 @@ export default function EmployerDashboard() {
     { name: 'Accepted', value: 0 },
   ];
   
-  // If we're dealing with an employer that doesn't have a profile yet,
-  // redirect them to the profile setup page
-  useEffect(() => {
-    if (user && !isLoading && profileError) {
-      setLocation("/employer/profile-setup");
-    }
-  }, [user, profileError, isLoading, setLocation]);
-  
   // Make sure only employers can access this page
   if (user && user.role !== "employer" && user.role !== "EMPLOYER") {
     return <Redirect to="/" />;
@@ -175,8 +168,65 @@ export default function EmployerDashboard() {
     );
   }
   
+  // Check if employer profile exists
   const hasProfile = !!employerProfile && !profileError;
   const hasJobPostings = jobPostings && Array.isArray(jobPostings) && jobPostings.length > 0;
+
+  // Display welcome screen for new employers without a profile
+  if (!hasProfile) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Global navigation */}
+        {isMobile ? <MobileNavbar activeItem="dashboard" /> : <Navbar />}
+        
+        <div className="container mx-auto py-20 px-4">
+          <Card className="max-w-3xl mx-auto shadow-lg border-t-4 border-t-[#5ce1e6]">
+            <CardHeader className="text-center pb-2">
+              <CardTitle className="text-2xl">Welcome to JobPair!</CardTitle>
+              <CardDescription className="text-lg mt-2">
+                Let's get your employer profile set up
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-6 pb-8">
+              <div className="flex flex-col items-center text-center mb-8">
+                <div className="h-20 w-20 bg-[rgba(92,225,230,0.1)] rounded-full flex items-center justify-center mb-4">
+                  <Building className="h-10 w-10 text-[#5ce1e6]" />
+                </div>
+                <h3 className="text-xl font-medium mb-2">Complete Your Employer Profile</h3>
+                <p className="text-gray-600 max-w-lg">
+                  Before you can start finding candidates, you'll need to set up your company profile. 
+                  This information will be shown to potential job seekers who might be interested in working with you.
+                </p>
+                
+                <div className="w-full max-w-md mt-8 bg-amber-50 border border-amber-100 rounded-lg p-4">
+                  <div className="flex gap-3 items-start">
+                    <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium text-amber-800">Your profile information is incomplete</p>
+                      <p className="text-sm text-amber-700 mt-1">
+                        You need to complete your company profile to start matching with candidates.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex justify-center">
+                <Button 
+                  size="lg"
+                  className="bg-[#5ce1e6] hover:bg-[#4bb7bc] text-white"
+                  onClick={() => setLocation("/employer/profile-setup")}
+                >
+                  <Building className="mr-2 h-5 w-5" />
+                  Create Employer Profile
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   // Calculate profile completion percentage based on available data
   const calculateProfileCompletion = () => {
