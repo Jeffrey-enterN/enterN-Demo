@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Filter } from "lucide-react";
 import EmployerCard from "@/components/employer-card";
 import { MatchStatusEnum } from "@shared/schema";
 import { Navbar } from "@/components/navbar";
@@ -9,6 +9,8 @@ import { MobileNavbar } from "@/components/mobile-navbar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/auth-context";
 import { useMascot } from "@/contexts/mascot-context";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 
 export default function JobseekerMatchFeed() {
   const { toast } = useToast();
@@ -16,10 +18,13 @@ export default function JobseekerMatchFeed() {
   const isMobile = useIsMobile();
   const [currentEmployerIndex, setCurrentEmployerIndex] = useState(0);
   const { setMood, showMessage, setIsVisible } = useMascot();
+  const [activeTab, setActiveTab] = useState<string>("all");
+  const [filteredEmployers, setFilteredEmployers] = useState<any[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
   
   // Fetch employer profiles for the jobseeker to match with
   const { data: employers, isLoading, error } = useQuery({
-    queryKey: ["/api/jobseeker/match-feed"],
+    queryKey: ["/api/jobseeker/match-feed", activeTab],
     enabled: !!user,
   });
   
