@@ -205,59 +205,202 @@ export default function MatchCard({ profile, onAccept, onReject }: MatchCardProp
               {/* Always display key preferences */}
               {profile.preferences.preferences && (
                 <>
-                  {/* Work Environment Preference - Remote vs Office */}
-                  <div>
-                    <div className="text-sm font-medium text-gray-700 mb-1">Office vs Remote</div>
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                      <span>In-office</span>
-                      <span>Fully Remote</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="h-2 rounded-full" 
-                        style={{ 
-                          width: `${((profile.preferences.preferences.officeVsRemote || 5) / 10) * 100}%`,
-                          background: "#5ce1e6"
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                  
-                  {/* Work Style Preference */}
-                  <div className="mt-3">
-                    <div className="text-sm font-medium text-gray-700 mb-1">Structure vs Ambiguity</div>
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                      <span>Prefers Structure</span>
-                      <span>Thrives in Ambiguity</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="h-2 rounded-full" 
-                        style={{ 
-                          width: `${((profile.preferences.preferences.structureVsAmbiguity || 5) / 10) * 100}%`,
-                          background: "#5ce1e6"
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                  
-                  {/* Mission & Vision Preference */}
-                  <div className="mt-3">
-                    <div className="text-sm font-medium text-gray-700 mb-1">Purpose vs Profit</div>
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
-                      <span>Purpose-Driven Impact</span>
-                      <span>Profit-Driven Focus</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="h-2 rounded-full" 
-                        style={{ 
-                          width: `${((profile.preferences.preferences.purposeVsProfit || 5) / 10) * 100}%`,
-                          background: "#5ce1e6"
-                        }}
-                      ></div>
-                    </div>
-                  </div>
+                  {/* Check if there are priority sliders defined by the employer */}
+                  {Array.isArray(profile.prioritySliders) && profile.prioritySliders.length > 0 ? (
+                    <>
+                      {/* Employer's priority sliders section */}
+                      <div className="mb-4 p-2 bg-[rgba(92,225,230,0.1)] rounded-lg">
+                        <div className="text-sm font-medium text-[#0097b1] mb-2 flex items-center">
+                          <span className="text-[#0097b1]">Top Matching Priorities</span>
+                          <Badge 
+                            variant="outline" 
+                            className="ml-2 bg-white text-[#0097b1] border-[#5ce1e6]"
+                          >
+                            Employer Focus
+                          </Badge>
+                        </div>
+                        
+                        {/* Display each priority slider */}
+                        {profile.prioritySliders.map((sliderId: string, index: number) => {
+                          // Extract the label from sliderId (e.g., "purposeVsProfit" to "Purpose vs Profit")
+                          const label = sliderId
+                            .replace(/([A-Z])/g, ' $1')
+                            .replace(/^./, str => str.toUpperCase());
+                            
+                          // Set up left and right labels based on slider ID
+                          let leftLabel = "";
+                          let rightLabel = "";
+                          
+                          // Custom labels based on the preference type
+                          if (sliderId === "purposeVsProfit") {
+                            leftLabel = "Purpose-Driven Impact";
+                            rightLabel = "Profit-Driven Focus";
+                          } else if (sliderId === "structureVsAmbiguity") {
+                            leftLabel = "Prefers Structure";
+                            rightLabel = "Thrives in Ambiguity";
+                          } else if (sliderId === "officeVsRemote") {
+                            leftLabel = "In-office";
+                            rightLabel = "Fully Remote";
+                          } else if (sliderId === "innovationVsTradition") {
+                            leftLabel = "Innovation & Disruption";
+                            rightLabel = "Tradition & Stability";
+                          } else if (sliderId === "diversityVsPerformance") {
+                            leftLabel = "Diversity & Inclusion";
+                            rightLabel = "Performance-First Culture";
+                          } else if (sliderId === "cooperativeVsCompetitive") {
+                            leftLabel = "Cooperative & Supportive";
+                            rightLabel = "Highly Competitive";
+                          } else if (sliderId === "socialResponsibilityVsPragmatism") {
+                            leftLabel = "Social Responsibility";
+                            rightLabel = "Business Pragmatism";
+                          } else if (sliderId === "logicalVsIntuitive") {
+                            leftLabel = "Logical Decision-Making";
+                            rightLabel = "Intuitive Decision-Making";
+                          } else if (sliderId === "focusVsMultitasking") {
+                            leftLabel = "Deep Focus";
+                            rightLabel = "Multitasking";
+                          } else if (sliderId === "deadlinesVsFlexibility") {
+                            leftLabel = "Strict Deadlines";
+                            rightLabel = "Flexible Timelines";
+                          } else if (sliderId === "planningVsAdaptability") {
+                            leftLabel = "Detailed Planning";
+                            rightLabel = "Adaptability & Flexibility";
+                          }
+                          
+                          return (
+                            <div key={index} className="mb-2 last:mb-0">
+                              <div className="text-sm font-medium text-gray-700 mb-1">{label}</div>
+                              <div className="flex justify-between text-xs text-gray-500 mb-1">
+                                <span>{leftLabel}</span>
+                                <span>{rightLabel}</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div 
+                                  className="h-2 rounded-full" 
+                                  style={{ 
+                                    width: `${((profile.preferences.preferences[sliderId] || 5) / 10) * 100}%`,
+                                    background: "#5ce1e6"
+                                  }}
+                                ></div>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      
+                      {/* Additional important preferences */}
+                      {!profile.prioritySliders.includes("officeVsRemote") && (
+                        <div>
+                          <div className="text-sm font-medium text-gray-700 mb-1">Office vs Remote</div>
+                          <div className="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>In-office</span>
+                            <span>Fully Remote</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="h-2 rounded-full" 
+                              style={{ 
+                                width: `${((profile.preferences.preferences.officeVsRemote || 5) / 10) * 100}%`,
+                                background: "#5ce1e6"
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {!profile.prioritySliders.includes("structureVsAmbiguity") && (
+                        <div className="mt-3">
+                          <div className="text-sm font-medium text-gray-700 mb-1">Structure vs Ambiguity</div>
+                          <div className="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>Prefers Structure</span>
+                            <span>Thrives in Ambiguity</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="h-2 rounded-full" 
+                              style={{ 
+                                width: `${((profile.preferences.preferences.structureVsAmbiguity || 5) / 10) * 100}%`,
+                                background: "#5ce1e6"
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {!profile.prioritySliders.includes("purposeVsProfit") && (
+                        <div className="mt-3">
+                          <div className="text-sm font-medium text-gray-700 mb-1">Purpose vs Profit</div>
+                          <div className="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>Purpose-Driven Impact</span>
+                            <span>Profit-Driven Focus</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="h-2 rounded-full" 
+                              style={{ 
+                                width: `${((profile.preferences.preferences.purposeVsProfit || 5) / 10) * 100}%`,
+                                background: "#5ce1e6"
+                              }}
+                            ></div>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {/* Default preferences if no priority sliders are set */}
+                      <div>
+                        <div className="text-sm font-medium text-gray-700 mb-1">Office vs Remote</div>
+                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                          <span>In-office</span>
+                          <span>Fully Remote</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="h-2 rounded-full" 
+                            style={{ 
+                              width: `${((profile.preferences.preferences.officeVsRemote || 5) / 10) * 100}%`,
+                              background: "#5ce1e6"
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-3">
+                        <div className="text-sm font-medium text-gray-700 mb-1">Structure vs Ambiguity</div>
+                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                          <span>Prefers Structure</span>
+                          <span>Thrives in Ambiguity</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="h-2 rounded-full" 
+                            style={{ 
+                              width: `${((profile.preferences.preferences.structureVsAmbiguity || 5) / 10) * 100}%`,
+                              background: "#5ce1e6"
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-3">
+                        <div className="text-sm font-medium text-gray-700 mb-1">Purpose vs Profit</div>
+                        <div className="flex justify-between text-xs text-gray-500 mb-1">
+                          <span>Purpose-Driven Impact</span>
+                          <span>Profit-Driven Focus</span>
+                        </div>
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="h-2 rounded-full" 
+                            style={{ 
+                              width: `${((profile.preferences.preferences.purposeVsProfit || 5) / 10) * 100}%`,
+                              background: "#5ce1e6"
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    </>
+                  )}
                   
                   {/* Expandable section for all other preferences */}
                   {showAllPreferences && (
