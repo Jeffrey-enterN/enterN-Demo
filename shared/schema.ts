@@ -66,6 +66,7 @@ export const employerProfiles = pgTable("employer_profiles", {
   calendarLink: text("calendar_link"),
   atsLink: text("ats_link"),
   superUser: boolean("super_user").default(true),
+  prioritySliders: text("priority_sliders").array(), // Array of slider IDs that are top priority for this employer
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
