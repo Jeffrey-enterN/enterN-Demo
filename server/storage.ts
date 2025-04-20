@@ -28,6 +28,7 @@ export interface IStorage {
   getEmployerProfile(id: number): Promise<EmployerProfile | undefined>;
   getEmployerProfileByUserId(userId: number): Promise<EmployerProfile | undefined>;
   createEmployerProfile(profile: InsertEmployerProfile): Promise<EmployerProfile>;
+  updateEmployerPrioritySliders(id: number, prioritySliders: string[]): Promise<EmployerProfile>;
 
   // Job Postings
   getJobPosting(id: number): Promise<JobPosting | undefined>;
@@ -150,10 +151,26 @@ export class MemStorage implements IStorage {
       ...profile,
       id,
       superUser: true,
+      prioritySliders: profile.prioritySliders || [],
       createdAt: now
     };
     this.employerProfiles.set(id, employerProfile);
     return employerProfile;
+  }
+  
+  async updateEmployerPrioritySliders(id: number, prioritySliders: string[]): Promise<EmployerProfile> {
+    const employerProfile = this.employerProfiles.get(id);
+    if (!employerProfile) {
+      throw new Error(`Employer profile with ID ${id} not found`);
+    }
+    
+    const updatedProfile = {
+      ...employerProfile,
+      prioritySliders
+    };
+    
+    this.employerProfiles.set(id, updatedProfile);
+    return updatedProfile;
   }
 
   // Job Postings
