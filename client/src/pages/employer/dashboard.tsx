@@ -34,7 +34,8 @@ import {
   BarChart2,
   Zap,
   DollarSign,
-  AlertCircle
+  AlertCircle,
+  SlidersHorizontal
 } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { MobileNavbar } from "@/components/mobile-navbar";
@@ -377,6 +378,19 @@ export default function EmployerDashboard() {
                 <div>
                   <h3 className="font-medium text-gray-900">Analytics Dashboard</h3>
                   <p className="text-sm text-gray-500">View detailed recruitment metrics</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/priority-sliders')}>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
+                  <SlidersHorizontal className="h-6 w-6 text-[#5ce1e6]" />
+                </div>
+                <div>
+                  <h3 className="font-medium text-gray-900">Priority Preferences</h3>
+                  <p className="text-sm text-gray-500">Set your top priority matching criteria</p>
                 </div>
               </div>
             </CardContent>

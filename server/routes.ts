@@ -39,6 +39,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
       next(error);
     }
   });
+  
+  // Priority Sliders Route
+  app.patch("/api/employer/profile/priority-sliders", async (req, res, next) => {
+    try {
+      if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
+      if (req.user.role !== "employer") return res.status(403).json({ message: "Forbidden" });
+      
+      const { prioritySliders } = req.body;
+      
+      // Validate that prioritySliders is an array with max 3 items
+      if (!Array.isArray(prioritySliders)) {
+        return res.status(400).json({ message: "prioritySliders must be an array" });
+      }
+      
+      if (prioritySliders.length > 3) {
+        return res.status(400).json({ message: "You can select up to 3 priority sliders" });
+      }
+      
+      const employerProfile = await storage.getEmployerProfileByUserId(req.user.id);
+      if (!employerProfile) {
+        return res.status(404).json({ message: "Employer profile not found" });
+      }
+      
+      const updatedProfile = await storage.updateEmployerPrioritySliders(
+        employerProfile.id,
+        prioritySliders
+      );
+      
+      res.json(updatedProfile);
+    } catch (error) {
+      next(error);
+    }
+  });
 
   // Job Posting Routes
   app.post("/api/job-postings", async (req, res, next) => {

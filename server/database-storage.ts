@@ -85,6 +85,20 @@ export class DatabaseStorage implements IStorage {
     const result = await db.insert(employerProfiles).values(profile).returning();
     return result[0];
   }
+  
+  async updateEmployerPrioritySliders(id: number, prioritySliders: string[]): Promise<EmployerProfile> {
+    const result = await db
+      .update(employerProfiles)
+      .set({ prioritySliders })
+      .where(eq(employerProfiles.id, id))
+      .returning();
+    
+    if (result.length === 0) {
+      throw new Error(`Employer profile with ID ${id} not found`);
+    }
+    
+    return result[0];
+  }
 
   // Job Postings
   async getJobPosting(id: number): Promise<JobPosting | undefined> {
