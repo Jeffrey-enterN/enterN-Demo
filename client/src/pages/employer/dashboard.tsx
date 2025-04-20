@@ -3,6 +3,8 @@ import { useAuth } from "@/contexts/auth-context";
 import { useQuery } from "@tanstack/react-query";
 import { Redirect, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   BarChart, 
@@ -40,9 +42,7 @@ import {
 import { Navbar } from "@/components/navbar";
 import { MobileNavbar } from "@/components/mobile-navbar";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
 import { EmployerProfile, JobPosting } from "@shared/schema";
 
 interface EmployerAnalytics {
@@ -173,57 +173,158 @@ export default function EmployerDashboard() {
   const hasProfile = !!employerProfile && !profileError;
   const hasJobPostings = jobPostings && Array.isArray(jobPostings) && jobPostings.length > 0;
 
-  // Display welcome screen for new employers without a profile
+  // Display dashboard even for employers without a profile
   if (!hasProfile) {
     return (
       <div className="min-h-screen bg-gray-50">
         {/* Global navigation */}
         {isMobile ? <MobileNavbar activeItem="dashboard" /> : <Navbar />}
         
-        <div className="container mx-auto py-20 px-4">
-          <Card className="max-w-3xl mx-auto shadow-lg border-t-4 border-t-[#5ce1e6]">
-            <CardHeader className="text-center pb-2">
-              <CardTitle className="text-2xl">Welcome to JobPair!</CardTitle>
-              <CardDescription className="text-lg mt-2">
-                Let's get your employer profile set up
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-6 pb-8">
-              <div className="flex flex-col items-center text-center mb-8">
-                <div className="h-20 w-20 bg-[rgba(92,225,230,0.1)] rounded-full flex items-center justify-center mb-4">
+        {/* Top Bar */}
+        <div className="bg-white border-b border-gray-200 p-4 shadow-sm flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">Employer Dashboard</h1>
+            <p className="text-gray-500">Welcome to JobPair!</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              <Bell className="h-6 w-6 text-gray-500 cursor-pointer" />
+              {notificationsCount > 0 && (
+                <Badge className="absolute -top-1 -right-1 bg-[#ff66c4] h-5 w-5 flex items-center justify-center p-0">
+                  {notificationsCount}
+                </Badge>
+              )}
+            </div>
+            <Button variant="ghost" size="icon">
+              <Settings className="h-5 w-5" />
+            </Button>
+            <div className="h-8 w-8 bg-[#5ce1e6] rounded-full flex items-center justify-center">
+              <span className="text-white font-medium">E</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="container mx-auto py-8 px-4">
+          {/* Welcome Card */}
+          <Card className="mb-8 border-t-4 border-t-[#5ce1e6]">
+            <CardContent className="pt-6">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <div className="h-20 w-20 flex-shrink-0 bg-[rgba(92,225,230,0.1)] rounded-full flex items-center justify-center">
                   <Building className="h-10 w-10 text-[#5ce1e6]" />
                 </div>
-                <h3 className="text-xl font-medium mb-2">Complete Your Employer Profile</h3>
-                <p className="text-gray-600 max-w-lg">
-                  Before you can start finding candidates, you'll need to set up your company profile. 
-                  This information will be shown to potential job seekers who might be interested in working with you.
-                </p>
-                
-                <div className="w-full max-w-md mt-8 bg-amber-50 border border-amber-100 rounded-lg p-4">
-                  <div className="flex gap-3 items-start">
-                    <AlertCircle className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-amber-800">Your profile information is incomplete</p>
-                      <p className="text-sm text-amber-700 mt-1">
-                        You need to complete your company profile to start matching with candidates.
-                      </p>
-                    </div>
+                <div>
+                  <h3 className="text-xl font-medium mb-2">Complete Your Company Profile</h3>
+                  <p className="text-gray-600 mb-4">
+                    We recommend setting up your company profile to help job seekers understand your company culture and values.
+                    This helps improve the quality of your matches.
+                  </p>
+                  <div className="flex flex-wrap gap-3">
+                    <Button
+                      className="bg-[#5ce1e6] hover:bg-[#4bb7bc] text-white"
+                      onClick={() => setLocation("/employer/profile-setup")}
+                    >
+                      <Building className="mr-2 h-5 w-5" />
+                      Create Company Profile
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="border-[#5ce1e6] text-[#5ce1e6] hover:bg-[rgba(92,225,230,0.1)]"
+                      onClick={() => setLocation("/employer/job-posting")}
+                    >
+                      <Briefcase className="mr-2 h-5 w-5" />
+                      Post a Job
+                    </Button>
                   </div>
                 </div>
               </div>
-              
-              <div className="flex justify-center">
-                <Button 
-                  size="lg"
-                  className="bg-[#5ce1e6] hover:bg-[#4bb7bc] text-white"
-                  onClick={() => setLocation("/employer/profile-setup")}
-                >
-                  <Building className="mr-2 h-5 w-5" />
-                  Create Employer Profile
-                </Button>
-              </div>
             </CardContent>
           </Card>
+          
+          {/* Quick Actions */}
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/profile-setup')}>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
+                    <Building className="h-6 w-6 text-[#5ce1e6]" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900">Create Company Profile</h3>
+                    <p className="text-sm text-gray-500">Set up your company information</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/job-posting')}>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
+                    <Briefcase className="h-6 w-6 text-[#5ce1e6]" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900">Post New Job</h3>
+                    <p className="text-sm text-gray-500">Create a new job posting</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/match-feed')}>
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
+                    <Users className="h-6 w-6 text-[#5ce1e6]" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900">Browse Candidates</h3>
+                    <p className="text-sm text-gray-500">Find potential candidates</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          
+          {/* Getting Started */}
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Getting Started</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="h-10 w-10 bg-[rgba(92,225,230,0.1)] rounded-full flex items-center justify-center mb-4">
+                    <span className="text-[#5ce1e6] font-bold">1</span>
+                  </div>
+                  <h3 className="font-medium mb-2">Create Your Profile</h3>
+                  <p className="text-sm text-gray-500">Set up your company details to attract the right candidates</p>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="h-10 w-10 bg-[rgba(92,225,230,0.1)] rounded-full flex items-center justify-center mb-4">
+                    <span className="text-[#5ce1e6] font-bold">2</span>
+                  </div>
+                  <h3 className="font-medium mb-2">Post Jobs</h3>
+                  <p className="text-sm text-gray-500">Create detailed job listings to match with qualified candidates</p>
+                </div>
+              </CardContent>
+            </Card>
+            
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="h-10 w-10 bg-[rgba(92,225,230,0.1)] rounded-full flex items-center justify-center mb-4">
+                    <span className="text-[#5ce1e6] font-bold">3</span>
+                  </div>
+                  <h3 className="font-medium mb-2">Match & Connect</h3>
+                  <p className="text-sm text-gray-500">Browse candidates, find matches, and start conversations</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     );
