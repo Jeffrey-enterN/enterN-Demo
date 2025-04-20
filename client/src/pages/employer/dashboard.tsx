@@ -339,12 +339,12 @@ export default function EmployerDashboard() {
     
     // Check company profile fields
     if (employerProfile) {
-      totalFields += 5; // companyName, industry, headquarters, description, website
+      totalFields += 5; // companyName, industry, headquarters, about, missionValues
       if (employerProfile.companyName) completedFields += 1;
       if (employerProfile.industry) completedFields += 1;
       if (employerProfile.headquarters) completedFields += 1;
-      if (employerProfile.description) completedFields += 1;
-      if (employerProfile.website) completedFields += 1;
+      if (employerProfile.about) completedFields += 1;
+      if (employerProfile.missionValues) completedFields += 1;
     }
     
     // Check job postings
@@ -417,7 +417,7 @@ export default function EmployerDashboard() {
         
         {/* Quick Actions */}
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/match-feed')}>
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
@@ -425,12 +425,13 @@ export default function EmployerDashboard() {
                   <Users className="h-6 w-6 text-[#5ce1e6]" />
                 </div>
                 <div>
-                  <h3 className="font-medium text-gray-900">View Candidates</h3>
-                  <p className="text-sm text-gray-500">Find potential matches for your jobs</p>
+                  <h3 className="font-medium text-gray-900">Match Feed</h3>
+                  <p className="text-sm text-gray-500">Find potential candidates</p>
                 </div>
               </div>
             </CardContent>
           </Card>
+          
           <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/job-posting')}>
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
@@ -438,12 +439,13 @@ export default function EmployerDashboard() {
                   <Briefcase className="h-6 w-6 text-[#5ce1e6]" />
                 </div>
                 <div>
-                  <h3 className="font-medium text-gray-900">Post New Job</h3>
+                  <h3 className="font-medium text-gray-900">Post Job</h3>
                   <p className="text-sm text-gray-500">Create a new job posting</p>
                 </div>
               </div>
             </CardContent>
           </Card>
+          
           <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/priority-sliders')}>
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
@@ -452,24 +454,12 @@ export default function EmployerDashboard() {
                 </div>
                 <div>
                   <h3 className="font-medium text-gray-900">Priority Preferences</h3>
-                  <p className="text-sm text-gray-500">Select your top matching priorities</p>
+                  <p className="text-sm text-gray-500">Customize your matching sliders</p>
                 </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/profile-setup')}>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
-                  <Edit className="h-6 w-6 text-[#5ce1e6]" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">Edit Company Profile</h3>
-                  <p className="text-sm text-gray-500">Update your company information</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          
           <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/messages')}>
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
@@ -478,239 +468,300 @@ export default function EmployerDashboard() {
                 </div>
                 <div>
                   <h3 className="font-medium text-gray-900">Messages</h3>
-                  <p className="text-sm text-gray-500">Chat with potential candidates</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/analytics-dashboard')}>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
-                  <BarChart2 className="h-6 w-6 text-[#5ce1e6]" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">Analytics Dashboard</h3>
-                  <p className="text-sm text-gray-500">View detailed recruitment metrics</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/employer/interviews')}>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
-                  <Calendar className="h-6 w-6 text-[#5ce1e6]" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-gray-900">Interview Schedule</h3>
-                  <p className="text-sm text-gray-500">Manage upcoming interviews</p>
+                  <p className="text-sm text-gray-500">Chat with your matches</p>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
         
-        {/* Analytics Section */}
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Recruitment Analytics</h2>
-        <Tabs defaultValue="all" className="mb-8">
-          <TabsList className="mb-6">
-            <TabsTrigger value="all">Overview</TabsTrigger>
-            <TabsTrigger value="candidates">Candidates</TabsTrigger>
-            <TabsTrigger value="applications">Applications</TabsTrigger>
-            <TabsTrigger value="interviews">Interviews</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="all">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-              <Card>
-                <CardContent className="pt-6 text-center">
-                  <div className="flex flex-col items-center">
-                    <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center mb-2">
-                      <Briefcase className="h-6 w-6 text-[#5ce1e6]" />
-                    </div>
-                    <p className="text-4xl font-bold">{analytics?.jobPostings.active || 0}</p>
-                    <p className="text-sm text-gray-500">Active Jobs</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="pt-6 text-center">
-                  <div className="flex flex-col items-center">
-                    <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center mb-2">
-                      <Users className="h-6 w-6 text-[#5ce1e6]" />
-                    </div>
-                    <p className="text-4xl font-bold">{analytics?.candidates.totalViewed || 0}</p>
-                    <p className="text-sm text-gray-500">Candidates Viewed</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="pt-6 text-center">
-                  <div className="flex flex-col items-center">
-                    <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center mb-2">
-                      <Zap className="h-6 w-6 text-[#5ce1e6]" />
-                    </div>
-                    <p className="text-4xl font-bold">{analytics?.candidates.matches || 0}</p>
-                    <p className="text-sm text-gray-500">Total Matches</p>
-                  </div>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardContent className="pt-6 text-center">
-                  <div className="flex flex-col items-center">
-                    <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center mb-2">
-                      <DollarSign className="h-6 w-6 text-[#5ce1e6]" />
-                    </div>
-                    <p className="text-4xl font-bold">{analytics?.interviews.accepted || 0}</p>
-                    <p className="text-sm text-gray-500">Hires</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+        {/* Analytics Tabs */}
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Analytics</h2>
+        <Card className="mb-8">
+          <Tabs defaultValue="candidates">
+            <TabsList className="grid grid-cols-4 h-auto p-0">
+              <TabsTrigger value="candidates" className="py-3 data-[state=active]:text-[#5ce1e6]">
+                Candidates
+              </TabsTrigger>
+              <TabsTrigger value="jobs" className="py-3 data-[state=active]:text-[#5ce1e6]">
+                Jobs
+              </TabsTrigger>
+              <TabsTrigger value="applications" className="py-3 data-[state=active]:text-[#5ce1e6]">
+                Applications
+              </TabsTrigger>
+              <TabsTrigger value="interviews" className="py-3 data-[state=active]:text-[#5ce1e6]">
+                Interviews
+              </TabsTrigger>
+            </TabsList>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Candidate Stats Card */}
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg font-medium">Candidate Interest</CardTitle>
-                </CardHeader>
-                <CardContent className="h-[250px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={candidateData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={50}
-                        outerRadius={70}
-                        paddingAngle={5}
-                        dataKey="value"
-                        labelLine={false}
-                        label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+            <TabsContent value="candidates" className="p-6">
+              <div className="flex flex-col md:flex-row gap-8">
+                <div className="flex-1">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-medium mb-2">Candidate Overview</h3>
+                    <p className="text-sm text-gray-500">Summary of candidate interactions</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <Card>
+                      <CardContent className="p-4">
+                        <div>
+                          <p className="text-sm text-gray-500">Total Viewed</p>
+                          <p className="text-3xl font-bold">{analytics?.candidates.totalViewed || 0}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-4">
+                        <div>
+                          <p className="text-sm text-gray-500">Matches</p>
+                          <p className="text-3xl font-bold">{analytics?.candidates.matches || 0}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+                
+                <div className="w-full md:w-1/2">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-medium mb-2">Candidate Decision Distribution</h3>
+                    <p className="text-sm text-gray-500">Breakdown of your candidate decisions</p>
+                  </div>
+                  
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={candidateData}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          nameKey="name"
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {candidateData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Pie>
+                        <Legend verticalAlign="bottom" height={36} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="jobs" className="p-6">
+              <div className="flex flex-col md:flex-row gap-8">
+                <div className="flex-1">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-medium mb-2">Job Postings Summary</h3>
+                    <p className="text-sm text-gray-500">Overview of your active and filled positions</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-4">
+                    <Card>
+                      <CardContent className="p-4">
+                        <div>
+                          <p className="text-sm text-gray-500">Total Jobs</p>
+                          <p className="text-3xl font-bold">{analytics?.jobPostings.total || 0}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-4">
+                        <div>
+                          <p className="text-sm text-gray-500">Active</p>
+                          <p className="text-3xl font-bold">{analytics?.jobPostings.active || 0}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-4">
+                        <div>
+                          <p className="text-sm text-gray-500">Closed</p>
+                          <p className="text-3xl font-bold">{analytics?.jobPostings.closed || 0}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+                
+                <div className="w-full md:w-1/2">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-medium mb-2">Job Postings</h3>
+                    <p className="text-sm text-gray-500">Status of your most recent job postings</p>
+                  </div>
+                  
+                  {jobPostings && jobPostings.length > 0 ? (
+                    <div className="space-y-4">
+                      {jobPostings.slice(0, 3).map(job => (
+                        <Card key={job.id} className="overflow-hidden">
+                          <CardContent className="p-0">
+                            <div className="border-l-4 border-[#5ce1e6] pl-3 py-3 pr-4">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <p className="font-medium">{job.title}</p>
+                                  <p className="text-sm text-gray-500">{job.location} • {job.type}</p>
+                                </div>
+                                <Badge className={job.status === 'open' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                                  {job.status === 'open' ? 'Active' : 'Closed'}
+                                </Badge>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <Card className="bg-gray-50">
+                      <CardContent className="flex flex-col items-center justify-center text-center py-10">
+                        <Briefcase className="h-12 w-12 text-gray-300 mb-4" />
+                        <h3 className="text-lg font-medium text-gray-600 mb-2">No Job Postings Yet</h3>
+                        <p className="text-sm text-gray-500 mb-4">Start creating job postings to attract candidates</p>
+                        <Button 
+                          size="sm"
+                          className="bg-[#5ce1e6] hover:bg-[#4bb7bc] text-white"
+                          onClick={() => setLocation("/employer/job-posting")}
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Create Job Posting
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="applications" className="p-6">
+              <div className="flex flex-col md:flex-row gap-8">
+                <div className="flex-1">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-medium mb-2">Applications Overview</h3>
+                    <p className="text-sm text-gray-500">Summary of applications received</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <Card>
+                      <CardContent className="p-4">
+                        <div>
+                          <p className="text-sm text-gray-500">Total Applications</p>
+                          <p className="text-3xl font-bold">{analytics?.applications.total || 0}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    <Card>
+                      <CardContent className="p-4">
+                        <div>
+                          <p className="text-sm text-gray-500">Reviewed</p>
+                          <p className="text-3xl font-bold">{analytics?.applications.reviewed || 0}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+                
+                <div className="w-full md:w-1/2">
+                  <div className="mb-4">
+                    <h3 className="text-lg font-medium mb-2">Application Outcomes</h3>
+                    <p className="text-sm text-gray-500">Breakdown of application review decisions</p>
+                  </div>
+                  
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={applicationData}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                          nameKey="name"
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                        >
+                          {applicationData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Pie>
+                        <Legend verticalAlign="bottom" height={36} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="interviews" className="p-6">
+              <div className="flex flex-col gap-8">
+                <div>
+                  <div className="mb-4">
+                    <h3 className="text-lg font-medium mb-2">Interview Pipeline</h3>
+                    <p className="text-sm text-gray-500">Track your candidates throughout the interview process</p>
+                  </div>
+                  
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={interviewData}
+                        margin={{
+                          top: 5,
+                          right: 5,
+                          left: 5,
+                          bottom: 5,
+                        }}
                       >
-                        {candidateData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                      </Pie>
-                      <RechartsTooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-              
-              {/* Interview Stats Card */}
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg font-medium">Hiring Funnel</CardTitle>
-                </CardHeader>
-                <CardContent className="h-[250px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={interviewData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <RechartsTooltip />
-                      <Bar dataKey="value" fill="#5ce1e6" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="candidates">
-            <div className="grid grid-cols-1 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg font-medium">Candidate Response</CardTitle>
-                </CardHeader>
-                <CardContent className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={candidateData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={90}
-                        paddingAngle={5}
-                        dataKey="value"
-                        labelLine={true}
-                        label
-                      >
-                        {candidateData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                      </Pie>
-                      <RechartsTooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="applications">
-            <div className="grid grid-cols-1 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg font-medium">Application Status</CardTitle>
-                </CardHeader>
-                <CardContent className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={applicationData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={90}
-                        paddingAngle={5}
-                        dataKey="value"
-                        labelLine={true}
-                        label
-                      >
-                        {applicationData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                      </Pie>
-                      <RechartsTooltip />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-          
-          <TabsContent value="interviews">
-            <div className="grid grid-cols-1 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg font-medium">Interview Pipeline</CardTitle>
-                </CardHeader>
-                <CardContent className="h-[300px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={interviewData}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <RechartsTooltip />
-                      <Legend />
-                      <Bar dataKey="value" fill="#5ce1e6" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <RechartsTooltip />
+                        <Bar dataKey="value" fill="#5ce1e6" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+                
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg font-medium">Upcoming Interviews</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {analytics && analytics.interviews.scheduled > 0 ? (
+                        Array(Math.min(analytics.interviews.scheduled, 3)).fill(0).map((_, i) => (
+                          <div key={i} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                            <div className="flex items-center gap-3">
+                              <div className="h-10 w-10 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
+                                <Users className="h-5 w-5 text-[#5ce1e6]" />
+                              </div>
+                              <div>
+                                <p className="font-medium">Candidate Name {i + 1}</p>
+                                <p className="text-sm text-gray-500">Software Developer • Tomorrow, 10:00 AM</p>
+                              </div>
+                            </div>
+                            <Button variant="outline" size="sm">
+                              <Calendar className="h-4 w-4 mr-2" />
+                              Calendar
+                            </Button>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-center py-4">
+                          <Calendar className="h-10 w-10 text-gray-300 mb-3" />
+                          <h3 className="text-base font-medium text-gray-600 mb-1">No Upcoming Interviews</h3>
+                          <p className="text-sm text-gray-500">Schedule interviews with your matched candidates</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </Card>
       </div>
     </div>
   );
