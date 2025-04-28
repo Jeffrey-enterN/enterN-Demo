@@ -146,6 +146,28 @@ export default function JobseekerDashboard() {
                 <span className="font-medium">{completionPercentage}%</span>
               </div>
               <Progress value={completionPercentage} className="h-2" />
+              
+              {/* Complete Profile CTA */}
+              <div className="bg-gradient-to-r from-[rgba(92,225,230,0.1)] to-[rgba(255,102,196,0.1)] border border-[#5ce1e6] rounded-md p-4 mt-4">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                  <div className="flex items-start gap-3">
+                    <div className="h-10 w-10 rounded-full bg-[rgba(92,225,230,0.2)] flex items-center justify-center flex-shrink-0">
+                      <Edit className="h-5 w-5 text-[#5ce1e6]" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900 mb-1">Complete Your Full Profile</h3>
+                      <p className="text-sm text-gray-600">Finish setting up your profile to improve your matches and get better job opportunities.</p>
+                    </div>
+                  </div>
+                  <Button
+                    className="bg-[#5ce1e6] hover:bg-[#4bb7bc] text-white shadow-sm"
+                    onClick={() => setLocation('/jobseeker/complete-profile')}
+                  >
+                    Complete Profile
+                  </Button>
+                </div>
+              </div>
+              
               {needsVerification && (
                 <div className="bg-amber-50 border border-amber-100 rounded-md p-3 mt-3 flex items-start gap-2">
                   <School className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
