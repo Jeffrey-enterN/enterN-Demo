@@ -14,10 +14,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from "@/components/ui/form";
 import { insertJobseekerProfileSchema } from "@shared/schema";
 import { Loader2 } from "lucide-react";
 
@@ -26,6 +27,7 @@ const essentialProfileSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   phoneNumber: z.string().optional(),
+  isStudent: z.boolean().default(false),
 });
 
 type EssentialProfileFormData = z.infer<typeof essentialProfileSchema>;
@@ -42,6 +44,7 @@ export default function SimpleProfileSetup() {
       firstName: "",
       lastName: "",
       phoneNumber: "",
+      isStudent: false,
     },
   });
 
@@ -171,6 +174,30 @@ export default function SimpleProfileSetup() {
                         <Input type="tel" placeholder="(123) 456-7890" {...field} />
                       </FormControl>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="isStudent"
+                  render={({ field }) => (
+                    <FormItem className={`flex flex-row items-center justify-between rounded-lg border p-4 ${field.value ? 'bg-cyan-50 border-cyan-200' : ''}`}>
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">Student Status</FormLabel>
+                        <FormDescription>
+                          {field.value 
+                            ? "You've identified as a student. We'll tailor opportunities accordingly."
+                            : "Are you currently a student? This helps us find student-specific opportunities."}
+                        </FormDescription>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className={field.value ? 'data-[state=checked]:bg-[#5ce1e6]' : ''}
+                        />
+                      </FormControl>
                     </FormItem>
                   )}
                 />
