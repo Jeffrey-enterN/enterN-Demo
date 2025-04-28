@@ -56,7 +56,17 @@ export default function AuthPage() {
   // Redirect if already logged in
   useEffect(() => {
     if (user) {
-      setLocation("/");
+      // If the user is already authenticated, redirect to the appropriate page
+      if (user.role === 'JOBSEEKER') {
+        // For jobseekers, redirect to the simple profile setup if they're new
+        setLocation("/jobseeker/simple-profile-setup");
+      } else if (user.role === 'EMPLOYER') {
+        // For employers, redirect to their dashboard
+        setLocation("/employer/dashboard");
+      } else {
+        // Default fallback
+        setLocation("/");
+      }
     }
   }, [user, setLocation]);
 
