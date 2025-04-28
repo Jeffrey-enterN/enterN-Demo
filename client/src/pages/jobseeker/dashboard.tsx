@@ -210,15 +210,15 @@ export default function JobseekerDashboard() {
               </div>
             </CardContent>
           </Card>
-          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/jobseeker/profile-setup')}>
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-[#e3fcfd] hover:border-[#5ce1e6]" onClick={() => setLocation('/jobseeker/complete-profile')}>
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 rounded-full bg-[rgba(92,225,230,0.1)] flex items-center justify-center">
                   <Edit className="h-6 w-6 text-[#5ce1e6]" />
                 </div>
                 <div>
-                  <h3 className="font-medium text-gray-900">Update Profile</h3>
-                  <p className="text-sm text-gray-500">Edit your personal information</p>
+                  <h3 className="font-medium text-gray-900">Complete Full Profile</h3>
+                  <p className="text-sm text-gray-500">Add more details to improve matches</p>
                 </div>
               </div>
             </CardContent>

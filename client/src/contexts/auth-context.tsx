@@ -55,10 +55,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Check if user has a profile already
       if (user.role === "jobseeker") {
-        // Redirect to profile setup or match feed based on previous usage
-        window.location.href = "/jobseeker/profile-setup";
+        // Send to dashboard - they can complete their profile from there
+        window.location.href = "/jobseeker/dashboard";
       } else if (user.role === "employer") {
-        window.location.href = "/employer/profile-setup";
+        window.location.href = "/employer/dashboard";
       }
     },
     onError: (error: Error) => {
@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Redirect user based on role after registration
       if (user.role === "jobseeker") {
-        window.location.href = "/jobseeker/profile-setup";
+        window.location.href = "/jobseeker/simple-profile-setup";
       } else if (user.role === "employer") {
         window.location.href = "/employer/profile-setup";
       }
