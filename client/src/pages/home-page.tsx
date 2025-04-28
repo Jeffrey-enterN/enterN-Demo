@@ -188,12 +188,11 @@ export default function HomePage() {
                   <div className="flex flex-col items-center text-center">
                     <div className="h-12 w-12 rounded-full flex items-center justify-center mb-4" 
                          style={{background: "linear-gradient(rgba(92, 225, 230, 0.1), rgba(255, 102, 196, 0.1))"}}>
-                      <Heart className="h-6 w-6" style={{color: "#0097b1"}} />
+                      <User className="h-6 w-6" style={{color: "#0097b1"}} />
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Matching Algorithm</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Anonymized Jobseeker Profiles</h3>
                     <p className="text-gray-600">
-                      Our smart matching system connects you with opportunities that align with your preferences
-                      and values.
+                      We've replaced the resume with bias-resistant anonymized profiles that capture 45 points of organizational and collaborative compatibility. Now you'll know if someone is a good fit, even before your first conversation.
                     </p>
                   </div>
                 </CardContent>
@@ -204,12 +203,11 @@ export default function HomePage() {
                   <div className="flex flex-col items-center text-center">
                     <div className="h-12 w-12 rounded-full flex items-center justify-center mb-4" 
                          style={{background: "linear-gradient(rgba(255, 102, 196, 0.1), rgba(92, 225, 230, 0.1))"}}>
-                      <Briefcase className="h-6 w-6" style={{color: "#ff66c4"}} />
+                      <Heart className="h-6 w-6" style={{color: "#ff66c4"}} />
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Job Verification</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Symmetrical Matching</h3>
                     <p className="text-gray-600">
-                      Candidates can express interest in specific roles after matching, ensuring genuine interest
-                      in the position.
+                      Our platform uses a two-way matching algorithm where both jobseekers and employers express interest independently. Only when there's mutual interest does a match occur, leading to higher engagement and better conversion rates.
                     </p>
                   </div>
                 </CardContent>
@@ -220,11 +218,11 @@ export default function HomePage() {
                   <div className="flex flex-col items-center text-center">
                     <div className="h-12 w-12 rounded-full flex items-center justify-center mb-4" 
                          style={{background: "linear-gradient(rgba(200, 253, 4, 0.15), rgba(92, 225, 230, 0.1))"}}>
-                      <MessageSquare className="h-6 w-6" style={{color: "#0097b1"}} />
+                      <Building className="h-6 w-6" style={{color: "#0097b1"}} />
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Direct Communication</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Organizational Alignment</h3>
                     <p className="text-gray-600">
-                      Once matched, employers and candidates can communicate directly to explore opportunities.
+                      Beyond skills and experience, enterN focuses on organizational fit, supervisor compatibility, and mission alignment. Our data shows that these factors lead to higher job satisfaction, better retention, and improved productivity.
                     </p>
                   </div>
                 </CardContent>
