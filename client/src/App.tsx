@@ -10,6 +10,8 @@ import EmployerMatchesPage from "@/pages/employer/matches-page";
 import EmployerAnalyticsDashboard from "@/pages/employer/analytics-dashboard";
 import PrioritySliders from "@/pages/employer/priority-sliders";
 import JobseekerProfileSetup from "@/pages/jobseeker/profile-setup";
+import SimpleProfileSetup from "@/pages/jobseeker/simple-profile-setup";
+import CompleteProfile from "@/pages/jobseeker/complete-profile";
 import JobseekerPreferences from "@/pages/jobseeker/preferences";
 import JobseekerDashboard from "@/pages/jobseeker/dashboard";
 import JobseekerMatchFeed from "@/pages/jobseeker/match-feed";
@@ -49,6 +51,8 @@ function AppRoutes() {
       {/* Jobseeker Routes - Protected */}
       <ProtectedRoute path="/jobseeker/dashboard" component={JobseekerDashboard} />
       <ProtectedRoute path="/jobseeker/profile-setup" component={JobseekerProfileSetup} />
+      <ProtectedRoute path="/jobseeker/simple-profile-setup" component={SimpleProfileSetup} />
+      <ProtectedRoute path="/jobseeker/complete-profile" component={CompleteProfile} />
       <ProtectedRoute path="/jobseeker/preferences" component={JobseekerPreferences} />
       <ProtectedRoute path="/jobseeker/match-feed" component={JobseekerMatchFeed} />
       <ProtectedRoute path="/jobseeker/employer-feed" component={JobseekerEmployerFeed} />

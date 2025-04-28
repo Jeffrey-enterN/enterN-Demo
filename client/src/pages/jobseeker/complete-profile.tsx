@@ -13,9 +13,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, School, BriefcaseIcon, Sliders } from "lucide-react";
-import { SchoolInfoStep } from "@/components/jobseeker/school-info-step";
-import { CareerInterestsStep } from "@/components/jobseeker/career-interests-step";
-import { PreferencesStep } from "@/components/jobseeker/preferences-step";
+import { SchoolInfoStep } from "../../components/jobseeker/school-info-step";
+import { CareerInterestsStep } from "../../components/jobseeker/career-interests-step";
+import { PreferencesStep } from "../../components/jobseeker/preferences-step";
 
 export default function CompleteProfile() {
   const [_, setLocation] = useLocation();

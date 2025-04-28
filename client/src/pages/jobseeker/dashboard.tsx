@@ -163,7 +163,7 @@ export default function JobseekerDashboard() {
                     className="bg-[#5ce1e6] hover:bg-[#4bb7bc] text-white shadow-sm"
                     onClick={() => setLocation('/jobseeker/complete-profile')}
                   >
-                    Complete Profile
+                    Complete Full Profile
                   </Button>
                 </div>
               </div>
