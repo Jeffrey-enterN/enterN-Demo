@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { SchoolInfoStep } from "@/components/jobseeker/school-info-step";
 import { CareerInterestsStep } from "@/components/jobseeker/career-interests-step";
 import { PreferencesStep } from "@/components/jobseeker/preferences-step";
+// Import the recently created StepHeader component
 import { StepHeader } from "@/components/step-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

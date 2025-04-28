@@ -1,78 +1,78 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/auth-context";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { 
+  Form, 
+  FormControl, 
+  FormField, 
+  FormItem, 
+  FormLabel, 
+  FormMessage 
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2, ChevronLeft } from "lucide-react";
 
-// Career interests schema
+// Define the schema for career interests
 const careerInterestsSchema = z.object({
-  preferredIndustries: z.array(z.string()).optional(),
-  preferredFunctionalAreas: z.array(z.string()).optional(),
-  preferredLocations: z.array(z.string()).optional(),
-  preferredLocationTypes: z.array(z.string()).optional(),
-  preferredFunctionalArea: z.string().optional(),
+  preferredIndustries: z.array(z.string()).min(1, "Select at least one industry"),
+  preferredFunctionalAreas: z.array(z.string()).min(1, "Select at least one functional area"),
+  preferredLocations: z.array(z.string()).min(1, "Select at least one location"),
+  preferredLocationTypes: z.array(z.string()).min(1, "Select at least one location type"),
+  minSalary: z.string().optional(),
 });
 
 type CareerInterestsFormData = z.infer<typeof careerInterestsSchema>;
 
 interface CareerInterestsStepProps {
-  profile: any;
   onNext: () => void;
   onBack: () => void;
 }
 
+// Sample data for checkboxes
 const industries = [
-  { id: "tech", label: "Technology" },
-  { id: "finance", label: "Finance" },
-  { id: "healthcare", label: "Healthcare" },
-  { id: "education", label: "Education" },
-  { id: "retail", label: "Retail" },
-  { id: "manufacturing", label: "Manufacturing" },
-  { id: "consulting", label: "Consulting" },
-  { id: "media", label: "Media & Entertainment" },
-  { id: "nonprofit", label: "Nonprofit" },
-  { id: "government", label: "Government" },
+  "Technology", "Finance", "Healthcare", "Education", "Manufacturing",
+  "Retail", "Hospitality", "Consulting", "Media", "Non-profit"
 ];
 
 const functionalAreas = [
-  { id: "software-development", label: "Software Development" },
-  { id: "data-science", label: "Data Science" },
-  { id: "product-management", label: "Product Management" },
-  { id: "design", label: "Design" },
-  { id: "marketing", label: "Marketing" },
-  { id: "sales", label: "Sales" },
-  { id: "customer-success", label: "Customer Success" },
-  { id: "finance", label: "Finance" },
-  { id: "hr", label: "Human Resources" },
-  { id: "operations", label: "Operations" },
+  "Software Engineering", "Data Science", "Product Management", "Design",
+  "Marketing", "Sales", "Customer Support", "Human Resources", "Finance",
+  "Operations"
+];
+
+const locations = [
+  "San Francisco Bay Area", "New York", "Boston", "Seattle", "Austin",
+  "Chicago", "Los Angeles", "Denver", "Atlanta", "Washington DC"
 ];
 
 const locationTypes = [
-  { id: "on-site", label: "On-site" },
-  { id: "hybrid", label: "Hybrid" },
-  { id: "remote", label: "Remote" },
+  "On-site", "Remote", "Hybrid"
 ];
 
-export function CareerInterestsStep({ profile, onNext, onBack }: CareerInterestsStepProps) {
+export function CareerInterestsStep({ onNext, onBack }: CareerInterestsStepProps) {
+  const { user } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [selectedIndustries, setSelectedIndustries] = useState<string[]>(
-    profile?.preferredIndustries || []
-  );
-  const [selectedFunctionalAreas, setSelectedFunctionalAreas] = useState<string[]>(
-    profile?.preferredFunctionalAreas || []
-  );
-  const [selectedLocationTypes, setSelectedLocationTypes] = useState<string[]>(
-    profile?.preferredLocationTypes || []
-  );
+
+  // Get existing profile data
+  const { data: profile, isLoading: isProfileLoading } = useQuery({
+    queryKey: ["/api/jobseeker/profile"],
+    queryFn: async () => {
+      const res = await fetch("/api/jobseeker/profile");
+      if (!res.ok) {
+        return null;
+      }
+      return await res.json();
+    },
+  });
 
   const form = useForm<CareerInterestsFormData>({
     resolver: zodResolver(careerInterestsSchema),
@@ -81,31 +81,31 @@ export function CareerInterestsStep({ profile, onNext, onBack }: CareerInterests
       preferredFunctionalAreas: profile?.preferredFunctionalAreas || [],
       preferredLocations: profile?.preferredLocations || [],
       preferredLocationTypes: profile?.preferredLocationTypes || [],
-      preferredFunctionalArea: profile?.preferredFunctionalArea || "",
+      minSalary: profile?.minSalary || "",
     },
   });
 
-  const profileMutation = useMutation({
+  const updateProfileMutation = useMutation({
     mutationFn: async (data: CareerInterestsFormData) => {
-      const res = await apiRequest("PATCH", `/api/jobseeker/profile/${profile.id}`, data);
+      const res = await apiRequest("PATCH", "/api/jobseeker/profile", data);
       return await res.json();
     },
     onSuccess: () => {
       toast({
         title: "Career interests updated",
-        description: "Your career interests have been saved.",
+        description: "Your career interests have been saved successfully.",
       });
       
-      // Invalidate the profile query
+      // Invalidate the profile query before proceeding
       queryClient.invalidateQueries({ queryKey: ["/api/jobseeker/profile"] });
       
-      // Move to the next step
+      // Go to next step
       onNext();
     },
     onError: (error: Error) => {
       setIsSubmitting(false);
       toast({
-        title: "Error updating profile",
+        title: "Error updating career interests",
         description: error.message,
         variant: "destructive",
       });
@@ -114,174 +114,266 @@ export function CareerInterestsStep({ profile, onNext, onBack }: CareerInterests
 
   const onSubmit = (data: CareerInterestsFormData) => {
     setIsSubmitting(true);
-    
-    const updatedData = {
-      ...data,
-      preferredIndustries: selectedIndustries,
-      preferredFunctionalAreas: selectedFunctionalAreas,
-      preferredLocationTypes: selectedLocationTypes,
-    };
-    
-    profileMutation.mutate(updatedData);
+    updateProfileMutation.mutate(data);
   };
 
-  const handleIndustryChange = (industry: string, checked: boolean) => {
-    if (checked) {
-      setSelectedIndustries((prev) => [...prev, industry]);
-    } else {
-      setSelectedIndustries((prev) => prev.filter((i) => i !== industry));
-    }
-  };
-
-  const handleFunctionalAreaChange = (area: string, checked: boolean) => {
-    if (checked) {
-      setSelectedFunctionalAreas((prev) => [...prev, area]);
-    } else {
-      setSelectedFunctionalAreas((prev) => prev.filter((a) => a !== area));
-    }
-  };
-
-  const handleLocationTypeChange = (type: string, checked: boolean) => {
-    if (checked) {
-      setSelectedLocationTypes((prev) => [...prev, type]);
-    } else {
-      setSelectedLocationTypes((prev) => prev.filter((t) => t !== type));
-    }
-  };
+  // If still loading the profile data, show a loading state
+  if (isProfileLoading) {
+    return (
+      <CardContent className="p-6 text-center">
+        <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+        <p className="mt-2 text-gray-500">Loading your profile data...</p>
+      </CardContent>
+    );
+  }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <div className="space-y-6">
-          {/* Industries */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-3">Industries of Interest</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {industries.map((industry) => (
-                <div key={industry.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`industry-${industry.id}`}
-                    checked={selectedIndustries.includes(industry.id)}
-                    onCheckedChange={(checked) => 
-                      handleIndustryChange(industry.id, checked as boolean)
-                    }
-                  />
-                  <label
-                    htmlFor={`industry-${industry.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {industry.label}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
+    <>
+      <CardHeader>
+        <CardTitle>Career Interests</CardTitle>
+        <CardDescription>
+          Tell us what you're looking for to help us match you with the right opportunities.
+        </CardDescription>
+      </CardHeader>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardContent className="space-y-8">
+            {/* Preferred Industries */}
+            <FormField
+              control={form.control}
+              name="preferredIndustries"
+              render={() => (
+                <FormItem>
+                  <FormLabel className="text-base font-medium">Preferred Industries</FormLabel>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
+                    {industries.map((industry) => (
+                      <FormField
+                        key={industry}
+                        control={form.control}
+                        name="preferredIndustries"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={industry}
+                              className="flex items-start space-x-2 space-y-0"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(industry)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...field.value, industry])
+                                      : field.onChange(
+                                          field.value?.filter(
+                                            (value) => value !== industry
+                                          )
+                                        )
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="text-sm font-normal cursor-pointer">
+                                {industry}
+                              </FormLabel>
+                            </FormItem>
+                          )
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Functional Areas */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-3">Functional Areas of Interest</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {functionalAreas.map((area) => (
-                <div key={area.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`area-${area.id}`}
-                    checked={selectedFunctionalAreas.includes(area.id)}
-                    onCheckedChange={(checked) => 
-                      handleFunctionalAreaChange(area.id, checked as boolean)
-                    }
-                  />
-                  <label
-                    htmlFor={`area-${area.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {area.label}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
+            {/* Preferred Functional Areas */}
+            <FormField
+              control={form.control}
+              name="preferredFunctionalAreas"
+              render={() => (
+                <FormItem>
+                  <FormLabel className="text-base font-medium">Preferred Functional Areas</FormLabel>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
+                    {functionalAreas.map((area) => (
+                      <FormField
+                        key={area}
+                        control={form.control}
+                        name="preferredFunctionalAreas"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={area}
+                              className="flex items-start space-x-2 space-y-0"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(area)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...field.value, area])
+                                      : field.onChange(
+                                          field.value?.filter(
+                                            (value) => value !== area
+                                          )
+                                        )
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="text-sm font-normal cursor-pointer">
+                                {area}
+                              </FormLabel>
+                            </FormItem>
+                          )
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Preferred Location */}
-          <div>
+            {/* Preferred Locations */}
             <FormField
               control={form.control}
               name="preferredLocations"
+              render={() => (
+                <FormItem>
+                  <FormLabel className="text-base font-medium">Preferred Locations</FormLabel>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-2">
+                    {locations.map((location) => (
+                      <FormField
+                        key={location}
+                        control={form.control}
+                        name="preferredLocations"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={location}
+                              className="flex items-start space-x-2 space-y-0"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(location)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...field.value, location])
+                                      : field.onChange(
+                                          field.value?.filter(
+                                            (value) => value !== location
+                                          )
+                                        )
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="text-sm font-normal cursor-pointer">
+                                {location}
+                              </FormLabel>
+                            </FormItem>
+                          )
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Preferred Location Types */}
+            <FormField
+              control={form.control}
+              name="preferredLocationTypes"
+              render={() => (
+                <FormItem>
+                  <FormLabel className="text-base font-medium">Preferred Work Arrangements</FormLabel>
+                  <div className="grid grid-cols-3 gap-3 mt-2">
+                    {locationTypes.map((type) => (
+                      <FormField
+                        key={type}
+                        control={form.control}
+                        name="preferredLocationTypes"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={type}
+                              className="flex items-start space-x-2 space-y-0"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(type)}
+                                  onCheckedChange={(checked) => {
+                                    return checked
+                                      ? field.onChange([...field.value, type])
+                                      : field.onChange(
+                                          field.value?.filter(
+                                            (value) => value !== type
+                                          )
+                                        )
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="text-sm font-normal cursor-pointer">
+                                {type}
+                              </FormLabel>
+                            </FormItem>
+                          )
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Minimum Salary */}
+            <FormField
+              control={form.control}
+              name="minSalary"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Preferred Locations</FormLabel>
+                  <FormLabel>Minimum Annual Salary</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="San Francisco, New York, London (separate with commas)" 
-                      value={field.value?.join(", ")} 
-                      onChange={(e) => {
-                        const locations = e.target.value.split(",").map(loc => loc.trim());
-                        field.onChange(locations);
-                      }}
+                      placeholder="e.g., 75000" 
+                      {...field} 
+                      type="number"
                     />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          </div>
-
-          {/* Location Types */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-3">Preferred Location Type</h3>
-            <div className="flex flex-wrap gap-3">
-              {locationTypes.map((type) => (
-                <div key={type.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`type-${type.id}`}
-                    checked={selectedLocationTypes.includes(type.id)}
-                    onCheckedChange={(checked) => 
-                      handleLocationTypeChange(type.id, checked as boolean)
-                    }
-                  />
-                  <label
-                    htmlFor={`type-${type.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                  >
-                    {type.label}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Primary Functional Area */}
-          <FormField
-            control={form.control}
-            name="preferredFunctionalArea"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Primary Functional Area</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Software Engineering" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        
-        <div className="flex justify-between pt-4">
-          <Button type="button" variant="outline" onClick={onBack}>
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              "Continue"
-            )}
-          </Button>
-        </div>
-      </form>
-    </Form>
+          </CardContent>
+          
+          <CardFooter className="flex justify-between">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onBack}
+              disabled={isSubmitting}
+              className="flex items-center"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Back
+            </Button>
+            
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Continue to Next Step"
+              )}
+            </Button>
+          </CardFooter>
+        </form>
+      </Form>
+    </>
   );
 }

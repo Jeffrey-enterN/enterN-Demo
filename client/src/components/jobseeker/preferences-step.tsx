@@ -1,186 +1,193 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useAuth } from "@/contexts/auth-context";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, FormItem } from "@/components/ui/form";
-import { Loader2, ChevronLeft, ChevronDown, ChevronUp } from "lucide-react";
 import { 
+  CardContent, 
+  CardFooter, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription 
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Loader2, ChevronLeft, ChevronDown } from "lucide-react";
+import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger
+  AccordionTrigger,
 } from "@/components/ui/accordion";
-
-// Preferences schema - allowing any values for now as we have many slider fields
-const preferencesSchema = z.object({
-  preferences: z.record(z.number()).optional(),
-});
-
-type PreferencesFormData = z.infer<typeof preferencesSchema>;
+import { Slider } from "@/components/ui/slider";
 
 interface PreferencesStepProps {
-  profile: any;
-  onNext: () => void;
+  onComplete: () => void;
   onBack: () => void;
 }
 
-// Define the categories and their sliders
-const preferencesCategories = [
+// Define the preference categories and sliders
+const preferenceCategories = [
   {
     id: "organizational-values",
-    title: "Organizational Values & Mission Alignment",
+    name: "Organizational Values",
     sliders: [
-      { id: "mission-driven", left: "Mission-driven", right: "Profit-driven" },
-      { id: "social-impact", left: "High social impact", right: "Low social impact" },
-      { id: "ethics-priority", left: "Ethics first", right: "Results first" },
-      { id: "innovation-tradition", left: "Innovative", right: "Traditional" },
-      { id: "diversity-inclusion", left: "Diverse & inclusive", right: "Homogeneous" }
+      { id: "work-life-balance", name: "Work-Life Balance", leftLabel: "Always-On", rightLabel: "Strict Boundaries" },
+      { id: "mission-driven", name: "Mission-Driven", leftLabel: "Profit-Focused", rightLabel: "Mission-Focused" },
+      { id: "innovation", name: "Innovation", leftLabel: "Stability", rightLabel: "Cutting-Edge" },
+      { id: "diversity", name: "Diversity & Inclusion", leftLabel: "Traditional", rightLabel: "Progressive" },
+      { id: "transparency", name: "Transparency", leftLabel: "Need-to-Know", rightLabel: "Open-Book" },
     ]
   },
   {
     id: "work-style",
-    title: "Work Style Preferences",
+    name: "Work Style",
     sliders: [
-      { id: "autonomy-direction", left: "High autonomy", right: "Clear direction" },
-      { id: "specialist-generalist", left: "Specialist", right: "Generalist" },
-      { id: "independent-collaborative", left: "Independent", right: "Collaborative" },
-      { id: "structure-flexibility", left: "Structured", right: "Flexible" },
-      { id: "risk-tolerance", left: "Risk-taking", right: "Risk-averse" }
+      { id: "autonomous", name: "Independence", leftLabel: "Guided", rightLabel: "Autonomous" },
+      { id: "structured", name: "Structure", leftLabel: "Fluid", rightLabel: "Structured" },
+      { id: "deadline-driven", name: "Deadline Approach", leftLabel: "Relaxed", rightLabel: "Urgent" },
+      { id: "multitasking", name: "Task Focus", leftLabel: "Single-Task", rightLabel: "Multi-Task" },
+      { id: "work-pace", name: "Work Pace", leftLabel: "Steady", rightLabel: "Sprint-based" },
     ]
   },
   {
-    id: "leadership-style",
-    title: "Preferred Leadership & Supervisor Styles",
+    id: "leadership",
+    name: "Leadership Styles",
     sliders: [
-      { id: "hands-on-hands-off", left: "Hands-on management", right: "Hands-off management" },
-      { id: "coaching-directing", left: "Coaching-oriented", right: "Direction-oriented" },
-      { id: "feedback-frequency", left: "Frequent feedback", right: "Periodic feedback" },
-      { id: "hierarchical-flat", left: "Hierarchical", right: "Flat structure" },
-      { id: "transformational-transactional", left: "Transformational", right: "Transactional" }
+      { id: "coaching", name: "Coaching Style", leftLabel: "Directive", rightLabel: "Facilitative" },
+      { id: "feedback", name: "Feedback Style", leftLabel: "Direct", rightLabel: "Diplomatic" },
+      { id: "decision-making", name: "Decision Making", leftLabel: "Top-Down", rightLabel: "Consensus" },
+      { id: "accessibility", name: "Leadership Accessibility", leftLabel: "Formal", rightLabel: "Approachable" },
+      { id: "recognition", name: "Recognition Style", leftLabel: "Private", rightLabel: "Public" },
     ]
   },
   {
-    id: "work-environment",
-    title: "Preferred Work Environment",
+    id: "environment",
+    name: "Work Environment",
     sliders: [
-      { id: "busy-calm", left: "Busy & energetic", right: "Calm & focused" },
-      { id: "formal-casual", left: "Formal", right: "Casual" },
-      { id: "competitive-supportive", left: "Competitive", right: "Supportive" },
-      { id: "tech-driven-human-centered", left: "Tech-driven", right: "Human-centered" },
-      { id: "open-private", left: "Open workspace", right: "Private workspace" }
+      { id: "noise-level", name: "Noise Level", leftLabel: "Library-Like", rightLabel: "Bustling" },
+      { id: "office-layout", name: "Space Layout", leftLabel: "Private", rightLabel: "Open" },
+      { id: "dress-code", name: "Dress Code", leftLabel: "Formal", rightLabel: "Casual" },
+      { id: "social-events", name: "Social Events", leftLabel: "Minimal", rightLabel: "Frequent" },
+      { id: "physical-comfort", name: "Physical Comfort", leftLabel: "Functional", rightLabel: "Ergonomic" },
     ]
   },
   {
-    id: "collaboration-style",
-    title: "Collaboration & Communication Style",
+    id: "collaboration",
+    name: "Collaboration",
     sliders: [
-      { id: "direct-diplomatic", left: "Direct communication", right: "Diplomatic communication" },
-      { id: "scheduled-spontaneous", left: "Scheduled meetings", right: "Spontaneous discussions" },
-      { id: "text-verbal", left: "Text-based", right: "Verbal" },
-      { id: "detailed-big-picture", left: "Detailed", right: "Big-picture" },
-      { id: "consensus-decisive", left: "Consensus-seeking", right: "Decisive" }
+      { id: "team-size", name: "Team Size", leftLabel: "Small Teams", rightLabel: "Large Teams" },
+      { id: "communication", name: "Communication Style", leftLabel: "Brief", rightLabel: "Detailed" },
+      { id: "meeting-frequency", name: "Meeting Frequency", leftLabel: "Minimal", rightLabel: "Regular" },
+      { id: "cross-functional", name: "Cross-Functional Work", leftLabel: "Specialized", rightLabel: "Integrated" },
+      { id: "conflict-resolution", name: "Conflict Resolution", leftLabel: "Direct", rightLabel: "Mediated" },
     ]
   },
   {
-    id: "growth-motivation",
-    title: "Growth, Intrinsic Motivation & Development Goals",
+    id: "growth",
+    name: "Growth & Development",
     sliders: [
-      { id: "continuous-learning", left: "Continuous learning", right: "Mastery" },
-      { id: "challenge-stability", left: "Challenge-oriented", right: "Stability-oriented" },
-      { id: "skill-breadth-depth", left: "Skill breadth", right: "Skill depth" },
-      { id: "mentor-access", left: "Access to mentorship", right: "Self-directed growth" },
-      { id: "creative-analytical", left: "Creative work", right: "Analytical work" }
+      { id: "learning-style", name: "Learning Style", leftLabel: "Self-Directed", rightLabel: "Structured" },
+      { id: "skill-variety", name: "Skill Variety", leftLabel: "Specialized", rightLabel: "Diverse" },
+      { id: "mentorship", name: "Mentorship", leftLabel: "Minimal", rightLabel: "Extensive" },
+      { id: "career-path", name: "Career Path", leftLabel: "Linear", rightLabel: "Exploratory" },
+      { id: "feedback-frequency", name: "Feedback Frequency", leftLabel: "Annual", rightLabel: "Continuous" },
     ]
   },
   {
     id: "problem-solving",
-    title: "Problem-Solving & Decision-Making",
+    name: "Problem Solving",
     sliders: [
-      { id: "intuitive-methodical", left: "Intuitive", right: "Methodical" },
-      { id: "theory-practice", left: "Theory-based", right: "Practice-based" },
-      { id: "rapid-thorough", left: "Rapid decisions", right: "Thorough analysis" },
-      { id: "innovative-proven", left: "Innovative solutions", right: "Proven approaches" },
-      { id: "solo-team", left: "Individual problem-solving", right: "Team problem-solving" }
+      { id: "analytical", name: "Analytical Approach", leftLabel: "Data-Driven", rightLabel: "Intuitive" },
+      { id: "risk-tolerance", name: "Risk Tolerance", leftLabel: "Conservative", rightLabel: "Innovative" },
+      { id: "decision-speed", name: "Decision Speed", leftLabel: "Deliberate", rightLabel: "Quick" },
+      { id: "process-adherence", name: "Process Adherence", leftLabel: "By-the-Book", rightLabel: "Adaptive" },
+      { id: "troubleshooting", name: "Troubleshooting Style", leftLabel: "Methodical", rightLabel: "Creative" },
     ]
   },
   {
     id: "adaptability",
-    title: "Adaptability & Resilience",
+    name: "Adaptability",
     sliders: [
-      { id: "change-consistency", left: "Embraces change", right: "Values consistency" },
-      { id: "pressure-tolerance", left: "Thrives under pressure", right: "Prefers low pressure" },
-      { id: "ambiguity-clarity", left: "Comfortable with ambiguity", right: "Needs clarity" },
-      { id: "multitasking-focus", left: "Multitasking", right: "Deep focus" },
-      { id: "fast-steady", left: "Fast-paced", right: "Steady-paced" }
+      { id: "change-frequency", name: "Change Frequency", leftLabel: "Stable", rightLabel: "Dynamic" },
+      { id: "pivoting", name: "Pivoting", leftLabel: "Consistent", rightLabel: "Agile" },
+      { id: "uncertainty", name: "Uncertainty Comfort", leftLabel: "Clear Expectations", rightLabel: "Ambiguity Friendly" },
+      { id: "tech-adoption", name: "Tech Adoption", leftLabel: "Proven Solutions", rightLabel: "Early Adopter" },
+      { id: "resilience", name: "Resilience Expectations", leftLabel: "Supportive", rightLabel: "Challenging" },
     ]
   },
   {
     id: "emotional-intelligence",
-    title: "Emotional Intelligence & Interpersonal Effectiveness",
+    name: "Emotional Intelligence",
     sliders: [
-      { id: "network-depth", left: "Wide network", right: "Deep relationships" },
-      { id: "emotional-rational", left: "Emotionally expressive", right: "Reserved & rational" },
-      { id: "social-independent", left: "Socially oriented", right: "Independently oriented" },
-      { id: "conflict-engagement", left: "Engages with conflict", right: "Avoids conflict" },
-      { id: "empathy-objectivity", left: "Empathy-driven", right: "Objectivity-driven" }
+      { id: "empathy", name: "Empathy Priority", leftLabel: "Results-First", rightLabel: "People-First" },
+      { id: "emotional-expression", name: "Emotional Expression", leftLabel: "Reserved", rightLabel: "Expressive" },
+      { id: "personal-boundaries", name: "Personal Boundaries", leftLabel: "Professional", rightLabel: "Personal" },
+      { id: "conflict-approach", name: "Conflict Approach", leftLabel: "Avoiding", rightLabel: "Engaging" },
+      { id: "stress-management", name: "Stress Management", leftLabel: "Individual", rightLabel: "Team Support" },
     ]
-  }
+  },
 ];
 
-export function PreferencesStep({ profile, onNext, onBack }: PreferencesStepProps) {
+export function PreferencesStep({ onComplete, onBack }: PreferencesStepProps) {
+  const { user } = useAuth();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [openCategories, setOpenCategories] = useState<string[]>([preferencesCategories[0].id]);
-  const [sliderValues, setSliderValues] = useState<Record<string, number>>({});
+  const [preferences, setPreferences] = useState<Record<string, number>>({});
 
-  const form = useForm<PreferencesFormData>({
-    resolver: zodResolver(preferencesSchema),
-    defaultValues: {
-      preferences: {},
+  // Get existing preferences data
+  const { data: preferencesData, isLoading: isPreferencesLoading } = useQuery({
+    queryKey: ["/api/jobseeker/preferences"],
+    queryFn: async () => {
+      const res = await fetch("/api/jobseeker/preferences");
+      if (!res.ok) {
+        // If preferences don't exist yet, return an empty object
+        if (res.status === 404) {
+          return {};
+        }
+        throw new Error("Failed to fetch preferences");
+      }
+      return await res.json();
     },
   });
 
-  // Initialize slider values from profile if available
+  // Initialize preferences from existing data
   useState(() => {
-    if (profile?.preferences) {
-      setSliderValues(profile.preferences);
-    } else {
-      // Initialize all sliders to middle value (50)
-      const initialValues: Record<string, number> = {};
-      preferencesCategories.forEach(category => {
-        category.sliders.forEach(slider => {
-          initialValues[slider.id] = 50;
-        });
-      });
-      setSliderValues(initialValues);
+    if (preferencesData && preferencesData.preferencesData) {
+      try {
+        const parsedPreferences = JSON.parse(preferencesData.preferencesData);
+        setPreferences(parsedPreferences);
+      } catch (error) {
+        // If the preferences data is not valid JSON, start with empty preferences
+        console.error("Failed to parse preferences data:", error);
+      }
     }
   });
 
-  const preferenceMutation = useMutation({
-    mutationFn: async (data: Record<string, number>) => {
-      const res = await apiRequest("PATCH", `/api/jobseeker/preferences/${profile.id}`, { 
-        preferences: data 
-      });
-      return await res.json();
+  const updatePreferencesMutation = useMutation({
+    mutationFn: async (data: { preferencesData: string }) => {
+      // Check if preferences already exist
+      if (preferencesData && preferencesData.id) {
+        // Update existing preferences
+        const res = await apiRequest("PATCH", "/api/jobseeker/preferences", data);
+        return await res.json();
+      } else {
+        // Create new preferences
+        const res = await apiRequest("POST", "/api/jobseeker/preferences", data);
+        return await res.json();
+      }
     },
     onSuccess: () => {
       toast({
         title: "Preferences updated",
-        description: "Your preferences have been saved.",
+        description: "Your preferences have been saved successfully.",
       });
       
-      // Invalidate the profile query
-      queryClient.invalidateQueries({ queryKey: ["/api/jobseeker/profile"] });
+      // Invalidate the preferences query
       queryClient.invalidateQueries({ queryKey: ["/api/jobseeker/preferences"] });
       
-      // Move to the next step/finish
-      onNext();
+      // Complete the form
+      onComplete();
     },
     onError: (error: Error) => {
       setIsSubmitting(false);
@@ -192,91 +199,108 @@ export function PreferencesStep({ profile, onNext, onBack }: PreferencesStepProp
     },
   });
 
-  const onSubmit = () => {
-    setIsSubmitting(true);
-    preferenceMutation.mutate(sliderValues);
-  };
-
   const handleSliderChange = (sliderId: string, value: number[]) => {
-    setSliderValues(prev => ({
+    setPreferences(prev => ({
       ...prev,
-      [sliderId]: value[0],
+      [sliderId]: value[0]
     }));
   };
 
-  const toggleCategory = (categoryId: string) => {
-    if (openCategories.includes(categoryId)) {
-      setOpenCategories(openCategories.filter(id => id !== categoryId));
-    } else {
-      setOpenCategories([...openCategories, categoryId]);
-    }
+  const handleSubmit = () => {
+    setIsSubmitting(true);
+    
+    // Convert preferences to JSON string
+    const preferencesData = JSON.stringify(preferences);
+    
+    // Send to API
+    updatePreferencesMutation.mutate({ preferencesData });
   };
 
+  // Get slider value or default to middle (50)
+  const getSliderValue = (sliderId: string) => {
+    return preferences[sliderId] !== undefined ? [preferences[sliderId]] : [50];
+  };
+
+  // If still loading preferences data, show a loading state
+  if (isPreferencesLoading) {
+    return (
+      <CardContent className="p-6 text-center">
+        <Loader2 className="h-8 w-8 animate-spin mx-auto" />
+        <p className="mt-2 text-gray-500">Loading your preferences...</p>
+      </CardContent>
+    );
+  }
+
   return (
-    <Form {...form}>
-      <form onSubmit={(e) => { e.preventDefault(); onSubmit(); }} className="space-y-6">
-        <div className="space-y-6">
-          <p className="text-gray-600">
-            Adjust these sliders to indicate your preferences. These will help us match you with employers that align with your values and work style.
-          </p>
-          
-          <Accordion 
-            type="multiple" 
-            value={openCategories} 
-            className="space-y-4"
-          >
-            {preferencesCategories.map((category) => (
-              <AccordionItem 
-                key={category.id} 
-                value={category.id}
-                className="border border-gray-200 rounded-lg shadow-sm overflow-hidden"
-              >
-                <AccordionTrigger className="px-4 py-3 hover:bg-gray-50 hover:no-underline">
-                  <span className="text-lg font-medium">{category.title}</span>
-                </AccordionTrigger>
-                <AccordionContent className="px-4 py-3 bg-gray-50/50">
-                  <div className="space-y-6">
-                    {category.sliders.map((slider) => (
-                      <div key={slider.id} className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-gray-700 font-medium">{slider.left}</span>
-                          <span className="text-gray-700 font-medium">{slider.right}</span>
-                        </div>
-                        <FormItem>
-                          <Slider
-                            defaultValue={[sliderValues[slider.id] || 50]}
-                            max={99}
-                            min={1}
-                            step={1}
-                            onValueChange={(value) => handleSliderChange(slider.id, value)}
-                          />
-                        </FormItem>
+    <>
+      <CardHeader>
+        <CardTitle>Preferences & Values</CardTitle>
+        <CardDescription>
+          Adjust the sliders to indicate your workplace preferences. These settings help us find employers who align with your values.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <Accordion type="multiple" className="w-full" defaultValue={["organizational-values"]}>
+          {preferenceCategories.map((category) => (
+            <AccordionItem value={category.id} key={category.id}>
+              <AccordionTrigger className="text-base font-medium hover:no-underline hover:bg-gray-50 px-4 py-2 rounded">
+                {category.name}
+              </AccordionTrigger>
+              <AccordionContent className="px-4 pt-2 pb-4">
+                <div className="space-y-8">
+                  {category.sliders.map((slider) => (
+                    <div key={slider.id} className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm font-medium">{slider.name}</span>
                       </div>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-        
-        <div className="flex justify-between pt-4">
-          <Button type="button" variant="outline" onClick={onBack}>
-            <ChevronLeft className="h-4 w-4 mr-2" />
-            Back
-          </Button>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Finishing...
-              </>
-            ) : (
-              "Complete Profile"
-            )}
-          </Button>
-        </div>
-      </form>
-    </Form>
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>{slider.leftLabel}</span>
+                          <span>{slider.rightLabel}</span>
+                        </div>
+                        <Slider
+                          value={getSliderValue(slider.id)}
+                          min={1}
+                          max={99}
+                          step={1}
+                          onValueChange={(value) => handleSliderChange(slider.id, value)}
+                          className="[&>span]:bg-[#5ce1e6] cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onBack}
+          disabled={isSubmitting}
+          className="flex items-center"
+        >
+          <ChevronLeft className="h-4 w-4 mr-1" />
+          Back
+        </Button>
+        <Button
+          type="button"
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            "Complete Profile"
+          )}
+        </Button>
+      </CardFooter>
+    </>
   );
 }
