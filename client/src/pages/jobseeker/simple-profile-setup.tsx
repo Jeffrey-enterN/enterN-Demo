@@ -178,29 +178,27 @@ export default function SimpleProfileSetup() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="isStudent"
-                  render={({ field }) => (
-                    <FormItem className={`flex flex-row items-center justify-between rounded-lg border p-4 ${field.value ? 'bg-cyan-50 border-cyan-200' : ''}`}>
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base">Student Status</FormLabel>
-                        <FormDescription>
-                          {field.value 
-                            ? "You've identified as a student. We'll tailor opportunities accordingly."
-                            : "Are you currently a student? This helps us find student-specific opportunities."}
-                        </FormDescription>
-                      </div>
-                      <FormControl>
-                        <Switch
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          className={field.value ? 'data-[state=checked]:bg-[#5ce1e6]' : ''}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                {/* Student status toggle */}
+                <div className="border rounded-lg p-4 flex flex-row items-center justify-between">
+                  <div>
+                    <h3 className="text-base font-medium">Student Status</h3>
+                    <p className="text-sm text-gray-500">Are you currently a student? This helps us find student-specific opportunities.</p>
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="isStudent"
+                    render={({ field }) => (
+                      <FormItem className="flex-shrink-0 m-0">
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
               </CardContent>
 
               <CardFooter className="flex justify-between">
