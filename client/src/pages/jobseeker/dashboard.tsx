@@ -73,7 +73,7 @@ export default function JobseekerDashboard() {
     enabled: !!user && !!profile,
   });
   
-  // Redirect to profile setup if profile doesn't exist
+  // Redirect to profile setup if profile doesn't exist or there's an error
   useEffect(() => {
     if (profileError) {
       console.log("Profile error detected:", profileErrorData);
@@ -81,6 +81,11 @@ export default function JobseekerDashboard() {
       if (profileErrorData instanceof Error && 
           profileErrorData.message.includes("404")) {
         console.log("Profile not found, redirecting to simple profile setup");
+        setLocation("/jobseeker/simple-profile-setup");
+      } else {
+        // For other errors, also redirect to simple profile setup
+        // This covers cases where the API might return 500 or other errors
+        console.log("Other profile error, redirecting to simple profile setup");
         setLocation("/jobseeker/simple-profile-setup");
       }
     }

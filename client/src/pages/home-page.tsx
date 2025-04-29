@@ -67,21 +67,17 @@ export default function HomePage() {
     }
     
     function handleUserRedirect(userData: { role: string }) {
-      if (userData.role === "EMPLOYER" && !employerProfile && !isLoadingEmployer) {
+      // For employer profiles
+      if ((userData.role === "EMPLOYER" || userData.role === "employer") && !employerProfile && !isLoadingEmployer) {
         setLocation("/employer/profile-setup");
-      } else if (userData.role === "JOBSEEKER" && !jobseekerProfile && !isLoadingJobseeker) {
-        setLocation("/jobseeker/profile-setup");
-      } else if (userData.role === "EMPLOYER" && employerProfile) {
+      } else if ((userData.role === "EMPLOYER" || userData.role === "employer") && employerProfile) {
         setLocation("/employer/dashboard");
-      } else if (userData.role === "JOBSEEKER" && jobseekerProfile) {
-        setLocation("/jobseeker/dashboard");
-      } else if (userData.role === "employer" && !employerProfile && !isLoadingEmployer) {
-        setLocation("/employer/profile-setup");
-      } else if (userData.role === "jobseeker" && !jobseekerProfile && !isLoadingJobseeker) {
-        setLocation("/jobseeker/profile-setup");
-      } else if (userData.role === "employer" && employerProfile) {
-        setLocation("/employer/dashboard");
-      } else if (userData.role === "jobseeker" && jobseekerProfile) {
+      }
+      // For jobseeker profiles - redirect to simple profile setup or dashboard
+      else if ((userData.role === "JOBSEEKER" || userData.role === "jobseeker") && !jobseekerProfile && !isLoadingJobseeker) {
+        // Send to simple profile setup instead of the full profile-setup
+        setLocation("/jobseeker/simple-profile-setup");
+      } else if ((userData.role === "JOBSEEKER" || userData.role === "jobseeker") && jobseekerProfile) {
         setLocation("/jobseeker/dashboard");
       }
     }
@@ -158,7 +154,7 @@ export default function HomePage() {
                 {effectiveRole === "jobseeker" || effectiveRole === "JOBSEEKER" ? (
                   <Button 
                     className="w-full" 
-                    onClick={() => setLocation("/jobseeker/profile-setup")}
+                    onClick={() => setLocation("/jobseeker/simple-profile-setup")}
                   >
                     Complete Your Profile
                     <ArrowRight className="h-4 w-4 ml-2" />
@@ -359,7 +355,7 @@ export default function HomePage() {
                     return response.json();
                   })
                   .then(user => {
-                    window.location.href = "/jobseeker/profile-setup";
+                    window.location.href = "/jobseeker/dashboard";
                   })
                   .catch(error => {
                     console.error('Error logging in:', error);
@@ -395,7 +391,7 @@ export default function HomePage() {
               <Button 
                 size="lg" 
                 variant="secondary" 
-                onClick={() => setLocation("/jobseeker/profile-setup")}
+                onClick={() => setLocation("/jobseeker/simple-profile-setup")}
               >
                 Complete Your Profile
                 <ArrowRight className="h-4 w-4 ml-2" />
