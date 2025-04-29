@@ -29,9 +29,42 @@ const schoolInfoSchema = z.object({
   degreeType: z.string().optional(),
   major: z.string().optional(),
   schoolEmail: z.string().optional().refine(val => {
+    // Only validate .edu email if isStudent is true and a value is provided
     if (!val) return true;
     return val.includes('@') && val.includes('.edu');
   }, { message: "Please enter a valid .edu email address" }),
+}).superRefine((data, ctx) => {
+  // If user is a student, require school info
+  if (data.isStudent) {
+    if (!data.school) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "School name is required for students",
+        path: ["school"],
+      });
+    }
+    if (!data.degreeType) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Degree type is required for students",
+        path: ["degreeType"],
+      });
+    }
+    if (!data.major) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Major is required for students",
+        path: ["major"],
+      });
+    }
+    if (!data.schoolEmail) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "School email is required for students",
+        path: ["schoolEmail"],
+      });
+    }
+  }
 });
 
 type SchoolInfoFormData = z.infer<typeof schoolInfoSchema>;
@@ -57,14 +90,27 @@ export function SchoolInfoStep({ onNext }: SchoolInfoStepProps) {
     },
   });
 
+  // Set default values based on the profile data
+  useEffect(() => {
+    if (profile) {
+      form.reset({
+        isStudent: profile.isStudent || false,
+        school: profile.school || "",
+        degreeType: profile.degreeLevel || "", // Note: schema uses degreeType but DB uses degreeLevel
+        major: profile.major || "",
+        schoolEmail: profile.schoolEmail || "",
+      });
+    }
+  }, [profile]);
+
   const form = useForm<SchoolInfoFormData>({
     resolver: zodResolver(schoolInfoSchema),
     defaultValues: {
-      isStudent: profile?.isStudent || false,
-      school: profile?.school || "",
-      degreeType: profile?.degreeType || "",
-      major: profile?.major || "",
-      schoolEmail: profile?.schoolEmail || "",
+      isStudent: false,
+      school: "",
+      degreeType: "",
+      major: "",
+      schoolEmail: "",
     },
   });
 
@@ -100,7 +146,18 @@ export function SchoolInfoStep({ onNext }: SchoolInfoStepProps) {
 
   const onSubmit = (data: SchoolInfoFormData) => {
     setIsSubmitting(true);
-    updateProfileMutation.mutate(data);
+    
+    // Map form fields to match the API field names
+    const apiData = {
+      isStudent: data.isStudent,
+      school: data.isStudent ? data.school : null,
+      degreeLevel: data.isStudent ? data.degreeType : null, // Map to correct DB field name
+      major: data.isStudent ? data.major : null,
+      schoolEmail: data.isStudent ? data.schoolEmail : null
+    };
+    
+    console.log('Submitting profile data:', apiData);
+    updateProfileMutation.mutate(apiData);
   };
 
   // If still loading the profile data, show a loading state
