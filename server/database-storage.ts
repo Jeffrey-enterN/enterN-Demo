@@ -151,6 +151,24 @@ export class DatabaseStorage implements IStorage {
     const result = await db.insert(jobseekerProfiles).values(profile).returning();
     return result[0];
   }
+  
+  async updateJobseekerProfile(id: number, profile: Partial<JobseekerProfile>): Promise<JobseekerProfile> {
+    // Remove non-updatable fields
+    const { id: _, userId: __, createdAt: ___, ...updateData } = profile;
+    
+    // Update the profile
+    const result = await db
+      .update(jobseekerProfiles)
+      .set(updateData)
+      .where(eq(jobseekerProfiles.id, id))
+      .returning();
+      
+    if (result.length === 0) {
+      throw new Error(`Jobseeker profile with ID ${id} not found`);
+    }
+    
+    return result[0];
+  }
 
   // Jobseeker Preferences
   async getJobseekerPreferences(id: number): Promise<JobseekerPreferences | undefined> {

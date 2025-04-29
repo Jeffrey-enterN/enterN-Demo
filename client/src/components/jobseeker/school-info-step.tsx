@@ -118,7 +118,7 @@ export function SchoolInfoStep({ onNext }: SchoolInfoStepProps) {
   const isStudent = form.watch("isStudent");
 
   const updateProfileMutation = useMutation({
-    mutationFn: async (data: SchoolInfoFormData) => {
+    mutationFn: async (data: any) => {
       const res = await apiRequest("PATCH", "/api/jobseeker/profile", data);
       return await res.json();
     },
@@ -148,13 +148,23 @@ export function SchoolInfoStep({ onNext }: SchoolInfoStepProps) {
     setIsSubmitting(true);
     
     // Map form fields to match the API field names
-    const apiData = {
+    const apiData: Record<string, any> = {
       isStudent: data.isStudent,
-      school: data.isStudent ? data.school : null,
-      degreeLevel: data.isStudent ? data.degreeType : null, // Map to correct DB field name
-      major: data.isStudent ? data.major : null,
-      schoolEmail: data.isStudent ? data.schoolEmail : null
     };
+    
+    // Only include education fields if student status is true
+    if (data.isStudent) {
+      apiData.school = data.school || "";
+      apiData.degreeLevel = data.degreeType || ""; // Map to correct DB field name
+      apiData.major = data.major || "";
+      apiData.schoolEmail = data.schoolEmail || "";
+    } else {
+      // Explicitly set to null when not a student
+      apiData.school = null;
+      apiData.degreeLevel = null;
+      apiData.major = null;
+      apiData.schoolEmail = null;
+    }
     
     console.log('Submitting profile data:', apiData);
     updateProfileMutation.mutate(apiData);

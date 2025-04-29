@@ -39,6 +39,7 @@ export interface IStorage {
   getJobseekerProfile(id: number): Promise<JobseekerProfile | undefined>;
   getJobseekerProfileByUserId(userId: number): Promise<JobseekerProfile | undefined>;
   createJobseekerProfile(profile: InsertJobseekerProfile): Promise<JobseekerProfile>;
+  updateJobseekerProfile(id: number, profile: Partial<JobseekerProfile>): Promise<JobseekerProfile>;
 
   // Jobseeker Preferences
   getJobseekerPreferences(id: number): Promise<JobseekerPreferences | undefined>;
@@ -218,6 +219,26 @@ export class MemStorage implements IStorage {
     };
     this.jobseekerProfiles.set(id, jobseekerProfile);
     return jobseekerProfile;
+  }
+  
+  async updateJobseekerProfile(id: number, profile: Partial<JobseekerProfile>): Promise<JobseekerProfile> {
+    const existingProfile = this.jobseekerProfiles.get(id);
+    if (!existingProfile) {
+      throw new Error(`Jobseeker profile with ID ${id} not found`);
+    }
+    
+    // Create updated profile by merging existing profile with updates
+    const updatedProfile = {
+      ...existingProfile,
+      ...profile,
+      // Ensure these fields are not overwritten by undefined values
+      id: existingProfile.id, // Keep original ID
+      userId: existingProfile.userId, // Keep original user ID
+      createdAt: existingProfile.createdAt // Keep original creation timestamp
+    };
+    
+    this.jobseekerProfiles.set(id, updatedProfile);
+    return updatedProfile;
   }
 
   // Jobseeker Preferences

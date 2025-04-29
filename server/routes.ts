@@ -170,11 +170,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!req.isAuthenticated()) return res.status(401).json({ message: "Unauthorized" });
       if (req.user.role !== "jobseeker") return res.status(403).json({ message: "Forbidden" });
       
+      console.log("Received PATCH to /api/jobseeker/profile with body:", req.body);
+      
       // Try to get existing profile
       let jobseekerProfile = await storage.getJobseekerProfileByUserId(req.user.id);
       
       // If no profile exists, create a basic one
       if (!jobseekerProfile) {
+        console.log("No existing profile found, creating new profile");
+        
         // Create a basic profile with required fields
         jobseekerProfile = await storage.createJobseekerProfile({
           userId: req.user.id,
@@ -183,13 +187,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
           ...req.body, // Apply updates from request
         });
         
+        console.log("Created new profile:", jobseekerProfile);
         return res.status(201).json(jobseekerProfile);
       }
       
-      // If profile exists, update it (not implemented in the storage interface yet)
-      // For now, return the existing profile as if it was updated
-      return res.status(200).json(jobseekerProfile);
+      // Profile exists, update it
+      console.log("Updating existing profile ID:", jobseekerProfile.id);
+      
+      // Handle special case for school info data
+      // Map degreeType from the form to degreeLevel in the database if present
+      if (req.body.degreeType !== undefined) {
+        req.body.degreeLevel = req.body.degreeType;
+        delete req.body.degreeType;
+      }
+      
+      // If isStudent is false, make sure we clear school fields
+      if (req.body.isStudent === false) {
+        req.body.school = null;
+        req.body.degreeLevel = null;
+        req.body.major = null;
+        req.body.schoolEmail = null;
+      }
+      
+      // Update the profile
+      const updatedProfile = await storage.updateJobseekerProfile(jobseekerProfile.id, req.body);
+      
+      console.log("Profile updated successfully:", updatedProfile);
+      return res.status(200).json(updatedProfile);
     } catch (error) {
+      console.error("Error updating jobseeker profile:", error);
       next(error);
     }
   });
