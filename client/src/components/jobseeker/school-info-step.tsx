@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/auth-context";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -20,15 +20,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 
 // Define the schema for school information
 const schoolInfoSchema = z.object({
-  school: z.string().min(1, "School name is required"),
-  degreeType: z.string().min(1, "Degree type is required"),
-  major: z.string().min(1, "Major is required"),
-  graduationYear: z.string().min(1, "Graduation year is required"),
-  gpa: z.string().optional(),
-  schoolEmail: z.string().email("Invalid email").optional(),
+  isStudent: z.boolean().default(false),
+  school: z.string().optional(),
+  degreeType: z.string().optional(),
+  major: z.string().optional(),
+  schoolEmail: z.string().optional().refine(val => {
+    if (!val) return true;
+    return val.includes('@') && val.includes('.edu');
+  }, { message: "Please enter a valid .edu email address" }),
 });
 
 type SchoolInfoFormData = z.infer<typeof schoolInfoSchema>;
@@ -57,14 +60,16 @@ export function SchoolInfoStep({ onNext }: SchoolInfoStepProps) {
   const form = useForm<SchoolInfoFormData>({
     resolver: zodResolver(schoolInfoSchema),
     defaultValues: {
+      isStudent: profile?.isStudent || false,
       school: profile?.school || "",
       degreeType: profile?.degreeType || "",
       major: profile?.major || "",
-      graduationYear: profile?.graduationYear || "",
-      gpa: profile?.gpa || "",
       schoolEmail: profile?.schoolEmail || "",
     },
   });
+
+  // Watch for changes to the isStudent field
+  const isStudent = form.watch("isStudent");
 
   const updateProfileMutation = useMutation({
     mutationFn: async (data: SchoolInfoFormData) => {
@@ -108,9 +113,6 @@ export function SchoolInfoStep({ onNext }: SchoolInfoStepProps) {
     );
   }
 
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 10 }, (_, i) => (currentYear + i).toString());
-
   return (
     <>
       <CardHeader>
@@ -122,126 +124,108 @@ export function SchoolInfoStep({ onNext }: SchoolInfoStepProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardContent className="space-y-6">
+            {/* Student Toggle */}
             <FormField
               control={form.control}
-              name="school"
+              name="isStudent"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>School/University</FormLabel>
-                  <FormControl>
-                    <Input placeholder="University of California, Berkeley" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="degreeType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Degree Type</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select degree type" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Bachelor's">Bachelor's</SelectItem>
-                        <SelectItem value="Master's">Master's</SelectItem>
-                        <SelectItem value="PhD">PhD</SelectItem>
-                        <SelectItem value="Associate's">Associate's</SelectItem>
-                        <SelectItem value="Certificate">Certificate</SelectItem>
-                        <SelectItem value="High School">High School</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="major"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Major/Field of Study</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Computer Science" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="graduationYear"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Graduation Year</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select year" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {years.map(year => (
-                          <SelectItem key={year} value={year}>{year}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              <FormField
-                control={form.control}
-                name="gpa"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>GPA <span className="text-gray-500 text-xs">(optional)</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="3.8" {...field} />
-                    </FormControl>
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">Student Status</FormLabel>
                     <FormDescription>
-                      On a 4.0 scale
+                      Are you a student or recent graduate with an active .edu email address?
                     </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <FormField
-              control={form.control}
-              name="schoolEmail"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>School Email <span className="text-gray-500 text-xs">(optional)</span></FormLabel>
+                  </div>
                   <FormControl>
-                    <Input type="email" placeholder="student@university.edu" {...field} />
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
                   </FormControl>
-                  <FormDescription>
-                    This will be used for school verification
-                  </FormDescription>
-                  <FormMessage />
                 </FormItem>
               )}
             />
+
+            {/* Educational Info - Only shown if isStudent is true */}
+            {isStudent && (
+              <div className="space-y-6 border-t pt-6">
+                <FormField
+                  control={form.control}
+                  name="school"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>School/University</FormLabel>
+                      <FormControl>
+                        <Input placeholder="University of California, Berkeley" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="degreeType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Degree Type</FormLabel>
+                        <Select 
+                          onValueChange={field.onChange} 
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select degree type" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="Bachelor's">Bachelor's</SelectItem>
+                            <SelectItem value="Master's">Master's</SelectItem>
+                            <SelectItem value="PhD">PhD</SelectItem>
+                            <SelectItem value="Associate's">Associate's</SelectItem>
+                            <SelectItem value="Certificate">Certificate</SelectItem>
+                            <SelectItem value="High School">High School</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="major"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Major/Field of Study</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Computer Science" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                
+                <FormField
+                  control={form.control}
+                  name="schoolEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>School Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="student@university.edu" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        This will be used for school verification
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
           </CardContent>
           
           <CardFooter className="flex justify-end">
