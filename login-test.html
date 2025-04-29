@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #333;
+    }
+    input, button {
+      padding: 8px;
+      margin: 10px 0;
+      width: 100%;
+      max-width: 300px;
+      display: block;
+    }
+    pre {
+      background: #f4f4f4;
+      padding: 15px;
+      overflow: auto;
+    }
+    .result {
+      margin-top: 20px;
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Login and Redirect Test</h1>
+  <p>This page tests login functionality and checks if redirection works properly.</p>
+  
+  <div>
+    <h3>Login Form</h3>
+    <input type="email" id="email" placeholder="Email" value="test@example.com">
+    <input type="password" id="password" placeholder="Password" value="password123">
+    <button id="loginButton">Login</button>
+  </div>
+  
+  <div>
+    <h3>Create Test User</h3>
+    <button id="createTestUser">Create Test User</button>
+  </div>
+  
+  <div class="result">
+    <h3>Result</h3>
+    <pre id="output">Results will appear here...</pre>
+  </div>
+  
+  <script>
+    const output = document.getElementById('output');
+    
+    function log(message) {
+      console.log(message);
+      if (typeof message === 'object') {
+        output.textContent += JSON.stringify(message, null, 2) + '\n';
+      } else {
+        output.textContent += message + '\n';
+      }
+    }
+    
+    // Create a test user
+    document.getElementById('createTestUser').addEventListener('click', async () => {
+      output.textContent = ''; // Clear the output
+      log('Creating test user...');
+      
+      try {
+        const email = `test-user-${Date.now()}@example.com`;
+        const password = 'password123';
+        
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            role: 'jobseeker',
+          }),
+          credentials: 'include'
+        });
+        
+        const data = await response.json();
+        log(`Test user created: ${email}`);
+        log(data);
+        
+        // Update the email field with the new email
+        document.getElementById('email').value = email;
+        
+      } catch (error) {
+        log(`Error creating test user: ${error.message}`);
+      }
+    });
+    
+    // Handle login
+    document.getElementById('loginButton').addEventListener('click', async () => {
+      output.textContent = ''; // Clear the output
+      log('Attempting login...');
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      try {
+        // First check if already logged in
+        const checkResponse = await fetch('/api/user', {
+          credentials: 'include'
+        });
+        
+        if (checkResponse.ok) {
+          const userData = await checkResponse.json();
+          log('Already logged in:');
+          log(userData);
+          return;
+        }
+        
+        // Now attempt login
+        const loginResponse = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+          credentials: 'include'
+        });
+        
+        if (loginResponse.ok) {
+          const userData = await loginResponse.json();
+          log('Login successful!');
+          log(userData);
+          
+          // Check if redirect will happen
+          log('Checking redirection behavior in 2 seconds...');
+          setTimeout(async () => {
+            const currentLocation = window.location.href;
+            log(`Current location: ${currentLocation}`);
+            
+            // Check if user state is recognized
+            const userCheckResponse = await fetch('/api/user', {
+              credentials: 'include'
+            });
+            
+            if (userCheckResponse.ok) {
+              const checkData = await userCheckResponse.json();
+              log('Session verified:');
+              log(checkData);
+              
+              // Directly test redirection
+              log('Testing direct redirection now...');
+              if (checkData.role === 'jobseeker') {
+                window.location.href = '/jobseeker/dashboard';
+              } else if (checkData.role === 'employer') {
+                window.location.href = '/employer/dashboard';
+              }
+            } else {
+              log('Failed to verify session after login');
+            }
+          }, 2000);
+        } else {
+          log('Login failed');
+          const errorData = await loginResponse.json();
+          log(errorData);
+        }
+      } catch (error) {
+        log(`Error: ${error.message}`);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -8,6 +8,7 @@ import { User as SelectUser, UserRoleEnum } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { saveAuthState, clearAuthState, getAuthState, isLikelyLoggedIn } from "@/lib/authUtils";
+import { useLocation } from "wouter";
 
 type AuthContextType = {
   user: SelectUser | null;
@@ -33,6 +34,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
+  const [location, setLocation] = useLocation();
   
   const {
     data: user,
@@ -83,27 +85,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Use a small delay to ensure query cache is updated and redirect to appropriate page
       setTimeout(() => {
-        try {
-          // Check if user has a profile already
-          if (user.role === "jobseeker") {
-            // Send to dashboard - they can complete their profile from there
-            console.log("Redirecting to jobseeker dashboard");
-            // Use navigate function and push state to maintain history
-            window.history.pushState({}, "", "/jobseeker/dashboard");
-            window.dispatchEvent(new PopStateEvent('popstate'));
-          } else if (user.role === "employer") {
-            console.log("Redirecting to employer dashboard");
-            window.history.pushState({}, "", "/employer/dashboard");
-            window.dispatchEvent(new PopStateEvent('popstate'));
-          }
-        } catch (e) {
-          console.error("Navigation error:", e);
-          // Fallback to direct location change if the above fails
-          if (user.role === "jobseeker") {
-            window.location.href = "/jobseeker/dashboard";
-          } else if (user.role === "employer") {
-            window.location.href = "/employer/dashboard";
-          }
+        // Check if user has a profile already
+        if (user.role === "jobseeker") {
+          // Send to dashboard - they can complete their profile from there
+          console.log("Redirecting to jobseeker dashboard using wouter");
+          // Use wouter's navigation
+          setLocation("/jobseeker/dashboard");
+        } else if (user.role === "employer") {
+          console.log("Redirecting to employer dashboard using wouter");
+          setLocation("/employer/dashboard");
         }
       }, 750);
     },
@@ -143,25 +133,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Use a small delay to ensure query cache is updated
       setTimeout(() => {
-        try {
-          // Redirect user based on role after registration
-          if (user.role === "jobseeker") {
-            console.log("Redirecting new jobseeker to profile setup");
-            window.history.pushState({}, "", "/jobseeker/simple-profile-setup");
-            window.dispatchEvent(new PopStateEvent('popstate'));
-          } else if (user.role === "employer") {
-            console.log("Redirecting new employer to profile setup");
-            window.history.pushState({}, "", "/employer/profile-setup");
-            window.dispatchEvent(new PopStateEvent('popstate'));
-          }
-        } catch (e) {
-          console.error("Navigation error:", e);
-          // Fallback to direct location change if the above fails
-          if (user.role === "jobseeker") {
-            window.location.href = "/jobseeker/simple-profile-setup";
-          } else if (user.role === "employer") {
-            window.location.href = "/employer/profile-setup";
-          }
+        // Redirect user based on role after registration
+        if (user.role === "jobseeker") {
+          console.log("Redirecting new jobseeker to profile setup using wouter");
+          setLocation("/jobseeker/simple-profile-setup");
+        } else if (user.role === "employer") {
+          console.log("Redirecting new employer to profile setup using wouter");
+          setLocation("/employer/profile-setup");
         }
       }, 750);
     },
@@ -193,14 +171,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Redirect to auth page
       setTimeout(() => {
-        try {
-          window.history.pushState({}, "", "/auth");
-          window.dispatchEvent(new PopStateEvent('popstate'));
-        } catch (e) {
-          console.error("Navigation error:", e);
-          // Fallback
-          window.location.href = '/auth';
-        }
+        console.log("Redirecting to auth page using wouter");
+        setLocation("/auth");
       }, 500);
     },
     onError: (error: Error) => {
