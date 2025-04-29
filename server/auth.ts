@@ -38,11 +38,12 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
-  // Using the default in-memory store for simplicity
+  // Using the database session store through connect-pg-simple
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "enterN-secret-key",
-    resave: true,
-    saveUninitialized: true,
+    resave: false,
+    saveUninitialized: false,
+    store: storage.sessionStore,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
@@ -51,6 +52,8 @@ export function setupAuth(app: Express) {
       path: '/'
     }
   };
+  
+  console.log("Session store initialized:", !!storage.sessionStore);
 
   app.set("trust proxy", 1);
   app.use(session(sessionSettings));
@@ -232,18 +235,27 @@ export function setupAuth(app: Express) {
     console.log("--------- /api/user API call ---------");
     console.log("authenticated:", req.isAuthenticated());
     console.log("session ID:", req.sessionID);
-    console.log("cookies:", req.headers.cookie);
-    console.log("user logged in cookie:", req.cookies.user_logged_in);
-    console.log("user info cookie:", req.cookies.user_info);
+    console.log("cookies header:", req.headers.cookie);
+    
+    // Safely check cookies
+    const cookies = req.cookies || {};
+    console.log("cookies object exists:", !!req.cookies);
+    console.log("user logged in cookie:", cookies.user_logged_in);
+    console.log("user info cookie:", cookies.user_info);
+    
     console.log("session passport:", req.session.passport);
     console.log("session data:", req.session);
     console.log("req.user:", req.user);
     
     if (!req.isAuthenticated()) {
-      if (req.cookies.user_info) {
-        console.log("User not authenticated, but has user_info cookie. Cookie data:", req.cookies.user_info);
+      // Safely check for cookies
+      const cookies = req.cookies || {};
+      
+      if (cookies.user_info) {
+        console.log("User not authenticated, but has user_info cookie. Cookie data:", cookies.user_info);
         try {
-          const userInfo = JSON.parse(req.cookies.user_info);
+          const userInfo = typeof cookies.user_info === 'string' ? 
+            JSON.parse(cookies.user_info) : cookies.user_info;
           console.log("Parsed user info from cookie:", userInfo);
           console.log("Will still return 401 since authentication state is false");
         } catch (e) {
