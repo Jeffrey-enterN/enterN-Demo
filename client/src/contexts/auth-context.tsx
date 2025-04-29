@@ -43,23 +43,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
+      console.log("Login mutation called with credentials:", credentials);
       const res = await apiRequest("POST", "/api/login", credentials);
-      return await res.json();
+      const userData = await res.json();
+      console.log("Login response data:", userData);
+      return userData;
     },
     onSuccess: (user: SelectUser) => {
+      // First invalidate any existing user query data
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      
+      // Then set the user data in the query cache
       queryClient.setQueryData(["/api/user"], user);
+      
+      console.log("Login successful, set user data:", user);
+      
       toast({
         title: "Login successful",
         description: `Welcome back!`,
       });
       
-      // Check if user has a profile already
-      if (user.role === "jobseeker") {
-        // Send to dashboard - they can complete their profile from there
-        window.location.href = "/jobseeker/dashboard";
-      } else if (user.role === "employer") {
-        window.location.href = "/employer/dashboard";
-      }
+      // Use a small delay to ensure query cache is updated
+      setTimeout(() => {
+        // Check if user has a profile already
+        if (user.role === "jobseeker") {
+          // Send to dashboard - they can complete their profile from there
+          window.location.href = "/jobseeker/dashboard";
+        } else if (user.role === "employer") {
+          window.location.href = "/employer/dashboard";
+        }
+      }, 300);
     },
     onError: (error: Error) => {
       toast({
@@ -72,22 +85,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const registerMutation = useMutation({
     mutationFn: async (credentials: RegisterData) => {
+      console.log("Register mutation called with credentials:", credentials);
       const res = await apiRequest("POST", "/api/register", credentials);
-      return await res.json();
+      const userData = await res.json();
+      console.log("Register response data:", userData);
+      return userData;
     },
     onSuccess: (user: SelectUser) => {
+      // First invalidate any existing user query data
+      queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      
+      // Then set the user data in the query cache
       queryClient.setQueryData(["/api/user"], user);
+      
+      console.log("Registration successful, set user data:", user);
+      
       toast({
         title: "Registration successful",
         description: "Your account has been created.",
       });
       
-      // Redirect user based on role after registration
-      if (user.role === "jobseeker") {
-        window.location.href = "/jobseeker/simple-profile-setup";
-      } else if (user.role === "employer") {
-        window.location.href = "/employer/profile-setup";
-      }
+      // Use a small delay to ensure query cache is updated
+      setTimeout(() => {
+        // Redirect user based on role after registration
+        if (user.role === "jobseeker") {
+          window.location.href = "/jobseeker/simple-profile-setup";
+        } else if (user.role === "employer") {
+          window.location.href = "/employer/profile-setup";
+        }
+      }, 300);
     },
     onError: (error: Error) => {
       toast({
@@ -134,8 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// By exporting as a const, we avoid the Fast Refresh incompatible export warning
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
