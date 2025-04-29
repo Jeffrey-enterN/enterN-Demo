@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/auth-context";
 import { useQuery } from "@tanstack/react-query";
+import { getAuthState, isLikelyLoggedIn } from "@/lib/authUtils";
 import { Navbar } from "@/components/navbar";
 import { MobileNavbar } from "@/components/mobile-navbar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -31,14 +32,46 @@ export default function HomePage() {
 
   // Redirect to appropriate setup page if user has not completed profile
   useEffect(() => {
+    // First check if user is in context
     if (user && !isLoading && !isLoadingEmployer && !isLoadingJobseeker) {
-      if (user.role === "EMPLOYER" && !employerProfile && !isLoadingEmployer) {
+      handleUserRedirect(user);
+      return;
+    }
+    
+    // If not in context, try localStorage as fallback
+    if (!user && !isLoading && isLikelyLoggedIn()) {
+      const savedAuth = getAuthState();
+      console.log("HomePage - checking saved auth:", savedAuth);
+      
+      if (savedAuth && savedAuth.role) {
+        console.log("User likely logged in from localStorage:", savedAuth);
+        // Since we don't have user data from context, redirect based on role only
+        if (savedAuth.role === "EMPLOYER" || savedAuth.role === "employer") {
+          console.log("Redirecting employer to dashboard from localStorage");
+          setLocation("/employer/dashboard");
+        } else if (savedAuth.role === "JOBSEEKER" || savedAuth.role === "jobseeker") {
+          console.log("Redirecting jobseeker to dashboard from localStorage");
+          setLocation("/jobseeker/dashboard");
+        }
+      }
+    }
+    
+    function handleUserRedirect(userData: { role: string }) {
+      if (userData.role === "EMPLOYER" && !employerProfile && !isLoadingEmployer) {
         setLocation("/employer/profile-setup");
-      } else if (user.role === "JOBSEEKER" && !jobseekerProfile && !isLoadingJobseeker) {
+      } else if (userData.role === "JOBSEEKER" && !jobseekerProfile && !isLoadingJobseeker) {
         setLocation("/jobseeker/profile-setup");
-      } else if (user.role === "EMPLOYER" && employerProfile) {
+      } else if (userData.role === "EMPLOYER" && employerProfile) {
         setLocation("/employer/dashboard");
-      } else if (user.role === "JOBSEEKER" && jobseekerProfile) {
+      } else if (userData.role === "JOBSEEKER" && jobseekerProfile) {
+        setLocation("/jobseeker/dashboard");
+      } else if (userData.role === "employer" && !employerProfile && !isLoadingEmployer) {
+        setLocation("/employer/profile-setup");
+      } else if (userData.role === "jobseeker" && !jobseekerProfile && !isLoadingJobseeker) {
+        setLocation("/jobseeker/profile-setup");
+      } else if (userData.role === "employer" && employerProfile) {
+        setLocation("/employer/dashboard");
+      } else if (userData.role === "jobseeker" && jobseekerProfile) {
         setLocation("/jobseeker/dashboard");
       }
     }
@@ -53,10 +86,15 @@ export default function HomePage() {
     );
   }
 
+  // Check if the user is likely logged in from localStorage as a fallback
+  const isUserLoggedIn = !!user || isLikelyLoggedIn();
+  const savedAuth = getAuthState();
+  const effectiveRole = user?.role || (savedAuth && savedAuth.role);
+  
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Only show Navbar for authenticated users */}
-      {user && <Navbar />}
+      {isUserLoggedIn && <Navbar />}
 
       <main className="flex-1 p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
@@ -107,7 +145,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {user?.role === "jobseeker" ? (
+                {effectiveRole === "jobseeker" || effectiveRole === "JOBSEEKER" ? (
                   <Button 
                     className="w-full" 
                     onClick={() => setLocation("/jobseeker/profile-setup")}
@@ -115,7 +153,7 @@ export default function HomePage() {
                     Complete Your Profile
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
-                ) : user?.role === "employer" ? null : (
+                ) : effectiveRole === "employer" || effectiveRole === "EMPLOYER" ? null : (
                   <Button className="w-full" onClick={() => setLocation("/auth")}>
                     Sign Up as Job Seeker
                     <ArrowRight className="h-4 w-4 ml-2" />
@@ -159,7 +197,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {user?.role === "employer" ? (
+                {effectiveRole === "employer" || effectiveRole === "EMPLOYER" ? (
                   <Button 
                     className="w-full" 
                     onClick={() => setLocation("/employer/profile-setup")}
@@ -167,7 +205,7 @@ export default function HomePage() {
                     Complete Your Profile
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
-                ) : user?.role === "jobseeker" ? null : (
+                ) : effectiveRole === "jobseeker" || effectiveRole === "JOBSEEKER" ? null : (
                   <Button className="w-full" onClick={() => setLocation("/auth")}>
                     Sign Up as Employer
                     <ArrowRight className="h-4 w-4 ml-2" />
