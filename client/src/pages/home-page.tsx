@@ -32,6 +32,16 @@ export default function HomePage() {
 
   // Redirect to appropriate setup page if user has not completed profile
   useEffect(() => {
+    // Skip redirection if the user came here explicitly (from a navigation action)
+    // This allows users to visit the home page even when logged in if they choose to
+    const isExplicitNavigation = window.location.pathname === '/' && 
+                               document.referrer.includes(window.location.host);
+    
+    if (isExplicitNavigation) {
+      console.log("User explicitly navigated to home page, not redirecting");
+      return;
+    }
+    
     // First check if user is in context
     if (user && !isLoading && !isLoadingEmployer && !isLoadingJobseeker) {
       handleUserRedirect(user);

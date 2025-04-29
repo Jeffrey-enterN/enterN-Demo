@@ -33,7 +33,8 @@ export function Navbar() {
 
   const handleLogout = () => {
     logoutMutation.mutate();
-    navigate("/auth");
+    // The navigation to auth page is now handled in the logoutMutation.onSuccess
+    // so we don't need to manually navigate here
   };
 
   // Determine navigation items based on user role

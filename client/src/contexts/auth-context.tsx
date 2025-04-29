@@ -157,6 +157,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await apiRequest("POST", "/api/logout");
     },
     onSuccess: () => {
+      // Invalidate all queries first
+      queryClient.invalidateQueries();
+      
       // Clear user data from query cache
       queryClient.setQueryData(["/api/user"], null);
       
@@ -169,11 +172,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: "You have been logged out.",
       });
       
-      // Redirect to auth page
+      // Redirect to auth page after a short delay to ensure cache is cleared
       setTimeout(() => {
         console.log("Redirecting to auth page using wouter");
-        setLocation("/auth");
-      }, 500);
+        // Force navigation to auth page, even if other redirects try to interfere
+        window.location.href = "/auth";
+      }, 300);
     },
     onError: (error: Error) => {
       toast({
@@ -181,6 +185,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: error.message,
         variant: "destructive",
       });
+      
+      // Even if the API call fails, try to clear state locally
+      queryClient.setQueryData(["/api/user"], null);
+      clearAuthState();
+      
+      // Attempt to redirect anyway
+      setTimeout(() => {
+        window.location.href = "/auth";
+      }, 300);
     },
   });
 
