@@ -47,8 +47,8 @@ export function setupAuth(app: Express) {
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
-      secure: false, // Set to true in production with HTTPS
-      sameSite: 'lax',
+      secure: false, // Set to false for dev environment
+      sameSite: 'lax', // Set to lax
       path: '/'
     }
   };
@@ -195,7 +195,10 @@ export function setupAuth(app: Express) {
           // Set a custom cookie as a backup
           res.cookie('user_logged_in', 'true', { 
             maxAge: 24 * 60 * 60 * 1000,
-            httpOnly: false
+            httpOnly: false,
+            secure: false,
+            sameSite: 'lax',
+            path: '/'
           });
           
           // Set another cookie with basic user info (non-sensitive)
@@ -204,7 +207,10 @@ export function setupAuth(app: Express) {
             role: user.role
           }), { 
             maxAge: 24 * 60 * 60 * 1000,
-            httpOnly: false
+            httpOnly: false,
+            secure: false,
+            sameSite: 'lax',
+            path: '/'
           });
           
           return res.status(200).json(user);
