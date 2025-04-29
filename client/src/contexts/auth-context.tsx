@@ -32,6 +32,25 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
+  
+  // Check localStorage for fallback auth state first (for better UX during page reloads)
+  const getInitialAuthState = () => {
+    try {
+      const storedAuthState = localStorage.getItem('auth_state');
+      if (storedAuthState) {
+        const authState = JSON.parse(storedAuthState);
+        console.log("Initial check - found stored auth state:", authState);
+        if (authState.isLoggedIn) {
+          // This is just a placeholder until the query runs
+          return { id: authState.userId, role: authState.role } as Partial<SelectUser>;
+        }
+      }
+    } catch (error) {
+      console.error("Error reading initial auth state:", error);
+    }
+    return undefined;
+  };
+  
   const {
     data: user,
     error,
@@ -39,6 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } = useQuery<SelectUser | undefined, Error>({
     queryKey: ["/api/user"],
     queryFn: getQueryFn({ on401: "returnNull" }),
+    placeholderData: getInitialAuthState(),
   });
 
   const loginMutation = useMutation({
@@ -63,16 +83,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         description: `Welcome back!`,
       });
       
-      // Use a small delay to ensure query cache is updated
+      // Use a small delay to ensure query cache is updated and redirect to appropriate page
       setTimeout(() => {
+        // Create a small indicator in localStorage that we're logged in
+        localStorage.setItem('auth_state', JSON.stringify({
+          isLoggedIn: true,
+          userId: user.id,
+          role: user.role
+        }));
+        
         // Check if user has a profile already
         if (user.role === "jobseeker") {
           // Send to dashboard - they can complete their profile from there
+          console.log("Redirecting to jobseeker dashboard");
           window.location.href = "/jobseeker/dashboard";
         } else if (user.role === "employer") {
+          console.log("Redirecting to employer dashboard");
           window.location.href = "/employer/dashboard";
         }
-      }, 300);
+      }, 500);
     },
     onError: (error: Error) => {
       toast({
@@ -107,13 +136,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Use a small delay to ensure query cache is updated
       setTimeout(() => {
+        // Create a small indicator in localStorage that we're logged in
+        localStorage.setItem('auth_state', JSON.stringify({
+          isLoggedIn: true,
+          userId: user.id,
+          role: user.role
+        }));
+        
         // Redirect user based on role after registration
         if (user.role === "jobseeker") {
+          console.log("Redirecting new jobseeker to profile setup");
           window.location.href = "/jobseeker/simple-profile-setup";
         } else if (user.role === "employer") {
+          console.log("Redirecting new employer to profile setup");
           window.location.href = "/employer/profile-setup";
         }
-      }, 300);
+      }, 500);
     },
     onError: (error: Error) => {
       toast({

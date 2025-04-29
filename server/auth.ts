@@ -31,11 +31,14 @@ async function comparePasswords(supplied: string, stored: string) {
 export function setupAuth(app: Express) {
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "enterN-secret-key",
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     store: storage.sessionStore,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      httpOnly: true,
+      secure: false, // Set to true in production with HTTPS
+      sameSite: 'lax'
     }
   };
 
@@ -110,12 +113,36 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
+    console.log("Login attempt for:", req.body.email);
+    
     passport.authenticate("local", (err, user, info) => {
-      if (err) return next(err);
-      if (!user) return res.status(401).json({ message: "Invalid email or password" });
+      if (err) {
+        console.error("Authentication error:", err);
+        return next(err);
+      }
+      
+      if (!user) {
+        console.log("Authentication failed: Invalid credentials");
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+      
+      console.log("User authenticated successfully:", user.email);
       
       req.login(user, (err) => {
-        if (err) return next(err);
+        if (err) {
+          console.error("Session error:", err);
+          return next(err);
+        }
+        
+        console.log("Session established, user ID in session:", req.session.passport?.user);
+        console.log("Authentication state:", req.isAuthenticated());
+        
+        // Set a custom cookie as a backup
+        res.cookie('user_logged_in', 'true', { 
+          maxAge: 24 * 60 * 60 * 1000,
+          httpOnly: false
+        });
+        
         return res.status(200).json(user);
       });
     })(req, res, next);
@@ -129,7 +156,15 @@ export function setupAuth(app: Express) {
   });
 
   app.get("/api/user", (req, res) => {
-    if (!req.isAuthenticated()) return res.sendStatus(401);
+    console.log("/api/user called, authenticated:", req.isAuthenticated());
+    console.log("Session data:", req.session);
+    
+    if (!req.isAuthenticated()) {
+      console.log("User not authenticated, returning 401");
+      return res.status(401).json({ message: "Not authenticated" });
+    }
+    
+    console.log("User authenticated, returning user data:", req.user?.email);
     res.json(req.user);
   });
 }
