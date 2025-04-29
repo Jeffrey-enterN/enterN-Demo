@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useEffect } from "react";
 import {
   useQuery,
   useMutation,
@@ -7,6 +7,7 @@ import {
 import { User as SelectUser, UserRoleEnum } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { saveAuthState, clearAuthState, getAuthState, isLikelyLoggedIn } from "@/lib/authUtils";
 
 type AuthContextType = {
   user: SelectUser | null;
@@ -59,6 +60,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       console.log("Login successful, set user data:", user);
       
+      // Save authentication state to localStorage
+      saveAuthState(user);
+      
       toast({
         title: "Login successful",
         description: `Welcome back!`,
@@ -66,13 +70,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Use a small delay to ensure query cache is updated and redirect to appropriate page
       setTimeout(() => {
-        // Create a small indicator in localStorage that we're logged in
-        localStorage.setItem('auth_state', JSON.stringify({
-          isLoggedIn: true,
-          userId: user.id,
-          role: user.role
-        }));
-        
         // Check if user has a profile already
         if (user.role === "jobseeker") {
           // Send to dashboard - they can complete their profile from there
@@ -82,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.log("Redirecting to employer dashboard");
           window.location.href = "/employer/dashboard";
         }
-      }, 500);
+      }, 750);
     },
     onError: (error: Error) => {
       toast({
@@ -110,6 +107,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       console.log("Registration successful, set user data:", user);
       
+      // Save authentication state to localStorage using the utility
+      saveAuthState(user);
+      
       toast({
         title: "Registration successful",
         description: "Your account has been created.",
@@ -117,13 +117,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Use a small delay to ensure query cache is updated
       setTimeout(() => {
-        // Create a small indicator in localStorage that we're logged in
-        localStorage.setItem('auth_state', JSON.stringify({
-          isLoggedIn: true,
-          userId: user.id,
-          role: user.role
-        }));
-        
         // Redirect user based on role after registration
         if (user.role === "jobseeker") {
           console.log("Redirecting new jobseeker to profile setup");
@@ -132,7 +125,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           console.log("Redirecting new employer to profile setup");
           window.location.href = "/employer/profile-setup";
         }
-      }, 500);
+      }, 750);
     },
     onError: (error: Error) => {
       toast({

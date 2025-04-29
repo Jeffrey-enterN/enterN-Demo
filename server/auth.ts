@@ -29,16 +29,17 @@ async function comparePasswords(supplied: string, stored: string) {
 }
 
 export function setupAuth(app: Express) {
+  // Using the default in-memory store for simplicity
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET || "enterN-secret-key",
     resave: true,
     saveUninitialized: true,
-    store: storage.sessionStore,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
       secure: false, // Set to true in production with HTTPS
-      sameSite: 'lax'
+      sameSite: 'lax',
+      path: '/'
     }
   };
 
@@ -134,16 +135,34 @@ export function setupAuth(app: Express) {
           return next(err);
         }
         
-        console.log("Session established, user ID in session:", req.session.passport?.user);
-        console.log("Authentication state:", req.isAuthenticated());
-        
-        // Set a custom cookie as a backup
-        res.cookie('user_logged_in', 'true', { 
-          maxAge: 24 * 60 * 60 * 1000,
-          httpOnly: false
+        // Force session save to ensure it's stored before responding
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return next(err);
+          }
+          
+          console.log("Session saved successfully");
+          console.log("Session established, user ID in session:", req.session.passport?.user);
+          console.log("Authentication state:", req.isAuthenticated());
+          
+          // Set a custom cookie as a backup
+          res.cookie('user_logged_in', 'true', { 
+            maxAge: 24 * 60 * 60 * 1000,
+            httpOnly: false
+          });
+          
+          // Set another cookie with basic user info (non-sensitive)
+          res.cookie('user_info', JSON.stringify({
+            id: user.id,
+            role: user.role
+          }), { 
+            maxAge: 24 * 60 * 60 * 1000,
+            httpOnly: false
+          });
+          
+          return res.status(200).json(user);
         });
-        
-        return res.status(200).json(user);
       });
     })(req, res, next);
   });
