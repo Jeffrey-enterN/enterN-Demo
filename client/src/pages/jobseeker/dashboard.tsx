@@ -62,7 +62,7 @@ export default function JobseekerDashboard() {
   const [notificationsCount, setNotificationsCount] = useState<number>(3);
 
   // Get jobseeker profile
-  const { data: profile } = useQuery<JobseekerProfile>({
+  const { data: profile, isError: profileError, error: profileErrorData } = useQuery<JobseekerProfile>({
     queryKey: ['/api/jobseeker/profile'],
     enabled: !!user,
   });
@@ -70,8 +70,21 @@ export default function JobseekerDashboard() {
   // Get analytics data
   const { data: analytics, isLoading: isLoadingAnalytics } = useQuery<JobseekerAnalytics>({
     queryKey: ['/api/jobseeker/analytics'],
-    enabled: !!user,
+    enabled: !!user && !!profile,
   });
+  
+  // Redirect to profile setup if profile doesn't exist
+  useEffect(() => {
+    if (profileError) {
+      console.log("Profile error detected:", profileErrorData);
+      // Check if the error is a 404 (profile not found)
+      if (profileErrorData instanceof Error && 
+          profileErrorData.message.includes("404")) {
+        console.log("Profile not found, redirecting to simple profile setup");
+        setLocation("/jobseeker/simple-profile-setup");
+      }
+    }
+  }, [profileError, profileErrorData, setLocation]);
   
   // Calculate if we have second look opportunities
   const hasSecondLookOpportunities = analytics?.secondLook?.total ? analytics.secondLook.total > 0 : false;

@@ -50,7 +50,9 @@ export default function SimpleProfileSetup() {
 
   const profileMutation = useMutation({
     mutationFn: async (profileData: any) => {
-      const res = await apiRequest("POST", "/api/jobseeker/profile", profileData);
+      console.log("Submitting profile data:", profileData);
+      // Use PATCH instead of POST to handle both creating and updating
+      const res = await apiRequest("PATCH", "/api/jobseeker/profile", profileData);
       return await res.json();
     },
     onSuccess: (result) => {
