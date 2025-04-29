@@ -13,6 +13,15 @@ declare global {
   }
 }
 
+// Add passport to session type
+declare module 'express-session' {
+  interface Session {
+    passport?: {
+      user: number;
+    };
+  }
+}
+
 const scryptAsync = promisify(scrypt);
 
 async function hashPassword(password: string) {
@@ -116,7 +125,7 @@ export function setupAuth(app: Express) {
   app.post("/api/login", (req, res, next) => {
     console.log("Login attempt for:", req.body.email);
     
-    passport.authenticate("local", (err, user, info) => {
+    passport.authenticate("local", (err: any, user: any, info: any) => {
       if (err) {
         console.error("Authentication error:", err);
         return next(err);

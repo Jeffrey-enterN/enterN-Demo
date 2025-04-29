@@ -373,15 +373,15 @@ export default function HomePage() {
           <div className="rounded-lg shadow-lg p-8 text-center" 
                style={{background: "linear-gradient(135deg, #5ce1e6, #ff66c4)"}}>
             <h2 className="text-2xl font-heading font-bold text-white mb-4">
-              {user ? "Ready to complete your profile?" : "Ready to find your perfect match?"}
+              {isUserLoggedIn ? "Ready to complete your profile?" : "Ready to find your perfect match?"}
             </h2>
             <p className="text-white/90 mb-6 max-w-2xl mx-auto">
-              {user 
+              {isUserLoggedIn 
                 ? "Take the next step towards finding your perfect match by completing your profile."
                 : "Join thousands of professionals and companies who are connecting through enterN's innovative matching platform."
               }
             </p>
-            {user?.role === "jobseeker" ? (
+            {effectiveRole === "jobseeker" || effectiveRole === "JOBSEEKER" ? (
               <Button 
                 size="lg" 
                 variant="secondary" 
@@ -390,7 +390,7 @@ export default function HomePage() {
                 Complete Your Profile
                 <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
-            ) : user?.role === "employer" ? (
+            ) : effectiveRole === "employer" || effectiveRole === "EMPLOYER" ? (
               <div className="flex flex-col md:flex-row items-center justify-center gap-4">
                 <Button 
                   size="lg" 
@@ -425,7 +425,7 @@ export default function HomePage() {
       </main>
 
       {/* Mobile Navigation - Only for authenticated users */}
-      {user && <MobileNavbar activeItem="home" />}
+      {isUserLoggedIn && <MobileNavbar activeItem="home" />}
     </div>
   );
 }
