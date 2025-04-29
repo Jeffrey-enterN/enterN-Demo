@@ -38,10 +38,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     data: user,
     error,
     isLoading,
+    refetch
   } = useQuery<SelectUser | undefined, Error>({
     queryKey: ["/api/user"],
     queryFn: getQueryFn({ on401: "returnNull" }),
   });
+  
+  // Check localStorage on initial render to handle page refreshes
+  useEffect(() => {
+    // If no user data from API but we have saved auth state, attempt to recover
+    if (!user && !isLoading) {
+      const savedAuth = getAuthState();
+      if (savedAuth && isLikelyLoggedIn()) {
+        console.log("No server session but found local auth state, refetching...");
+        refetch();
+      }
+    }
+  }, [user, isLoading, refetch]);
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: LoginData) => {
@@ -144,8 +157,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Clear user data from query cache
       queryClient.setQueryData(["/api/user"], null);
       
-      // Remove auth state from localStorage
-      localStorage.removeItem('auth_state');
+      // Remove auth state from localStorage using our utility
+      clearAuthState();
       
       // Notification
       toast({

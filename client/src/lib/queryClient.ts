@@ -1,4 +1,5 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { getAuthState, isLikelyLoggedIn, clearAuthState } from "@/lib/authUtils";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {

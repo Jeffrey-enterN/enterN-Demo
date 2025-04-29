@@ -2,6 +2,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { Loader2 } from "lucide-react";
 import { Redirect, Route } from "wouter";
 import { useEffect, useState } from "react";
+import { getAuthState, isLikelyLoggedIn } from "@/lib/authUtils";
 
 export function ProtectedRoute({
   path,
@@ -21,18 +22,14 @@ export function ProtectedRoute({
       return;
     }
     
-    // Try to get auth state from localStorage
+    // Try to get auth state from localStorage using our utility functions
     try {
-      const storedAuthState = localStorage.getItem('auth_state');
-      if (storedAuthState) {
-        const authState = JSON.parse(storedAuthState);
-        console.log("Found stored auth state:", authState);
-        
-        if (authState.isLoggedIn) {
-          console.log("User is authorized from localStorage state");
-          setIsAuthorized(true);
-          return;
-        }
+      const savedAuth = getAuthState();
+      if (savedAuth && isLikelyLoggedIn()) {
+        console.log("Found valid auth state:", savedAuth);
+        console.log("User is authorized from localStorage state");
+        setIsAuthorized(true);
+        return;
       }
       
       // No valid auth state found

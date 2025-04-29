@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { UserRoleEnum } from "@shared/schema";
+import { getAuthState, isLikelyLoggedIn } from "@/lib/authUtils";
 
 // Form schemas with validation
 const loginSchema = z.object({
@@ -58,29 +59,39 @@ export default function AuthPage() {
     const checkAndRedirect = async () => {
       console.log("Auth page - checking user:", user);
       
+      // First check if we have a user in context
       if (user) {
-        console.log("User is authenticated:", user);
-        
-        try {
-          // If the user is already authenticated, redirect to the appropriate page
-          if (user.role === 'jobseeker') {
-            console.log("Redirecting jobseeker to dashboard");
-            // For jobseekers, redirect to the simple profile setup if they're new
-            window.location.href = "/jobseeker/dashboard";
-          } else if (user.role === 'employer') {
-            console.log("Redirecting employer to dashboard");
-            // For employers, redirect to their dashboard
-            window.location.href = "/employer/dashboard";
-          } else {
-            console.log("Unknown role, redirecting to home");
-            // Default fallback
-            window.location.href = "/";
-          }
-        } catch (error) {
-          console.error("Error during redirect:", error);
+        console.log("User is authenticated from server:", user);
+        redirectBasedOnRole(user.role);
+        return;
+      }
+      
+      // If no user from server, check localStorage as fallback
+      if (isLikelyLoggedIn()) {
+        const savedAuth = getAuthState();
+        if (savedAuth && savedAuth.role) {
+          console.log("User likely logged in from local storage:", savedAuth);
+          redirectBasedOnRole(savedAuth.role);
         }
       }
     };
+    
+    function redirectBasedOnRole(role: string) {
+      try {
+        if (role === 'jobseeker') {
+          console.log("Redirecting jobseeker to dashboard");
+          window.location.href = "/jobseeker/dashboard";
+        } else if (role === 'employer') {
+          console.log("Redirecting employer to dashboard");
+          window.location.href = "/employer/dashboard";
+        } else {
+          console.log("Unknown role, redirecting to home");
+          window.location.href = "/";
+        }
+      } catch (error) {
+        console.error("Error during redirect:", error);
+      }
+    }
     
     checkAndRedirect();
   }, [user]);
