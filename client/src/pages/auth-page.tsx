@@ -55,27 +55,54 @@ export default function AuthPage() {
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user) {
-      // If the user is already authenticated, redirect to the appropriate page
-      if (user.role === 'JOBSEEKER') {
-        // For jobseekers, redirect to the simple profile setup if they're new
-        setLocation("/jobseeker/simple-profile-setup");
-      } else if (user.role === 'EMPLOYER') {
-        // For employers, redirect to their dashboard
-        setLocation("/employer/dashboard");
-      } else {
-        // Default fallback
-        setLocation("/");
+    const checkAndRedirect = async () => {
+      console.log("Auth page - checking user:", user);
+      
+      if (user) {
+        console.log("User is authenticated:", user);
+        
+        try {
+          // If the user is already authenticated, redirect to the appropriate page
+          if (user.role === 'jobseeker') {
+            console.log("Redirecting jobseeker to dashboard");
+            // For jobseekers, redirect to the simple profile setup if they're new
+            window.location.href = "/jobseeker/dashboard";
+          } else if (user.role === 'employer') {
+            console.log("Redirecting employer to dashboard");
+            // For employers, redirect to their dashboard
+            window.location.href = "/employer/dashboard";
+          } else {
+            console.log("Unknown role, redirecting to home");
+            // Default fallback
+            window.location.href = "/";
+          }
+        } catch (error) {
+          console.error("Error during redirect:", error);
+        }
       }
-    }
-  }, [user, setLocation]);
+    };
+    
+    checkAndRedirect();
+  }, [user]);
 
-  const onLoginSubmit = (data: LoginFormData) => {
-    loginMutation.mutate(data);
+  const onLoginSubmit = async (data: LoginFormData) => {
+    console.log("Login submit with data:", data);
+    try {
+      await loginMutation.mutateAsync(data);
+      console.log("Login mutation completed successfully");
+    } catch (error) {
+      console.error("Login mutation error:", error);
+    }
   };
 
-  const onRegisterSubmit = (data: RegisterFormData) => {
-    registerMutation.mutate(data);
+  const onRegisterSubmit = async (data: RegisterFormData) => {
+    console.log("Register submit with data:", data);
+    try {
+      await registerMutation.mutateAsync(data);
+      console.log("Register mutation completed successfully");
+    } catch (error) {
+      console.error("Register mutation error:", error);
+    }
   };
 
   return (
