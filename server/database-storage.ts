@@ -56,18 +56,39 @@ export class DatabaseStorage implements IStorage {
 
   // Users
   async getUser(id: number): Promise<User | undefined> {
-    const result = await db.select().from(users).where(eq(users.id, id));
-    return result[0];
+    try {
+      console.log("[DatabaseStorage] Getting user by ID:", id);
+      const result = await db.select().from(users).where(eq(users.id, id));
+      console.log("[DatabaseStorage] User lookup result:", result);
+      return result[0];
+    } catch (error) {
+      console.error("[DatabaseStorage] Error getting user by ID:", error);
+      throw error;
+    }
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const result = await db.select().from(users).where(eq(users.email, email));
-    return result[0];
+    try {
+      console.log("[DatabaseStorage] Getting user by email:", email);
+      const result = await db.select().from(users).where(eq(users.email, email));
+      console.log("[DatabaseStorage] User by email result:", result);
+      return result[0];
+    } catch (error) {
+      console.error("[DatabaseStorage] Error getting user by email:", error);
+      throw error;
+    }
   }
 
   async createUser(user: InsertUser): Promise<User> {
-    const result = await db.insert(users).values(user).returning();
-    return result[0];
+    try {
+      console.log("[DatabaseStorage] Creating user:", user.email);
+      const result = await db.insert(users).values(user).returning();
+      console.log("[DatabaseStorage] User creation result:", result);
+      return result[0];
+    } catch (error) {
+      console.error("[DatabaseStorage] Error creating user:", error);
+      throw error;
+    }
   }
 
   // Employer Profiles

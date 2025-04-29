@@ -81,29 +81,44 @@ export function setupAuth(app: Express) {
   passport.serializeUser((user, done) => done(null, user.id));
   passport.deserializeUser(async (id: number, done) => {
     try {
+      console.log("Deserializing user with ID:", id);
       const user = await storage.getUser(id);
+      if (!user) {
+        console.log("No user found with ID:", id);
+        return done(null, false);
+      }
+      console.log("Deserialized user successfully:", user.email);
       done(null, user);
     } catch (error) {
+      console.error("Error deserializing user:", error);
       done(error);
     }
   });
 
   app.post("/api/register", async (req, res, next) => {
     try {
+      console.log("Register attempt with data:", { 
+        email: req.body.email, 
+        role: req.body.role 
+      });
+      
       const { email, password, role } = req.body;
 
       // Basic validation
       if (!email || !password || !role) {
+        console.log("Registration failed: Missing required fields");
         return res.status(400).json({ message: "Email, password, and role are required" });
       }
 
       // Check if role is valid
       if (![UserRoleEnum.EMPLOYER, UserRoleEnum.JOBSEEKER].includes(role)) {
+        console.log("Registration failed: Invalid role:", role);
         return res.status(400).json({ message: "Invalid role" });
       }
 
       const existingUser = await storage.getUserByEmail(email);
       if (existingUser) {
+        console.log("Registration failed: Email already exists:", email);
         return res.status(400).json({ message: "User with this email already exists" });
       }
 
@@ -112,12 +127,31 @@ export function setupAuth(app: Express) {
         password: await hashPassword(password),
         role,
       });
+      
+      console.log("User created successfully:", user.id, user.email);
 
       req.login(user, (err) => {
-        if (err) return next(err);
-        return res.status(201).json(user);
+        if (err) {
+          console.error("Error during login after registration:", err);
+          return next(err);
+        }
+        console.log("User logged in after registration. Session user:", user.id);
+        
+        // Force session save to ensure it's stored before responding
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error after registration:", err);
+            return next(err);
+          }
+          
+          console.log("Session saved after registration. Auth state:", req.isAuthenticated());
+          console.log("Session data after registration:", req.session);
+          
+          return res.status(201).json(user);
+        });
       });
     } catch (error) {
+      console.error("Registration error:", error);
       next(error);
     }
   });
@@ -195,10 +229,27 @@ export function setupAuth(app: Express) {
   });
 
   app.get("/api/user", (req, res) => {
-    console.log("/api/user called, authenticated:", req.isAuthenticated());
-    console.log("Session data:", req.session);
+    console.log("--------- /api/user API call ---------");
+    console.log("authenticated:", req.isAuthenticated());
+    console.log("session ID:", req.sessionID);
+    console.log("cookies:", req.headers.cookie);
+    console.log("user logged in cookie:", req.cookies.user_logged_in);
+    console.log("user info cookie:", req.cookies.user_info);
+    console.log("session passport:", req.session.passport);
+    console.log("session data:", req.session);
+    console.log("req.user:", req.user);
     
     if (!req.isAuthenticated()) {
+      if (req.cookies.user_info) {
+        console.log("User not authenticated, but has user_info cookie. Cookie data:", req.cookies.user_info);
+        try {
+          const userInfo = JSON.parse(req.cookies.user_info);
+          console.log("Parsed user info from cookie:", userInfo);
+          console.log("Will still return 401 since authentication state is false");
+        } catch (e) {
+          console.error("Failed to parse user_info cookie:", e);
+        }
+      }
       console.log("User not authenticated, returning 401");
       return res.status(401).json({ message: "Not authenticated" });
     }
