@@ -33,24 +33,6 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   
-  // Check localStorage for fallback auth state first (for better UX during page reloads)
-  const getInitialAuthState = () => {
-    try {
-      const storedAuthState = localStorage.getItem('auth_state');
-      if (storedAuthState) {
-        const authState = JSON.parse(storedAuthState);
-        console.log("Initial check - found stored auth state:", authState);
-        if (authState.isLoggedIn) {
-          // This is just a placeholder until the query runs
-          return { id: authState.userId, role: authState.role } as Partial<SelectUser>;
-        }
-      }
-    } catch (error) {
-      console.error("Error reading initial auth state:", error);
-    }
-    return undefined;
-  };
-  
   const {
     data: user,
     error,
@@ -58,7 +40,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } = useQuery<SelectUser | undefined, Error>({
     queryKey: ["/api/user"],
     queryFn: getQueryFn({ on401: "returnNull" }),
-    placeholderData: getInitialAuthState(),
   });
 
   const loginMutation = useMutation({
@@ -167,11 +148,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await apiRequest("POST", "/api/logout");
     },
     onSuccess: () => {
+      // Clear user data from query cache
       queryClient.setQueryData(["/api/user"], null);
+      
+      // Remove auth state from localStorage
+      localStorage.removeItem('auth_state');
+      
+      // Notification
       toast({
         title: "Logout successful",
         description: "You have been logged out.",
       });
+      
+      // Redirect to auth page
+      setTimeout(() => {
+        window.location.href = '/auth';
+      }, 500);
     },
     onError: (error: Error) => {
       toast({

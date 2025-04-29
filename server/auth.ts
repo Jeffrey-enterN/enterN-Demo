@@ -149,8 +149,19 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/logout", (req, res, next) => {
-    req.logout((err) => {
-      if (err) return next(err);
+    console.log("Logout request received");
+    
+    // Destroy the session completely
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("Session destruction error:", err);
+        return next(err);
+      }
+      
+      // Clear the cookie
+      res.clearCookie('connect.sid');
+      console.log("Session destroyed and cookie cleared");
+      
       res.sendStatus(200);
     });
   });

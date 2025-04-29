@@ -59,33 +59,60 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     console.log(`Query fetch for ${queryKey[0]}`);
     
-    const res = await fetch(queryKey[0] as string, {
-      credentials: "include",
-    });
-    
-    console.log(`Query response for ${queryKey[0]}: status=${res.status}`);
-
-    if (unauthorizedBehavior === "returnNull" && res.status === 401) {
-      console.log('Returning null for 401 response as configured');
-      return null;
-    }
-
-    // Clone the response so we can log the body but still return the original response
     try {
-      const clonedRes = res.clone();
-      const body = await clonedRes.text();
-      try {
-        const jsonBody = JSON.parse(body);
-        console.log(`Query response body:`, jsonBody);
-      } catch (e) {
-        console.log(`Query response body (text):`, body);
+      const res = await fetch(queryKey[0] as string, {
+        credentials: "include",
+      });
+      
+      console.log(`Query response for ${queryKey[0]}: status=${res.status}`);
+  
+      if (res.status === 401) {
+        console.log('Authentication failed with 401 status');
+        // Use a more reliable way to detect if we're on the auth page
+        const currentPath = window.location.pathname;
+        
+        if (currentPath !== '/auth' && unauthorizedBehavior === "returnNull") {
+          console.log('Not on auth page, redirecting to auth page due to 401');
+          
+          // Clear any saved auth state to prevent loops
+          localStorage.removeItem('auth_state');
+          
+          // No need for immediate redirect - let React router handle it
+          // But do force a hard redirect if we're already at a protected route
+          if (currentPath.startsWith('/jobseeker/') || currentPath.startsWith('/employer/')) {
+            window.location.href = '/auth';
+          }
+          
+          return null;
+        } else {
+          console.log('On auth page or using throw behavior, just handling 401 normally');
+          if (unauthorizedBehavior === "returnNull") {
+            return null;
+          }
+          throw new Error('Unauthorized');
+        }
       }
-    } catch (e) {
-      console.error('Could not read query response body:', e);
+  
+      // Clone the response so we can log the body but still return the original response
+      try {
+        const clonedRes = res.clone();
+        const body = await clonedRes.text();
+        try {
+          const jsonBody = JSON.parse(body);
+          console.log(`Query response body:`, jsonBody);
+        } catch (e) {
+          console.log(`Query response body (text):`, body);
+        }
+      } catch (e) {
+        console.error('Could not read query response body:', e);
+      }
+      
+      await throwIfResNotOk(res);
+      return await res.json();
+    } catch (error) {
+      console.error(`Query fetch error for ${queryKey[0]}:`, error);
+      throw error;
     }
-    
-    await throwIfResNotOk(res);
-    return await res.json();
   };
 
 export const queryClient = new QueryClient({
